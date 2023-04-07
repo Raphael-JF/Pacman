@@ -50,13 +50,13 @@ campagne = Button(
     parent_groups = [all_group, to_draw_group, clickable_group],
 )
 
-nouvelle_partie = Button(
+Perso = Button(
     winsize = assets.BASE_SIZE, 
     loc = [(400,261),"center"], 
     background_clr = (250,250,250),
     size = [350,40],
     border=[2,(25,25,25),2,"inset"],
-    text = "Nouvelle partie",
+    text = "Personnalisé",
     font_clrs=[(25,25,25)],
     font_size=30,
     font_family="RopaSans-Regular.ttf",
@@ -170,7 +170,7 @@ def click_manage(button:Button):
 
     if button == campagne:
         return 1
-    if button == nouvelle_partie:
+    if button == Perso:
         return 2
     if button == options:
         return 3
