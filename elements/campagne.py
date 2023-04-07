@@ -58,13 +58,13 @@ annuler = Button(
 
 reset = Button(
     winsize=assets.BASE_SIZE,
-    loc = [(795,5),"topright"],
+    loc = [(780,430),"bottomright"],
     background_clr = (250,250,250),
-    size = [235,40],
+    size = [100,20],
     border=[2,(25,25,25),2,"inset"],
     text = "Réinitialiser",
     font_clrs=[(25,25,25)],
-    font_size=30,
+    font_size=20,
     font_family="RopaSans-Regular.ttf",
     ease_seconds=0.25,
     ease_mode="inout",
