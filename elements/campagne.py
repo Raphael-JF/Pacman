@@ -38,7 +38,7 @@ title = Title(
 
 annuler = Button(
     winsize=assets.BASE_SIZE,
-    loc = [(250,400),"center"],
+    loc = [(400,400),"center"],
     background_clr = (250,250,250),
     size = [235,40],
     border=[2,(25,25,25),2,"inset"],
