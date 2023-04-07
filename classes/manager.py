@@ -14,7 +14,7 @@ class Manager():
         #variables
         self.fps = assets.START_GAME_FPS
         self.last_time = pygame.time.get_ticks()/1000
-        self.state = "start_menu"
+        self.state = self.loop_start_menu
         self.screen_size=itertools.cycle([
             [1280,720],
             [1600,900],
@@ -52,14 +52,7 @@ class Manager():
         """
 
         self.tick()
-        if self.state == "start_menu":
-            self.loop_start_menu()
-        elif self.state == "multijoueur_selection_menu":
-            self.loop_nouvelle_partie()
-        elif self.state == "game":
-            self.loop_game()
-        elif self.state == "parameters":
-            self.loop_parameters()
+        self.state()
         
 
     def loop_start_menu(self):
@@ -69,10 +62,25 @@ class Manager():
         
         action = start_menu.loop(self.win,self.current_winsize,self.dt,self.fps)
         if action == 1:
-            pass
+            importlib.reload(start_menu)
+            self.state = self.loop_campagne
         if action == 2:
-            # importlib.reload(start_menu)
-            self.state = "multijoueur_selection_menu"
+            pass
+        if action == 3:
+            pass
+        if action == 4:
+            pass
+        if action == 5:
+            pygame.quit()
+            sys.exit()
+
+    def loop_campagne(self):
+        action = start_menu.loop(self.win,self.current_winsize,self.dt,self.fps)
+        if action == 1:
+            importlib.reload(start_menu)
+            self.state = self.loop_start_menu
+        if action == 2:
+            pass
         if action == 3:
             pass
         if action == 4:
