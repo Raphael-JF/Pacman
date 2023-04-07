@@ -5,6 +5,7 @@ import itertools
 
 import assets
 import elements.start_menu as start_menu
+import elements.campagne as campagne
 
 class Manager():
     """L'objet Manager gère le comportement du jeu à chaque image. Il redirige vers les instructions à exécuter en fonction des actions utilisateur."""
@@ -75,7 +76,7 @@ class Manager():
             sys.exit()
 
     def loop_campagne(self):
-        action = start_menu.loop(self.win,self.current_winsize,self.dt,self.fps)
+        action = campagne.loop(self.win,self.current_winsize,self.dt,self.fps)
         if action == 1:
             importlib.reload(start_menu)
             self.state = self.loop_start_menu
