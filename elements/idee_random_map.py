@@ -1,49 +1,61 @@
-import sys
-
-import numpy as np
 import pygame
-from contracts import *
-from settings import *
 import random
 
-class Generator:
-    def __init__(self):
-        self.cols = 0
-        self.rows = 0
-        self.grid = np.NAN
-        self.empty_position_count = 0
+# Taille de la fenêtre
+SCREEN_WIDTH = 800
+SCREEN_HEIGHT = 600
 
-    def generate_maze(self, rows, cols):
-        zero_counter = 0
-        v = 0
-        grid = np.full_like(np.zeros((rows, cols)), fill_value=BLOCKED, dtype=int)
-        for i in range(rows):
-            for j in range(cols):
-                if i % 2 == 1 and j % 2 == 1:
-                    grid[i, j] = PASSAGE
-                    zero_counter += 1
-        self.cols = cols
-        self.rows = rows
-        self.grid = grid
-        self.empty_position_count = zero_counter
-        current_cell = (1, 1)
-        stack = []
-        visited = [current_cell]
-        while v < zero_counter - 1:
-            all_neighbors = self.get_neighbors_of_cell(current_cell, PASSAGE)
-            neighbors = []
-            for n in all_neighbors:
-                if n not in visited:
-                    neighbors.append(n)
-            next_cell = []
-            if neighbors:
-                next_cell = random.choice(neighbors)
-            if next_cell:
-                visited.append(next_cell)
-                stack.append(current_cell)
-                self.connect_cell(current_cell, next_cell)
-                current_cell = next_cell
-                self.grid[current_cell] = PASSAGE
-                v += 1
-            elif stack:
-                current_cell = stack.pop()
+# Taille des cases
+CELL_SIZE = 20
+
+# Couleurs
+BLACK = (0, 0, 0)
+WHITE = (255, 255, 255)
+BLUE = (0, 0, 255)
+
+# Initialisation de Pygame
+pygame.init()
+
+# Création de la fenêtre
+screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+
+# Fonction pour générer une carte aléatoire
+def generate_map():
+    map = []
+    for i in range(SCREEN_HEIGHT // CELL_SIZE):
+        row = []
+        for j in range(SCREEN_WIDTH // CELL_SIZE):
+            if random.random() < 0.2:
+                row.append(1)
+            else:
+                row.append(0)
+        map.append(row)
+    return map
+
+# Fonction pour dessiner la carte sur l'écran
+def draw_map(map):
+    for i in range(len(map)):
+        for j in range(len(map[i])):
+            if map[i][j] == 1:
+                pygame.draw.rect(screen, BLUE, (j * CELL_SIZE, i * CELL_SIZE, CELL_SIZE, CELL_SIZE))
+
+# Boucle principale du jeu
+running = True
+while running:
+    # Gestion des événements
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            running = False
+        elif event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_ESCAPE:
+                running = False
+    
+    # Génération et affichage de la carte
+    map = generate_map()
+    draw_map(map)
+    
+    # Rafraîchissement de l'écran
+    pygame.display.flip()
+
+# Fermeture de Pygame
+pygame.quit()
