@@ -50,7 +50,7 @@ campagne = Button(
     parent_groups = [all_group, to_draw_group, clickable_group],
 )
 
-Perso = Button(
+perso = Button(
     winsize = assets.BASE_SIZE, 
     loc = [(400,261),"center"], 
     background_clr = (250,250,250),
@@ -170,7 +170,7 @@ def click_manage(button:Button):
 
     if button == campagne:
         return 1
-    if button == Perso:
+    if button == perso:
         return 2
     if button == options:
         return 3
