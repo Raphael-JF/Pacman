@@ -6,7 +6,8 @@ import itertools
 import assets
 import elements.start_menu as start_menu
 import elements.campagne as campagne
-
+import elements.options as options
+import elements.credits as credits
 class Manager():
     """L'objet Manager gère le comportement du jeu à chaque image. Il redirige vers les instructions à exécuter en fonction des actions utilisateur."""
 
@@ -90,4 +91,24 @@ class Manager():
             pygame.quit()
             sys.exit()
 
-    
+    def loop_options(self):
+        action = options.loop(self.win,self.current_winsize,self.dt,self.fps)
+        if action == 1:
+            importlib.reload(start_menu)
+            self.state = self.loop_start_menu
+
+
+    def loop_credits(self):
+        action = credits.loop(self.win,self.current_winsize,self.dt,self.fps)
+        if action == 1:
+            importlib.reload(start_menu)
+            self.state = self.loop_start_menu
+        if action == 2:
+            pass
+        if action == 3:
+            pass
+        if action == 4:
+            pass
+        if action == 5:
+            pygame.quit()
+            sys.exit()
