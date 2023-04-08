@@ -77,7 +77,7 @@ class Button(Title):
         instant_change = True,
     ):
         """
-        Redéfinition des attributs constants du bouton. N'affecte pas l'état actuel du bouton. Cette méthode est à utiliser pour changer le style que le bouton prend en fonction de ses états : 'base' est l'état que prend le bouton quand il ne reçoit aucune interaction. 'hover' est l'état que prend le bouton au survol. 'active' est l'état que prend le bouton quand il est cliqué (il écrase donc 'hover')
+        Redéfinition des attributs constants du bouton. N'affecte pas l'état actuel du bouton. Cette méthode est à utiliser pour changer le style que le bouton prend en fonction de ses états : 'base' est l'état que prend le bouton quand il ne reçoit aucune interaction. 'hover' est l'état que prend le bouton au survol. 'active' est l'état que prend le bouton quand il est cliqué.
         """
 
         if background_clr != None:
@@ -194,43 +194,22 @@ class Button(Title):
             
             self.state = new_state
             if self.state == "hover":
-                self.cur_background_clr_frames = Transition([self.background_clr,self.hov_background_clr],[self.ease_seconds],[self.ease_mode])
-                self.background_clr_iter_nb = 1
-
-                self.cur_border_width_frames = Transition([self.border_width,self.hov_border_width],[self.ease_seconds],[self.ease_mode])
-                self.border_width_iter_nb = 1
-
-                self.cur_border_clr_frames = Transition([self.border_clr,self.hov_border_clr],[self.ease_seconds],[self.ease_mode])
-                self.border_clr_iter_nb = 1
-
-                self.cur_border_padding_frames = Transition([self.border_padding,self.hov_border_padding],[self.ease_seconds],[self.ease_mode])
-                self.border_padding_iter_nb = 1
+                self.change_background_clr([self.background_clr,self.hov_background_clr],[self.ease_seconds],[self.ease_mode],1)
+                self.change_border_width([self.border_width,self.hov_border_width],[self.ease_seconds],[self.ease_mode],1)
+                self.change_border_clr([self.border_clr,self.hov_border_clr],[self.ease_seconds],[self.ease_mode],1)
+                self.change_border_padding([self.border_padding,self.hov_border_padding],[self.ease_seconds],[self.ease_mode],1)
 
             elif self.state == "base":
-                self.cur_background_clr_frames = Transition([self.background_clr,self.base_background_clr],[self.ease_seconds],[self.ease_mode])
-                self.background_clr_iter_nb = 1
-
-                self.cur_border_width_frames = Transition([self.border_width,self.base_border_width],[self.ease_seconds],[self.ease_mode])
-                self.border_width_iter_nb = 1
-
-                self.cur_border_clr_frames = Transition([self.border_clr,self.base_border_clr],[self.ease_seconds],[self.ease_mode])
-                self.border_clr_iter_nb = 1
-
-                self.cur_border_padding_frames = Transition([self.border_padding,self.base_border_padding],[self.ease_seconds],[self.ease_mode])
-                self.border_padding_iter_nb = 1
+                self.change_background_clr([self.background_clr,self.base_background_clr],[self.ease_seconds],[self.ease_mode],1)
+                self.change_border_width([self.border_width,self.base_border_width],[self.ease_seconds],[self.ease_mode],1)
+                self.change_border_clr([self.border_clr,self.base_border_clr],[self.ease_seconds],[self.ease_mode],1)
+                self.change_border_padding([self.border_padding,self.base_border_padding],[self.ease_seconds],[self.ease_mode],1)
 
             elif self.state == "active":
-                self.cur_background_clr_frames = Transition([self.background_clr,self.active_background_clr],[self.ease_seconds],[self.ease_mode])
-                self.background_clr_iter_nb = 1
-
-                self.cur_border_width_frames = Transition([self.border_width,self.active_border_width],[self.ease_seconds],[self.ease_mode])
-                self.border_width_iter_nb = 1
-
-                self.cur_border_clr_frames = Transition([self.border_clr,self.active_border_clr],[self.ease_seconds],[self.ease_mode])
-                self.border_clr_iter_nb = 1
-
-                self.cur_border_padding_frames = Transition([self.border_padding,self.active_border_padding],[self.ease_seconds],[self.ease_mode])
-                self.border_padding_iter_nb = 1
+                self.change_background_clr([self.background_clr,self.active_background_clr],[self.ease_seconds],[self.ease_mode],1)
+                self.change_border_width([self.border_width,self.active_border_width],[self.ease_seconds],[self.ease_mode],1)
+                self.change_border_clr([self.border_clr,self.active_border_clr],[self.ease_seconds],[self.ease_mode],1)
+                self.change_border_padding([self.border_padding,self.active_border_padding],[self.ease_seconds],[self.ease_mode],1)
         
     
     def set_clicking(self,state:bool):
