@@ -7,6 +7,7 @@ pygame.init()
 from classes.box import Box
 from classes.button import Button
 from classes.title import Title
+from classes.slider import Slider
 
 
 all_group = pygame.sprite.Group()
@@ -56,6 +57,31 @@ annuler = Button(
     parent_groups = [all_group,to_draw_group,clickable_group]
 )
 
+test = Slider(
+    winsize = assets.BASE_SIZE,
+    loc = [(216,150),"center"],
+    background_clr= (250,250,250),
+    hov_background_clr=(230,230,230),
+    font_clrs=[(25,25,25)],
+    parent_groups= [all_group, to_draw_group, clickable_group],
+    font_size=30,
+    size = [300,40],
+    options_list = ['option 1','option 2','option 3','option 4','option 5'],
+    base_option = 'option 1',
+    cursor_width = 25,
+    cursor_background_clr=(150,150,150),
+    hov_cursor_background_clr=(150,150,150),
+    hov_border=[2,(250,250,250),0],
+    cursor_border = [2,(20,20,20)],
+    hov_cursor_border = [2,(250,250,250)],
+    border = [2,(20,20,20),0,"inset"],
+    ease_seconds = 0.25,
+    ease_mode = "inout",
+    text = "option choisie : {}",
+    font_family = "RopaSans-Regular.ttf",
+    layer = 5,
+    living = True
+)
 
 
 

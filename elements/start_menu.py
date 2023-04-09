@@ -7,7 +7,6 @@ pygame.init()
 from classes.box import Box
 from classes.button import Button
 from classes.image import Image
-from classes.slider import Slider
 
 all_group = pygame.sprite.Group()
 to_draw_group = pygame.sprite.LayeredUpdates()
@@ -129,32 +128,6 @@ quitter = Button(
     active_border=[3,(25,25,25),0],
     layer = 1,
     parent_groups = [all_group, to_draw_group, clickable_group],
-)
-
-test = Slider(
-    winsize = assets.BASE_SIZE,
-    loc= [(400,225),"center"],
-    background_clr= (250,250,250),
-    hov_background_clr=(230,230,230),
-    font_clrs=[(25,25,25)],
-    parent_groups= [all_group, to_draw_group, clickable_group],
-    font_size=20,
-    size=[400,60],
-    options_list = ['option 1','option 2','option 3','option 4','option 5'],
-    base_option = 'option 1',
-    cursor_width = 40,
-    cursor_background_clr=(150,150,150),
-    hov_cursor_background_clr=(150,150,150),
-    hov_border=[2,(250,250,250),0],
-    cursor_border = [2,(20,20,20)],
-    hov_cursor_border = [2,(250,250,250)],
-    border = [2,(20,20,20),0,"inset"],
-    ease_seconds = 0.25,
-    ease_mode = "inout",
-    text = "option choisie : {}",
-    font_family = "RopaSans-Regular.ttf",
-    layer = 5,
-    living = True
 )
 
 
