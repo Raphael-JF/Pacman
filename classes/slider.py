@@ -5,7 +5,7 @@ class Slider(Box):
     """
     Héritant de l'objet Title, Slide implémente un widget permettant à l'utilisateur de sélectionner une valeur précise en déplaçant un curseur le long d'un segment.
     """
-    def  __init__(
+    def __init__(
         self,
         winsize:list,
         loc:list,
@@ -21,6 +21,7 @@ class Slider(Box):
         cursor_background_clr:list,
         hov_cursor_background_clr:list,
         hov_border:list,
+        anchor_options:bool = True,
         cursor_border:list = [0,(0,0,0)],
         hov_cursor_border:list = [0,(0,0,0)],
         border:list = [0,(0,0,0),0,"inset"],
@@ -43,7 +44,7 @@ class Slider(Box):
 
         """
 
-        x = (size[0] / len(options_list)) * options_list.index(base_option)
+        x = ((size[0] - cursor_width)/(len(options_list) - 1))*options_list.index(base_option) + cursor_width/2
         if x < cursor_width / 2:
             x = cursor_width / 2
         if x > size[0] - cursor_width / 2:
@@ -105,6 +106,7 @@ class Slider(Box):
         self.hov_border_clr = hov_border[1]
         self.hov_border_padding = hov_border[2]
 
+        self.anchor_options = anchor_options
         self.text_str = text
         self.ease_seconds = ease_seconds
         self.ease_mode = ease_mode
@@ -119,21 +121,24 @@ class Slider(Box):
 
         if self.winsize != new_winsize:
             self.rescale(new_winsize)
-        if self.clicking:
-            x = cursor[0] - self.rect.topleft[0]
-            if x < self.cursor.width / 2:
-                x = self.cursor.width / 2
-            if x > self.width - self.cursor.width / 2:
-                x = self.width - self.cursor.width / 2
 
+        if self.clicking:
+            rel_x = cursor[0] - self.rect.topleft[0]
+            fractions = [i*((self.width - self.cursor.width) / (len(self.options_list)-1)) + self.cursor.width/2 for i in range(len(self.options_list))]
+            if self.anchor_options:
+                x = min(fractions, key=lambda a: abs(a - rel_x))
+                index = fractions.index(x)
+            else:
+                index = fractions.index(min(fractions, key=lambda a: abs(a - rel_x)))
+                x = rel_x
+                if rel_x < self.cursor.width / 2:
+                    x = self.cursor.width / 2
+                if rel_x > self.width - self.cursor.width / 2:
+                    x = self.width - self.cursor.width / 2
             if round(x) != self.cursor.pos[0]:
-                fraction = (self.width - self.cursor.width) / len(self.options_list)
-                for i in range(len(self.options_list)):
-                    if x <= (i+1) * fraction:
-                        break
                 self.cursor.pos[0] = x
                 self.cursor.calc_rect()
-                self.cur_option = self.options_list[i]
+                self.cur_option = self.options_list[index]
                 self.text.set_text(self.text_str.format(self.cur_option))
                 self.calc_image()
 
