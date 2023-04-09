@@ -194,22 +194,22 @@ class Button(Title):
             
             self.state = new_state
             if self.state == "hover":
-                self.change_background_clr([self.background_clr,self.hov_background_clr],[self.ease_seconds],[self.ease_mode],1)
-                self.change_border_width([self.border_width,self.hov_border_width],[self.ease_seconds],[self.ease_mode],1)
-                self.change_border_clr([self.border_clr,self.hov_border_clr],[self.ease_seconds],[self.ease_mode],1)
-                self.change_border_padding([self.border_padding,self.hov_border_padding],[self.ease_seconds],[self.ease_mode],1)
+                self.instant_change_background_clr([self.background_clr,self.hov_background_clr],[self.ease_seconds],[self.ease_mode])
+                self.instant_change_border_width([self.border_width,self.hov_border_width],[self.ease_seconds],[self.ease_mode])
+                self.instant_change_border_clr([self.border_clr,self.hov_border_clr],[self.ease_seconds],[self.ease_mode])
+                self.instant_change_border_padding([self.border_padding,self.hov_border_padding],[self.ease_seconds],[self.ease_mode])
 
             elif self.state == "base":
-                self.change_background_clr([self.background_clr,self.base_background_clr],[self.ease_seconds],[self.ease_mode],1)
-                self.change_border_width([self.border_width,self.base_border_width],[self.ease_seconds],[self.ease_mode],1)
-                self.change_border_clr([self.border_clr,self.base_border_clr],[self.ease_seconds],[self.ease_mode],1)
-                self.change_border_padding([self.border_padding,self.base_border_padding],[self.ease_seconds],[self.ease_mode],1)
+                self.instant_change_background_clr([self.background_clr,self.base_background_clr],[self.ease_seconds],[self.ease_mode])
+                self.instant_change_border_width([self.border_width,self.base_border_width],[self.ease_seconds],[self.ease_mode])
+                self.instant_change_border_clr([self.border_clr,self.base_border_clr],[self.ease_seconds],[self.ease_mode])
+                self.instant_change_border_padding([self.border_padding,self.base_border_padding],[self.ease_seconds],[self.ease_mode])
 
             elif self.state == "active":
-                self.change_background_clr([self.background_clr,self.active_background_clr],[self.ease_seconds],[self.ease_mode],1)
-                self.change_border_width([self.border_width,self.active_border_width],[self.ease_seconds],[self.ease_mode],1)
-                self.change_border_clr([self.border_clr,self.active_border_clr],[self.ease_seconds],[self.ease_mode],1)
-                self.change_border_padding([self.border_padding,self.active_border_padding],[self.ease_seconds],[self.ease_mode],1)
+                self.instant_change_background_clr([self.background_clr,self.active_background_clr],[self.ease_seconds],[self.ease_mode])
+                self.instant_change_border_width([self.border_width,self.active_border_width],[self.ease_seconds],[self.ease_mode])
+                self.instant_change_border_clr([self.border_clr,self.active_border_clr],[self.ease_seconds],[self.ease_mode])
+                self.instant_change_border_padding([self.border_padding,self.active_border_padding],[self.ease_seconds],[self.ease_mode])
         
     
     def set_clicking(self,state:bool):
