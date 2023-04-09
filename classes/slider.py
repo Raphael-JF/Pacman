@@ -5,7 +5,7 @@ class Slider(Box):
     """
     Héritant de l'objet Title, Slide implémente un widget permettant à l'utilisateur de sélectionner une valeur précise en déplaçant un curseur le long d'un segment.
     """
-    def __init__(
+    def  __init__(
         self,
         winsize:list,
         loc:list,

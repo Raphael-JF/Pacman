@@ -192,7 +192,7 @@ L'objet Box est le widget le plus bas niveau (il n'hérite de rien d'autre que p
         """Actualisation du sprite ayant lieu à chaque changement image"""
 
         if self.winsize != new_winsize:
-            self.rescale(new_winsize = new_winsize)
+            self.rescale(new_winsize)
 
         self.manage_frames(dt)
 
@@ -217,15 +217,16 @@ L'objet Box est le widget le plus bas niveau (il n'hérite de rien d'autre que p
         if round(self.height) %2 != 1:
             self.height += 1
 
-        for transition in self.border_width_frames_list + [self.cur_border_width_frames,self.inf_border_width_frames]:
+        for transition in [i[0] for i in self.border_width_frames_list] + [self.cur_border_width_frames,self.inf_border_width_frames]:
+            print(transition)
             if transition is not None:
                 transition.resize_extremums(self.ratio)
 
-        for transition in self.border_padding_frames_list + [self.cur_border_padding_frames,self.inf_border_padding_frames]:
+        for transition in [i[0] for i in self.border_padding_frames_list] + [self.cur_border_padding_frames,self.inf_border_padding_frames]:
             if transition is not None:
                 transition.resize_extremums(self.ratio)
 
-        for transition in self.translate_frames_list + [self.cur_translate_frames,self.inf_translate_frames]:
+        for transition in [i[0] for i in self.translate_frames_list] + [self.cur_translate_frames,self.inf_translate_frames]:
             if transition is not None:
                 transition.resize_extremums(self.ratio)
         
