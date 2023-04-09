@@ -1,5 +1,5 @@
 """
-Ce module contient les éléments et widgets du menu de lancement. Il contient aussi le code de gestion utilisateur pour ce menu.
+Ce module contient les éléments et widgets du menu de lancement. Il contient aussi le code de gestion utilisateur pour ce menu. ancienne couleur background : (9, 11, 89) 
 """
 
 import pygame,sys,assets
@@ -16,7 +16,7 @@ background = Box(
     winsize = assets.BASE_SIZE,
     size = [802,452],
     loc = [[0,0],"topleft"],
-    background_clr=(9, 11, 89),
+    background_clr=(17, 19, 166),
     border = [-1,(0,0,0),0,"inset"],
     parent_groups = [all_group, to_draw_group],
 )

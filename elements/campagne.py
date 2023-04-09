@@ -17,7 +17,7 @@ background = Box(
     winsize = assets.BASE_SIZE,
     size = [802,452],
     loc = [[0,0],"topleft"],
-    background_clr=(9, 11, 89),
+    background_clr=(17, 19, 166),
     border = [-1,(0,0,0),0,"inset"],
     parent_groups = [all_group, to_draw_group],
 )
@@ -25,7 +25,7 @@ background = Box(
 title = Title(
     winsize = assets.BASE_SIZE, 
     loc = [(400,25),"midtop"], 
-    background_clr = (235,235,235),
+    background_clr = (242,242,242),
     size = [250 ,50],
     border=[2,(25,25,25),0,"inset"],
     text = "Campagne",

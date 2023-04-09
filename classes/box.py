@@ -40,7 +40,7 @@ L'objet Box est le widget le plus bas niveau (il n'hérite de rien d'autre que p
         self._layer = layer
         self.parent_groups = parent_groups
 
-        self.pos = loc[0]
+        self.pos = list(loc[0])
         self.placement_mode = loc[1]
         self.border_position = border[3]
 
@@ -218,7 +218,6 @@ L'objet Box est le widget le plus bas niveau (il n'hérite de rien d'autre que p
             self.height += 1
 
         for transition in [i[0] for i in self.border_width_frames_list] + [self.cur_border_width_frames,self.inf_border_width_frames]:
-            print(transition)
             if transition is not None:
                 transition.resize_extremums(self.ratio)
 

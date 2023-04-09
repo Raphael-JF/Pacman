@@ -17,7 +17,7 @@ background = Box(
     winsize = assets.BASE_SIZE,
     size = [802,452],
     loc = [[0,0],"topleft"],
-    background_clr=(9, 11, 89),
+    background_clr=(17, 19, 166),
     border = [-1,(0,0,0),0,"inset"],
     parent_groups = [all_group, to_draw_group],
 )
@@ -38,15 +38,15 @@ title = Title(
 
 test1 = Slider(
     winsize = assets.BASE_SIZE,
-    loc = [(180,100),"center"],
+    loc = [(187.5,127.4),"center"],
     background_clr= (250,250,250),
     hov_background_clr=(250,250,250),
     font_clrs=[(25,25,25)],
     parent_groups= [all_group, to_draw_group, clickable_group],
     font_size=25,
-    size = [300,25],
-    options_list = ['option 1','option 2','option 3','option 4','option 5'],
-    base_option = 'option 1',
+    size = [205,35],
+    options_list = ['1','2','3','4','5','6','7','8','9','10'],
+    base_option = '4',
     cursor_width = 15,
     cursor_background_clr=(150,150,150),
     hov_cursor_background_clr=(150,150,150),
@@ -56,59 +56,7 @@ test1 = Slider(
     border = [2,(20,20,20),0,"inset"],
     ease_seconds = 0.25,
     ease_mode = "inout",
-    text = "option1 choisie : {}",
-    font_family = "RopaSans-Regular.ttf",
-    layer = 5,
-    living = True
-)
-
-test2 = Slider(
-    winsize = assets.BASE_SIZE,
-    loc = [(180,140),"center"],
-    background_clr= (250,250,250),
-    hov_background_clr=(250,250,250),
-    font_clrs=[(25,25,25)],
-    parent_groups= [all_group, to_draw_group, clickable_group],
-    font_size=25,
-    size = [300,25],
-    options_list = ['option 1','option 2','option 3','option 4','option 5'],
-    base_option = 'option 1',
-    cursor_width = 15,
-    cursor_background_clr=(150,150,150),
-    hov_cursor_background_clr=(150,150,150),
-    hov_border=[2,(150,150,150),0],
-    cursor_border = [2,(20,20,20)],
-    hov_cursor_border = [2,(150,150,150)],
-    border = [2,(20,20,20),0,"inset"],
-    ease_seconds = 0.25,
-    ease_mode = "inout",
-    text = "option2 choisie : {}",
-    font_family = "RopaSans-Regular.ttf",
-    layer = 5,
-    living = True
-)
-
-test3 = Slider(
-    winsize = assets.BASE_SIZE,
-    loc = [(180,180),"center"],
-    background_clr= (250,250,250),
-    hov_background_clr=(250,250,250),
-    font_clrs=[(25,25,25)],
-    parent_groups= [all_group, to_draw_group, clickable_group],
-    font_size=25,
-    size = [300,25],
-    options_list = ['option 1','option 2','option 3','option 4','option 5'],
-    base_option = 'option 1',
-    cursor_width = 15,
-    cursor_background_clr=(150,150,150),
-    hov_cursor_background_clr=(150,150,150),
-    hov_border=[2,(150,150,150),0],
-    cursor_border = [2,(20,20,20)],
-    hov_cursor_border = [2,(150,150,150)],
-    border = [2,(20,20,20),0,"inset"],
-    ease_seconds = 0.25,
-    ease_mode = "inout",
-    text = "option3 choisie : {}",
+    text = "nombre de fantômes : {}",
     font_family = "RopaSans-Regular.ttf",
     layer = 5,
     living = True
@@ -134,10 +82,30 @@ jouer = Button(
     parent_groups = [all_group,to_draw_group,clickable_group]
 )
 
+zone_parametres = Box(
+    winsize = assets.BASE_SIZE,
+    loc = [(187.5,225),'center'],
+    size = [275,280],
+    background_clr = (25, 29, 255),
+    border = [4,(17, 19, 166),4,"inset"],
+    layer = 1,
+    parent_groups = [all_group,to_draw_group]
+)
+
+zone_preview = Box(
+    winsize = assets.BASE_SIZE,
+    loc = [(555,225),'center'],
+    size = [390,280],
+    background_clr = (25, 29, 255),
+    border = [4,(17, 19, 166),4,"inset"],
+    layer = 1,
+    parent_groups = [all_group,to_draw_group]
+)
+
 
 reset = Button(
     winsize=assets.BASE_SIZE,
-    loc = [(475,400),"center"],
+    loc = [(475,405),"center"],
     background_clr = (250,250,250),
     size = [120,40],
     border=[2,(25,25,25),2,"inset"],
@@ -157,7 +125,7 @@ reset = Button(
 
 jouer = Button(
     winsize=assets.BASE_SIZE,
-    loc = [(655,400),"center"],
+    loc = [(655,405),"center"],
     background_clr = (250,250,250),
     size = [120,40],
     border=[2,(25,25,25),2,"inset"],
@@ -175,13 +143,13 @@ jouer = Button(
     parent_groups = [all_group,to_draw_group,clickable_group]
 )
 
-annuler = Button(
+retour = Button(
     winsize=assets.BASE_SIZE,
-    loc = [(180,400),"center"],
+    loc = [(180,405),"center"],
     background_clr = (250,250,250),
     size = [135,40],
     border=[2,(25,25,25),2,"inset"],
-    text = "Annuler",
+    text = "Retour",
     font_clrs=[(25,25,25)],
     font_size=30,
     font_family="RopaSans-Regular.ttf",
@@ -234,5 +202,5 @@ def loop(screen,new_winsize, dt,fps):
 
 def click_manage(button:Button):
 
-    if button is annuler:
+    if button is retour:
         return 1

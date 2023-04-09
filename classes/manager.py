@@ -6,7 +6,7 @@ import itertools
 import assets
 import elements.start_menu as start_menu
 import elements.campagne as campagne
-import elements.perso as perso
+import elements.personnalise as personnalise
 import elements.options as options
 import elements.credits as credits
 
@@ -20,12 +20,13 @@ class Manager():
         self.last_time = pygame.time.get_ticks()/1000
         self.state = self.loop_start_menu
         self.screen_size=itertools.cycle([
+            [800,450],
             [1280,720],
             [1600,900],
             
             [960,540],
             [1920,1080],
-            [800,450],
+            
             
             [1920,1080],
             [480,270],
@@ -97,7 +98,7 @@ class Manager():
             sys.exit()
 
     def loop_perso(self):
-        action = perso.loop(self.win,self.current_winsize,self.dt,self.fps)
+        action = personnalise.loop(self.win,self.current_winsize,self.dt,self.fps)
         if action == 1:
             importlib.reload(start_menu)
             self.state = self.loop_start_menu
