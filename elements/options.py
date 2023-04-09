@@ -26,7 +26,7 @@ background = Box(
 
 title = Title(
     winsize = assets.BASE_SIZE, 
-    loc = [(400,20),"midtop"], 
+    loc = [(400,25),"midtop"], 
     background_clr = (235,235,235),
     size = [250 ,50],
     border=[2,(25,25,25),0,"inset"],
@@ -38,151 +38,11 @@ title = Title(
     parent_groups = [all_group,to_draw_group]
 )
 
-
-test1 = Slider(
-    winsize = assets.BASE_SIZE,
-    loc = [(180,100),"center"],
-    background_clr= (250,250,250),
-    hov_background_clr=(250,250,250),
-    font_clrs=[(25,25,25)],
-    parent_groups= [all_group, to_draw_group, clickable_group],
-    font_size=25,
-    size = [300,25],
-    options_list = ['option 1','option 2','option 3','option 4','option 5'],
-    base_option = 'option 1',
-    cursor_width = 15,
-    cursor_background_clr=(150,150,150),
-    hov_cursor_background_clr=(150,150,150),
-    hov_border=[2,(150,150,150),0],
-    cursor_border = [2,(20,20,20)],
-    hov_cursor_border = [2,(150,150,150)],
-    border = [2,(20,20,20),0,"inset"],
-    ease_seconds = 0.25,
-    ease_mode = "inout",
-    text = "option1 choisie : {}",
-    font_family = "RopaSans-Regular.ttf",
-    layer = 5,
-    living = True
-)
-
-test2 = Slider(
-    winsize = assets.BASE_SIZE,
-    loc = [(180,140),"center"],
-    background_clr= (250,250,250),
-    hov_background_clr=(250,250,250),
-    font_clrs=[(25,25,25)],
-    parent_groups= [all_group, to_draw_group, clickable_group],
-    font_size=25,
-    size = [300,25],
-    options_list = ['option 1','option 2','option 3','option 4','option 5'],
-    base_option = 'option 1',
-    cursor_width = 15,
-    cursor_background_clr=(150,150,150),
-    hov_cursor_background_clr=(150,150,150),
-    hov_border=[2,(150,150,150),0],
-    cursor_border = [2,(20,20,20)],
-    hov_cursor_border = [2,(150,150,150)],
-    border = [2,(20,20,20),0,"inset"],
-    ease_seconds = 0.25,
-    ease_mode = "inout",
-    text = "option2 choisie : {}",
-    font_family = "RopaSans-Regular.ttf",
-    layer = 5,
-    living = True
-)
-
-test3 = Slider(
-    winsize = assets.BASE_SIZE,
-    loc = [(180,180),"center"],
-    background_clr= (250,250,250),
-    hov_background_clr=(250,250,250),
-    font_clrs=[(25,25,25)],
-    parent_groups= [all_group, to_draw_group, clickable_group],
-    font_size=25,
-    size = [300,25],
-    options_list = ['option 1','option 2','option 3','option 4','option 5'],
-    base_option = 'option 1',
-    cursor_width = 15,
-    cursor_background_clr=(150,150,150),
-    hov_cursor_background_clr=(150,150,150),
-    hov_border=[2,(150,150,150),0],
-    cursor_border = [2,(20,20,20)],
-    hov_cursor_border = [2,(150,150,150)],
-    border = [2,(20,20,20),0,"inset"],
-    ease_seconds = 0.25,
-    ease_mode = "inout",
-    text = "option3 choisie : {}",
-    font_family = "RopaSans-Regular.ttf",
-    layer = 5,
-    living = True
-)
-
-jouer = Button(
-    winsize=assets.BASE_SIZE,
-    loc = [(180,260),"center"],
-    background_clr = (250,250,250),
-    size = [80,20],
-    border=[2,(25,25,25),2,"inset"],
-    text = "random",
-    font_clrs=[(25,25,25)],
-    font_size=20,
-    font_family="RopaSans-Regular.ttf",
-    ease_seconds=0.25,
-    ease_mode="inout",
-    hov_background_clr=(230,230,230),
-    hov_border=[2,(25,25,25),0],
-    active_background_clr=(210,210,210),
-    active_border=[3,(25,25,25),0],
-    layer = 1,
-    parent_groups = [all_group,to_draw_group,clickable_group]
-)
-
-
-reset = Button(
-    winsize=assets.BASE_SIZE,
-    loc = [(475,400),"center"],
-    background_clr = (250,250,250),
-    size = [120,40],
-    border=[2,(25,25,25),2,"inset"],
-    text = "reset",
-    font_clrs=[(25,25,25)],
-    font_size=30,
-    font_family="RopaSans-Regular.ttf",
-    ease_seconds=0.25,
-    ease_mode="inout",
-    hov_background_clr=(230,230,230),
-    hov_border=[2,(25,25,25),0],
-    active_background_clr=(210,210,210),
-    active_border=[3,(25,25,25),0],
-    layer = 1,
-    parent_groups = [all_group,to_draw_group,clickable_group]
-)
-
-jouer = Button(
-    winsize=assets.BASE_SIZE,
-    loc = [(655,400),"center"],
-    background_clr = (250,250,250),
-    size = [120,40],
-    border=[2,(25,25,25),2,"inset"],
-    text = "Jouer",
-    font_clrs=[(25,25,25)],
-    font_size=30,
-    font_family="RopaSans-Regular.ttf",
-    ease_seconds=0.25,
-    ease_mode="inout",
-    hov_background_clr=(230,230,230),
-    hov_border=[2,(25,25,25),0],
-    active_background_clr=(210,210,210),
-    active_border=[3,(25,25,25),0],
-    layer = 1,
-    parent_groups = [all_group,to_draw_group,clickable_group]
-)
-
 annuler = Button(
     winsize=assets.BASE_SIZE,
-    loc = [(180,400),"center"],
+    loc = [(400,400),"center"],
     background_clr = (250,250,250),
-    size = [135,40],
+    size = [235,40],
     border=[2,(25,25,25),2,"inset"],
     text = "Annuler",
     font_clrs=[(25,25,25)],
@@ -197,6 +57,8 @@ annuler = Button(
     layer = 1,
     parent_groups = [all_group,to_draw_group,clickable_group]
 )
+
+
 
 
 def loop(screen,new_winsize, dt,fps):
