@@ -59,28 +59,6 @@ class Input_field(Button):
             living = living
         )
 
-        # if active_background_clr == None:
-        #     self.active_background_clr = self.base_background_clr[:]
-        # else:
-        #     self.active_background_clr = active_background_clr
-
-        # if active_border == None:
-        #     self.active_border_width = self.base_border_width
-        #     self.active_border_clr = self.base_border_clr[:]
-        #     self.active_border_padding = self.base_border_padding
-        # else:
-        #     self.active_border_width = active_border[0]
-        #     self.active_border_clr = active_border[1]
-        #     self.active_border_padding = active_border[2]
-        
-        # if len(self.active_background_clr) != 4:
-        #     self.active_background_clr = list(self.active_background_clr)
-        #     self.active_background_clr.append(255)
-        
-        # if len(self.active_border_clr) != 4:
-        #     self.active_border_clr = list(self.active_border_clr)
-        #     self.active_border_clr.append(255)
-
         self.dash_delay = DASH_DELAY
         self.dash = False
         self.focus = False
@@ -91,7 +69,7 @@ class Input_field(Button):
         self.text_max_size = False
     
 
-    def update(self,new_winsize,dt,fps,cursor):
+    def update(self,new_winsize,dt,cursor):
         if self.winsize != new_winsize:
             self.rescale(new_winsize = new_winsize)
 

@@ -80,9 +80,9 @@ class Transition():
             
 
 
-    def change_index(self,dt:float,cur_val:int|float|list[int|float]):
+    def change_index(self,dt:float,cur_val:float|list):
         """
-        dt_x_fps -> le temps écoulé de puis la dernière image multiplié par le nombre d'image/seconde
+        dt -> le temps écoulé depuis la dernière image
         """
 
         self.index += dt * assets.TIME_TICKING

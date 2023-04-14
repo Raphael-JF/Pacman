@@ -7,7 +7,7 @@ import assets
 import elements.start_menu as start_menu
 import elements.campagne as campagne
 import elements.personnalise as personnalise
-import elements.options as options
+import elements.parameters as parameters
 import elements.credits as credits
 
 class Manager():
@@ -19,22 +19,11 @@ class Manager():
         self.fps = assets.START_GAME_FPS
         self.last_time = pygame.time.get_ticks()/1000
         self.state = self.loop_start_menu
-        self.screen_size=itertools.cycle([
-            [800,450],
-            [1280,720],
-            [1600,900],
-            
-            [960,540],
-            [1920,1080],
-            
-            
-            [1920,1080],
-            [480,270],
-            ])
         
         #initialisation
-        self.current_winsize = next(self.screen_size) 
+        self.current_winsize = assets.GAME_RESOLUTIONS[0] 
         self.win = pygame.display.set_mode(self.current_winsize)
+        self.show_fps = False
         self.first_start = True
         self.clock = pygame.time.Clock()
         self.first_looping = True
@@ -65,55 +54,77 @@ class Manager():
         Instructions du menu de lancement du jeu. action désigne l'action utilisateur (sur quel bouton il a apppuyé et dans quel menu doit il se rendre par conséquent)
         """
         
-        action = start_menu.loop(self.win,self.current_winsize,self.dt,self.fps)
-        if action == 1:
+        action = start_menu.loop(self.win,self.current_winsize,self.dt,[self.fps,self.show_fps])
+        if action == 0:
             importlib.reload(start_menu)
             self.state = self.loop_campagne
-        if action == 2:
+            self.first_looping = True
+        if action == 1:
             importlib.reload(start_menu)
             self.state = self.loop_perso
+            self.first_looping = True
+        if action == 2:
+            importlib.reload(start_menu)
+            self.state = self.loop_parameters
+            self.first_looping = True
         if action == 3:
             importlib.reload(start_menu)
-            self.state = self.loop_options
-        if action == 4:
-            importlib.reload(start_menu)
             self.state = self.loop_credits
-        if action == 5:
+            self.first_looping = True
+        if action == 4:
             pygame.quit()
             sys.exit()
 
     def loop_campagne(self):
-        action = campagne.loop(self.win,self.current_winsize,self.dt,self.fps)
-        if action == 1:
+        action = campagne.loop(self.win,self.current_winsize,self.dt,[self.fps,self.show_fps])
+        if action == 0:
             importlib.reload(start_menu)
             self.state = self.loop_start_menu
+            self.first_looping = True
+        if action == 1:
+            pass
         if action == 2:
             pass
         if action == 3:
             pass
         if action == 4:
-            pass
-        if action == 5:
             pygame.quit()
             sys.exit()
 
     def loop_perso(self):
-        action = personnalise.loop(self.win,self.current_winsize,self.dt,self.fps)
-        if action == 1:
+        action = personnalise.loop(self.win,self.current_winsize,self.dt,[self.fps,self.show_fps])
+        if action == 0:
             importlib.reload(start_menu)
             self.state = self.loop_start_menu
+            self.first_looping = True
 
-    def loop_options(self):
-        action = options.loop(self.win,self.current_winsize,self.dt,self.fps)
-        if action == 1:
+    def loop_parameters(self):
+        if self.first_looping:
+            action = parameters.loop(self.win,self.current_winsize,self.dt,[self.fps,self.show_fps],True)
+            self.first_looping = False
+        else:
+            action = parameters.loop(self.win,self.current_winsize,self.dt,[self.fps,self.show_fps],False)
+        
+        if action == 0:
             importlib.reload(start_menu)
             self.state = self.loop_start_menu
+            self.first_looping = True
+            
+        elif type(action) is dict :
+            if self.current_winsize != action['resolution']:
+                self.current_winsize = action['resolution']
+                pygame.display.quit()
+                self.win = pygame.display.set_mode(self.current_winsize)
+            if self.fps != action['fps']:
+                self.fps = action['fps']
+            self.show_fps = action['montrer_fps']
 
 
 
     def loop_credits(self):
-        action = credits.loop(self.win,self.current_winsize,self.dt,self.fps)
-        if action == 1:
+        action = credits.loop(self.win,self.current_winsize,self.dt,[self.fps,self.show_fps])
+        if action == 0:
             importlib.reload(start_menu)
             self.state = self.loop_start_menu
+            self.first_looping = True
 

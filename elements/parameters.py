@@ -10,6 +10,7 @@ from classes.button import Button
 from classes.title import Title
 from classes.slider import Slider
 
+
 all_group = pygame.sprite.Group()
 to_draw_group = pygame.sprite.LayeredUpdates()
 clickable_group = pygame.sprite.LayeredUpdates()
@@ -17,7 +18,7 @@ fps_display_update = Timer(0,'')
 
 background = Box(
     winsize = assets.BASE_SIZE,
-    size = [802,452],
+    size = [800,450],
     loc = [[0,0],"topleft"],
     background_clr=(17, 19, 166),
     border = [-1,(0,0,0),0,"inset"],
@@ -41,11 +42,11 @@ fps_display = Title(
 
 title = Title(
     winsize = assets.BASE_SIZE, 
-    loc = [(400,20),"midtop"], 
+    loc = [(400,25),"midtop"], 
     background_clr = (235,235,235),
     size = [250 ,50],
     border=[2,(25,25,25),0,"inset"],
-    text = "Personnalisé",
+    text = "Options",
     font_clrs = [(25,25,25)],
     font_size = 40,
     font_family = "RopaSans-Regular.ttf",
@@ -53,16 +54,16 @@ title = Title(
     parent_groups = [all_group,to_draw_group]
 )
 
-test1 = Slider(
+resolution = Slider(
     winsize = assets.BASE_SIZE,
-    loc = [(187.5,127.4),"center"],
+    loc = [(216,150),"center"],
     font_clrs=[(25,25,25)],
     parent_groups= [all_group, to_draw_group, clickable_group],
     font_size=30,
-    size = [205,35],
-    options_list = ['1','2','3','4','5','6','7','8','9','10'],
-    base_option = '4',
-    cursor_width = 15,
+    size = [300,40],
+    options_list = [f'{i}x{j}' for i,j in assets.GAME_RESOLUTIONS],
+    base_option = '{}x{}'.format(*assets.GAME_RESOLUTIONS[0]),
+    cursor_width = 22.5,
     background_clr= (250,250,250),
     hov_background_clr=(230,230,230),
     cursor_background_clr=(175,175,175),
@@ -73,60 +74,65 @@ test1 = Slider(
     hov_border=[2,(20,20,20),0],
     ease_seconds = 0.25,
     ease_mode = "inout",
-    text = "fantômes : {}",
+    text = "Résolution : {}",
     font_family = "RopaSans-Regular.ttf",
     layer = 5,
     living = True
 )
 
-jouer = Button(
-    winsize=assets.BASE_SIZE,
-    loc = [(180,260),"center"],
-    background_clr = (250,250,250),
-    size = [80,20],
-    border=[2,(25,25,25),2,"inset"],
-    text = "random",
-    font_clrs=[(25,25,25)],
-    font_size=20,
-    font_family="RopaSans-Regular.ttf",
-    ease_seconds=0.25,
-    ease_mode="inout",
-    hov_background_clr=(230,230,230),
-    hov_border=[2,(25,25,25),0],
-    active_background_clr=(210,210,210),
-    active_border=[3,(25,25,25),0],
-    layer = 1,
-    parent_groups = [all_group,to_draw_group,clickable_group]
-)
-
-zone_parametres = Box(
+rafraichissement = Slider(
     winsize = assets.BASE_SIZE,
-    loc = [(187.5,225),'center'],
-    size = [275,280],
-    background_clr = (25, 29, 255),
-    border = [4,(17, 19, 166),4,"inset"],
-    layer = 1,
-    parent_groups = [all_group,to_draw_group]
+    loc = [(584,150),"center"],
+    font_clrs=[(25,25,25)],
+    parent_groups= [all_group, to_draw_group, clickable_group],
+    font_size=30,
+    size = [300,40],
+    options_list = [str(i) for i in range(10,250,10)],
+    base_option = '60',
+    cursor_width = 22.5,
+    background_clr= (250,250,250),
+    hov_background_clr=(230,230,230),
+    cursor_background_clr=(175,175,175),
+    hov_cursor_background_clr=(175,175,175),
+    cursor_border = [2,(20,20,20)],
+    hov_cursor_border = [2,(20,20,20)],
+    border = [2,(20,20,20),0,"inset"],
+    hov_border=[2,(20,20,20),0],
+    ease_seconds = 0.25,
+    ease_mode = "inout",
+    text = "Rafraîchissement : {} fps",
+    font_family = "RopaSans-Regular.ttf",
+    layer = 5,
+    living = True
 )
 
-zone_preview = Box(
-    winsize = assets.BASE_SIZE,
-    loc = [(555,225),'center'],
-    size = [390,280],
-    background_clr = (25, 29, 255),
-    border = [4,(17, 19, 166),4,"inset"],
-    layer = 1,
-    parent_groups = [all_group,to_draw_group]
-)
-
-
-reset = Button(
+montrer_fps = Button(
     winsize=assets.BASE_SIZE,
-    loc = [(475,405),"center"],
+    loc = [(584,210),"center"],
     background_clr = (250,250,250),
-    size = [120,40],
+    size = [300,40],
     border=[2,(25,25,25),2,"inset"],
-    text = "reset",
+    text = "Montrer les fps : Non",
+    font_clrs=[(25,25,25)],
+    font_size=30,
+    font_family="RopaSans-Regular.ttf",
+    ease_seconds=0.25,
+    ease_mode="inout",
+    hov_background_clr=(230,230,230),
+    hov_border=[2,(25,25,25),0],
+    active_background_clr=(210,210,210),
+    active_border=[3,(25,25,25),0],
+    layer = 1,
+    parent_groups = [all_group,to_draw_group,clickable_group]  
+)
+
+annuler = Button(
+    winsize=assets.BASE_SIZE,
+    loc = [(250,400),"center"],
+    background_clr = (250,250,250),
+    size = [235,40],
+    border=[2,(25,25,25),2,"inset"],
+    text = "Annuler",
     font_clrs=[(25,25,25)],
     font_size=30,
     font_family="RopaSans-Regular.ttf",
@@ -140,33 +146,13 @@ reset = Button(
     parent_groups = [all_group,to_draw_group,clickable_group]
 )
 
-jouer = Button(
+appliquer = Button(
     winsize=assets.BASE_SIZE,
-    loc = [(655,405),"center"],
+    loc = [(550,400),"center"],
     background_clr = (250,250,250),
-    size = [120,40],
+    size = [235,40],
     border=[2,(25,25,25),2,"inset"],
-    text = "Jouer",
-    font_clrs=[(25,25,25)],
-    font_size=30,
-    font_family="RopaSans-Regular.ttf",
-    ease_seconds=0.25,
-    ease_mode="inout",
-    hov_background_clr=(230,230,230),
-    hov_border=[2,(25,25,25),0],
-    active_background_clr=(210,210,210),
-    active_border=[3,(25,25,25),0],
-    layer = 1,
-    parent_groups = [all_group,to_draw_group,clickable_group]
-)
-
-retour = Button(
-    winsize=assets.BASE_SIZE,
-    loc = [(180,405),"center"],
-    background_clr = (250,250,250),
-    size = [135,40],
-    border=[2,(25,25,25),2,"inset"],
-    text = "Retour",
+    text = "Appliquer",
     font_clrs=[(25,25,25)],
     font_size=30,
     font_family="RopaSans-Regular.ttf",
@@ -181,8 +167,15 @@ retour = Button(
 )
 
 
+def loop(screen,new_winsize, dt, fps_infos, first_looping):
 
-def loop(screen,new_winsize, dt, fps_infos):
+    if first_looping :
+        resolution.set_option(f"{new_winsize[0]}x{new_winsize[1]}")
+        rafraichissement.set_option(str(fps_infos[0]))
+        if fps_infos[1]:
+            montrer_fps.set_text("Montrer les fps : Oui")
+        else:
+            montrer_fps.set_text("Montrer les fps : Non")
 
     if fps_display.alive() != fps_infos[1]:
         if fps_infos[1]:
@@ -193,12 +186,12 @@ def loop(screen,new_winsize, dt, fps_infos):
     if fps_infos[1] and fps_display_update.finished:
         fps_display.set_text(f"max fps : {fps_infos[0]}\nfps : {1/dt:.2f}")
         fps_display_update.__init__(1,'')
-
+        
     cursor = pygame.mouse.get_pos()
 
     hovered_button:Button = (clickable_group.get_sprites_at(cursor) or [None])[-1]
 
-    all_group.update(new_winsize,dt, cursor)
+    all_group.update(new_winsize,dt,cursor)
     to_draw_group.draw(screen)
     pygame.display.flip()
     
@@ -229,5 +222,16 @@ def loop(screen,new_winsize, dt, fps_infos):
 
 def click_manage(button:Button):
 
-    if button is retour:
+    if button is annuler :
         return 0
+    
+    elif button is appliquer :
+        return {'resolution' : [int(i) for i in resolution.cur_option.split('x')],
+                'fps' : int(rafraichissement.cur_option),
+                'montrer_fps' : montrer_fps.texte == "Montrer les fps : Oui"}
+
+    elif button is montrer_fps :
+        if montrer_fps.texte == "Montrer les fps : Non":
+            montrer_fps.set_text("Montrer les fps : Oui")
+        else:
+            montrer_fps.set_text("Montrer les fps : Non")

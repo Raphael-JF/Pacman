@@ -153,9 +153,9 @@ class Button(Title):
             self.instant_change_border_width([self.border_width,self.base_border_width],[self.ease_seconds],[self.ease_mode])
             self.instant_change_border_clr([self.border_clr,self.base_border_clr],[self.ease_seconds],[self.ease_mode])
             self.instant_change_border_padding([self.border_padding,self.base_border_padding],[self.ease_seconds],[self.ease_mode])
-            
     
-    def update(self,new_winsize,dt,fps,cursor):
+    
+    def update(self,new_winsize,dt,cursor):
         """Actualisation du sprite ayant lieu à chaque changement image"""
 
         if self.winsize != new_winsize:

@@ -116,7 +116,7 @@ class Slider(Box):
         self.cur_option = base_option
     
 
-    def update(self,new_winsize,dt,fps,cursor):
+    def update(self,new_winsize,dt,cursor):
         """Actualisation du sprite ayant lieu à chaque changement image"""
 
         if self.winsize != new_winsize:
@@ -166,6 +166,7 @@ class Slider(Box):
         self.cursor.rescale(new_winsize)
         self.text.rescale(new_winsize)
         self.base_cursor_border_width *= self.ratio
+        self.hov_cursor_border_width *= self.ratio
 
         self.base_border_width *= self.ratio
         self.base_border_padding *= self.ratio
@@ -204,8 +205,6 @@ class Slider(Box):
                 self.cursor.instant_change_border_width([self.cursor.border_width,self.hov_cursor_border_width],[self.ease_seconds],[self.ease_mode])
                 self.cursor.instant_change_border_clr([self.cursor.border_clr,self.hov_cursor_border_clr],[self.ease_seconds],[self.ease_mode])
 
-                
-
     
     def set_clicking(self,state:bool):
         """
@@ -213,4 +212,20 @@ class Slider(Box):
         """
 
         self.clicking = state
+
+    
+    def set_option(self,option:str):
+        """
+        définit comme option actuelle l'option renseignée.
+        """
+        x = ((self.width - self.cursor.width)/(len(self.options_list) - 1))*self.options_list.index(option) + self.cursor.width/2
+        if x < self.cursor.width / 2:
+            x = self.cursor.width / 2
+        if x > self.width - self.cursor.width / 2:
+            x = self.width - self.cursor.width / 2
+        self.cursor.pos[0] = x
+        self.cursor.calc_rect()
+        self.cur_option = option
+        self.text.set_text(self.text_str.format(self.cur_option))
+        self.calc_image()
 

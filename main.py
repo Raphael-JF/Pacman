@@ -7,6 +7,3 @@ if __name__ == "__main__":
     while True:
         MAIN.manage_state()
 
-
-# idées dev
-# pour les parametres on pourra mettre résolution, fps, qualité test1yghb

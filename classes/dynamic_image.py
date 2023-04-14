@@ -42,7 +42,7 @@ class Dynamic_image(Image):
 
 
 
-    def update(self,new_winsize,dt,fps,cursor):
+    def update(self,new_winsize,dt,cursor):
         """Actualisation du sprite ayant lieu à chaque changement image"""
 
         if self.winsize != new_winsize:

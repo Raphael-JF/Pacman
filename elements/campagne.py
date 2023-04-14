@@ -7,11 +7,12 @@ pygame.init()
 from classes.box import Box
 from classes.button import Button
 from classes.title import Title
-
+from classes.timer import Timer
 
 all_group = pygame.sprite.Group()
 to_draw_group = pygame.sprite.LayeredUpdates()
 clickable_group = pygame.sprite.LayeredUpdates()
+fps_display_update = Timer(0,'')
 
 background = Box(
     winsize = assets.BASE_SIZE,
@@ -20,6 +21,21 @@ background = Box(
     background_clr=(17, 19, 166),
     border = [-1,(0,0,0),0,"inset"],
     parent_groups = [all_group, to_draw_group],
+)
+
+fps_display = Title(
+    winsize = assets.BASE_SIZE, 
+    loc = [(0,0),"topleft"], 
+    background_clr = (0,0,0,0),
+    size = [100 ,40],
+    border=[-1,(0,0,0,0),0,"inset"],
+    text = "",
+    font_clrs = [(0, 117, 12),(0, 117, 12)],
+    font_size = 20,
+    font_family = "RopaSans-Regular.ttf",
+    layer = 100_000,
+    parent_groups = [all_group,to_draw_group],
+    living = False
 )
 
 title = Title(
@@ -176,13 +192,23 @@ lvl5 = Button(
     parent_groups = [all_group,to_draw_group,clickable_group]
 )
 
-def loop(screen,new_winsize, dt,fps):
+def loop(screen,new_winsize, dt,fps_infos):
+
+    if fps_display.alive() != fps_infos[1]:
+        if fps_infos[1]:
+            fps_display.liven()
+        else:
+            fps_display.kill()
+    fps_display_update.pass_time(dt)
+    if fps_infos[1] and fps_display_update.finished:
+        fps_display.set_text(f"max fps : {fps_infos[0]}\nfps : {1/dt:.2f}")
+        fps_display_update.__init__(1,'')
 
     cursor = pygame.mouse.get_pos()
 
     hovered_button:Button = (clickable_group.get_sprites_at(cursor) or [None])[-1]
 
-    all_group.update(new_winsize,dt,fps,cursor)
+    all_group.update(new_winsize,dt,cursor)
     to_draw_group.draw(screen)
     pygame.display.flip()
     
@@ -214,4 +240,4 @@ def loop(screen,new_winsize, dt,fps):
 def click_manage(button:Button):
 
     if button is annuler:
-        return 1
+        return 0
