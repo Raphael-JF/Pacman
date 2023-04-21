@@ -1,7 +1,7 @@
 import pygame
 
 
-class Game_Map(pygame.sprite.Sprite):
+class Map_generator(pygame.sprite.Sprite):
 
     def __init__(
         self,
@@ -19,6 +19,7 @@ class Game_Map(pygame.sprite.Sprite):
         """
         winsize = [width:int,height:int] -> taille de la fenetre pygame
         size = [width:int,height:int] -> taille de la box
+        grid_dimensions = [width:int,height:int] -> nombre de cellules de la map
         loc = [[x:int,y:int],mode:str] -> coordonnées et mode de placement ('center', 'topleft', 'topright', 'bottomleft','bottomright','midtop', midright', 'midbottom','midleft')
         background_clr = [r:int,g:int,b:int,alpha:int|None] -> couleur de fond de la boîte
         parent_groups -> liste des groupes auxquels le sprite est rattaché
@@ -55,7 +56,11 @@ class Game_Map(pygame.sprite.Sprite):
             self.liven()
 
         self.matrix = []
-        for x in range(grid_dimensions[0]/2):
+        for y in range(grid_dimensions[0]/2):
             self.matrix.append([])
-            for y in range(grid_dimensions[1]/2):
-                self.matrix[x].append()
+            for x in range(grid_dimensions[1]):
+                self.matrix[x].append('X')
+
+[[x,x,x,x],
+[x,x,x,x],
+[x,x,x,x]]
