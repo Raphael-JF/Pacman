@@ -78,6 +78,12 @@ L'objet Box est le widget le plus bas niveau (il n'hérite de rien d'autre que p
         self.resize_iter_nb = 0
         self.resize_frames_list:list[tuple[Transition,int]] = []
         self.inf_resize_frames:Transition = None
+
+        self.degrees = 0
+        self.cur_degrees_frames:Transition = None
+        self.degrees_iter_nb = 0
+        self.degrees_frames_list:list[tuple[Transition,int]] = []
+        self.inf_degrees_frames:Transition = None
         
         self.alpha = alpha
         self.cur_alpha_frames:Transition = None
@@ -162,6 +168,8 @@ L'objet Box est le widget le plus bas niveau (il n'hérite de rien d'autre que p
         else:
             raise ValueError ("border_position must be 'inset' or 'outset'")
 
+        if self.degrees != 0:
+            self.image = pygame.transform.rotate(self.image,round(self.degrees,2))
         self.image.set_alpha(self.alpha)
 
 
@@ -197,7 +205,7 @@ L'objet Box est le widget le plus bas niveau (il n'hérite de rien d'autre que p
         self.manage_frames(dt)
 
 
-    def rescale(self,new_winsize) -> None:
+    def rescale(self,new_winsize):
         """actualisation des valeurs en cas de changement de résolution"""
 
         old_winsize = self.winsize[:]
@@ -235,7 +243,7 @@ L'objet Box est le widget le plus bas niveau (il n'hérite de rien d'autre que p
 
     def manage_frames(self,dt):
 
-        calc_image1,calc_image2,calc_both1,calc_both2,calc_both3,calc_rect1,calc_rect2 = [False]*7
+        calc_image1,calc_image2,calc_both1,calc_both2,calc_both3,calc_both4,calc_rect1,calc_rect2 = [False]*8
 
         if self.background_clr_iter_nb > 0:
             self.background_clr, calc_image1, finish = self.cur_background_clr_frames.change_index(dt,self.background_clr)
@@ -320,6 +328,20 @@ L'objet Box est le widget le plus bas niveau (il n'hérite de rien d'autre que p
                 elif self.inf_resize_frames:
                         self.cur_resize_frames = self.inf_resize_frames
                         self.resize_iter_nb = math.inf
+
+        if self.degrees_iter_nb > 0:
+            self.degrees, calc_both4, finish = self.cur_degrees_frames.change_index(dt,self.degrees)
+            if finish:
+                if self.degrees_iter_nb == math.inf and len(self.degrees_frames_list) > 0:
+                    self.cur_degrees_frames, self.degrees_iter_nb = self.degrees_frames_list.pop(0)
+                self.degrees_iter_nb -= 1
+                if self.degrees_iter_nb > 0:
+                    self.cur_degrees_frames.reset_index()
+                elif len(self.degrees_frames_list) > 0:
+                    self.cur_degrees_frames, self.degrees_iter_nb = self.degrees_frames_list.pop(0)
+                elif self.inf_degrees_frames:
+                        self.cur_degrees_frames = self.inf_degrees_frames
+                        self.degrees_iter_nb = math.inf
         
         if self.alpha_iter_nb > 0:
             self.alpha, calc_image2, finish = self.cur_alpha_frames.change_index(dt,self.alpha)
@@ -338,7 +360,7 @@ L'objet Box est le widget le plus bas niveau (il n'hérite de rien d'autre que p
         if round(self.alpha) == 0 and self.alpha_iter_nb == 0:
             self.kill()
 
-        if calc_both1 or calc_both2 or calc_both3:
+        if calc_both1 or calc_both2 or calc_both3 or calc_both4:
             self.calc_image()
             self.calc_rect()
 
@@ -490,6 +512,30 @@ L'objet Box est le widget le plus bas niveau (il n'hérite de rien d'autre que p
 
         self.cur_resize_frames = Transition(values,ease_seconds,ease_modes)
         self.resize_iter_nb = 1
+
+    
+    def rotate(self,values:list,ease_seconds:list,ease_modes:list,iter_nb:int = math.inf):
+        
+        if iter_nb == math.inf:
+            self.inf_degrees_frames = Transition(values,ease_seconds,ease_modes)
+            if self.cur_degrees_frames is None or self.degrees_iter_nb == 0:
+                self.cur_degrees_frames = self.inf_degrees_frames
+                self.degrees_iter_nb = math.inf
+        else:
+            if self.cur_degrees_frames is None or self.degrees_iter_nb == 0:
+                self.cur_degrees_frames = Transition(values,ease_seconds,ease_modes)
+                self.degrees_iter_nb = iter_nb
+            elif self.degrees_iter_nb == math.inf:
+                self.cur_degrees_frames = Transition(values,ease_seconds,ease_modes)
+                self.degrees_iter_nb = iter_nb
+            else:
+                self.degrees_frames_list.append((Transition(values,ease_seconds,ease_modes),iter_nb))
+    
+    
+    def instant_rotate(self,values:list,ease_seconds:list,ease_modes:list):
+
+        self.cur_degrees_frames = Transition(values,ease_seconds,ease_modes)
+        self.degrees_iter_nb = 1
 
 
     def change_alpha(self,values:list,ease_seconds:list,ease_modes:list,iter_nb:int = math.inf):

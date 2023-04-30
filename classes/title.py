@@ -94,6 +94,10 @@ class Title(Box):
 
         super().calc_image()
         x,y = self.image.get_rect().center
+
+        if self.degrees != 0:
+            text_surface = pygame.transform.rotate(text_surface,round(self.degrees,2))
+
         if self.text_align[1] == "center":
             text_rect = text_surface.get_rect(center=(x,y))
             self.image.blit(text_surface,text_rect)

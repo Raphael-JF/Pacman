@@ -15,3 +15,7 @@ GAME_RESOLUTIONS = [
 INPUT_FIELD_DASH_DELAY = 0.5 # délai de disparition/apparition du curseur dans un input_field
 KEYPRESS_SPAM_DELAY = 0.5 # délai avant entrée en mode spam dans un input_field
 CHARS_SPAM_DELAY = 0.05 # délai entre chaque placement de caractère en mode spam dans un input_field
+
+
+#Game_map_editor() :
+TILES_DEFAULT_SIDE = 35
