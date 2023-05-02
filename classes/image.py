@@ -17,7 +17,7 @@ class Image(pygame.sprite.Sprite):
         """
         winsize = [width:int,height:int] -> taille fenetre pygame
         name = str -> chemin absolu vers l'image en partant du dossier 'images'. Aucune extension n'est concaténée.
-        scale_axis = [x_or_y:str,value:int] -> taille voulue pour l'axe x ou y
+        scale_axis = [value:int,x_or_y:str] -> taille voulue pour l'axe x ou y
         loc = [[x:int,y:int],mode:str] -> coordonnées et mode de placement ('center', 'topleft', 'topright', 'bottomleft','bottomright','midtop', midright', 'midbottom','midleft')
         degrees -> angle d'affichage de l'image
         border = [bd_width:int,bd_clr:tuple] -> bd_width est l'épaisseur de la bordure : pour ne pas en avoir, insérer une valeur négative. bd_clr est la couleur de la bordure. 
@@ -31,19 +31,20 @@ class Image(pygame.sprite.Sprite):
         self._layer = layer
         self.pos = loc[0]
         self.placement_mode = loc[1]
+        self.border_position = border[3]
         self.parent_groups = parent_groups
         self.contenu = pygame.image.load(os.path.join(os.getcwd(),'images',*name))
 
-        if scale_axis[0] == "x":
-            self.height = (scale_axis[1]*self.contenu.get_height()) / self.contenu.get_width()
-            self.width = scale_axis[1]
+        if scale_axis[1] == "x":
+            self.height = (scale_axis[0]*self.contenu.get_height()) / self.contenu.get_width()
+            self.width = scale_axis[0]
             
-        elif scale_axis[0] == "y":
-            self.width = (scale_axis[1]*self.contenu.get_width()) / self.contenu.get_height()
-            self.height = scale_axis[1]
+        elif scale_axis[1] == "y":
+            self.width = (scale_axis[0]*self.contenu.get_width()) / self.contenu.get_height()
+            self.height = scale_axis[0]
 
         else:
-            raise ValueError("scale_axis[0] doit être 'x' ou 'y'")
+            raise ValueError("scale_axis[1] doit être 'x' ou 'y'")
 
 
         self.border_width = border[0]
@@ -109,20 +110,73 @@ class Image(pygame.sprite.Sprite):
         if self.winsize != new_winsize:
             self.rescale(new_winsize = new_winsize)
 
-        self.manage_states(dt)
+        self.manage_frames(dt)
 
     
     def calc_image(self):
         """
         Recalcul de la surface du sprite (sa taille).
         """
-        self.image = pygame.transform.smoothscale(self.contenu,(round(self.width*self.resize_ratio),round(self.height*self.resize_ratio)))
+
+        width = round(self.width) + round(self.width) % 2
+        height = round(self.height) + round(self.height) % 2
+        border_padding2 = round(self.border_padding*2) + round(self.border_padding*2) % 2
+        border_width2 = round(self.border_width*2) + round(self.border_width*2) % 2
+
+        img_surf = pygame.transform.smoothscale(self.contenu,(round(self.width*self.resize_ratio),round(self.height*self.resize_ratio)))
+
+        if self.border_position == "inset":
+            self.image = pygame.Surface([
+                round(width*self.resize_ratio),
+                round(height*self.resize_ratio)
+                ],pygame.SRCALPHA)
+            self.image.blit(img_surf,img_surf.get_rect(center = [round(width*self.resize_ratio/2),round(height*self.resize_ratio/2)]))
+
+            border_rect = pygame.Rect(
+                0,
+                0, 
+                round((width - border_padding2)*self.resize_ratio), 
+                round((height - border_padding2)*self.resize_ratio))
+
+            border_rect.center = self.image.get_rect().center
+
+            pygame.draw.rect(
+            self.image,
+            self.border_clr,
+            border_rect,
+            round(self.border_width*self.resize_ratio)
+            )
+
+        elif self.border_position == "outset":
+            self.image = pygame.Surface([
+                round((width + border_width2 + border_padding2)*self.resize_ratio),
+                round((height + border_width2 + border_padding2)*self.resize_ratio)],pygame.SRCALPHA)
+            self.image.blit(img_surf,img_surf.get_rect(center = [round((height + border_width2 + border_padding2)*self.resize_ratio/2),round((height + border_width2 + border_padding2)*self.resize_ratio)]))
+
+
+
+            border_rect = pygame.Rect(
+                0,
+                0, 
+                round((width + round(self.border_width*2))*self.resize_ratio), 
+                round((height + round(self.border_width*2))*self.resize_ratio))
+            border_rect.center = self.image.get_rect().center
+            pygame.draw.rect(
+            self.image,
+            self.border_clr,
+            border_rect,
+            round(self.border_width*self.resize_ratio)
+            )
+
+        else:
+            raise ValueError ("border_position must be 'inset' or 'outset'")
         
         if self.degrees != 0:
             self.image = pygame.transform.rotate(self.image,round(self.degrees,2))
 
         if self.alpha != 255:
             self.image.set_alpha(self.alpha)
+
     
     def calc_rect(self):
         """
@@ -155,7 +209,7 @@ class Image(pygame.sprite.Sprite):
         self.contenu = pygame.image.load(os.path.join(os.getcwd(),'images',*new_name))
 
 
-    def manage_states(self,dt):
+    def manage_frames(self,dt):
 
         calc_image1,calc_both1,calc_both2,calc_both3,calc_both4,calc_rect1,calc_rect2 = [False]*7
         

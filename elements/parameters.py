@@ -212,7 +212,7 @@ def loop(screen,new_winsize, dt, fps_infos, first_looping):
             if event.button in (pygame.BUTTON_LEFT,pygame.BUTTON_RIGHT): 
                 if hovered_button != None :
                     if hovered_button.clicking:
-                        res = click_manage(hovered_button)
+                        res = button_handling(hovered_button)
                         hovered_button.set_clicking(False)
                         return res
                         
@@ -220,7 +220,7 @@ def loop(screen,new_winsize, dt, fps_infos, first_looping):
                     button.set_clicking(False)
 
 
-def click_manage(button:Button):
+def button_handling(button:Button):
 
     if button is annuler :
         return 0

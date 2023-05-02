@@ -200,7 +200,16 @@ class Transition():
 
 
     def reset_index(self):
-
+        """
+        réinitialise la transition.
+        """
         self.index = 0
+
+
+    def is_finished(self):
+        """
+        renvoie True si la transition est achevée, False sinon.
+        """
+        return self.index == sum(self.nb_frames)-1
 
         

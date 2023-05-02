@@ -43,7 +43,7 @@ fps_display = Title(
 title = Image(
     name = ["logo.png"],
     winsize = assets.BASE_SIZE,
-    scale_axis = ['y',150],
+    scale_axis = [150,'y'],
     loc = [[400,20],"midtop"],
     border = [-1,[0,0,0],0,"inset"],
     layer = 1,
@@ -188,7 +188,7 @@ def loop(screen,new_winsize, dt, fps_infos):
             if event.button in (pygame.BUTTON_LEFT,pygame.BUTTON_RIGHT): 
                 if hovered_button != None :
                     if hovered_button.clicking:
-                        res = click_manage(hovered_button)
+                        res = button_handling(hovered_button)
                         hovered_button.set_clicking(False)
                         return res
                         
@@ -196,7 +196,7 @@ def loop(screen,new_winsize, dt, fps_infos):
                     button.set_clicking(False)
 
 
-def click_manage(button:Button):
+def button_handling(button:Button):
 
     if button == campagne:
         return 0

@@ -216,6 +216,7 @@ class Button(Title):
         """
         méthode d'écriture de l'attribut 'clicking'
         """
+        
         if self.hoverable:
             self.clicking = state
 
