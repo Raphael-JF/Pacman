@@ -180,11 +180,11 @@ def loop(screen,new_winsize, dt, fps_infos):
 
     cursor = pygame.mouse.get_pos()
 
-    hovered_button:Button|Image_button = (clickable_group.get_sprites_at(cursor) or [None])[-1]
-    if hovered_button is not None:
-        hovered_button.set_hovering(True)
+    hovered_clickable:Button|Image_button = (clickable_group.get_sprites_at(cursor) or [None])[-1]
+    if hovered_clickable is not None:
+        hovered_clickable.set_hovering(True)
     for btn in clickable_group.sprites():
-        if btn is not hovered_button:
+        if btn is not hovered_clickable:
             btn.set_hovering(False)
     
     for event in pygame.event.get():
@@ -195,15 +195,15 @@ def loop(screen,new_winsize, dt, fps_infos):
 
         elif event.type == pygame.MOUSEBUTTONDOWN:
             if event.button in (pygame.BUTTON_LEFT,pygame.BUTTON_RIGHT):
-                if hovered_button is not None:
-                    hovered_button.set_clicking(True)
+                if hovered_clickable is not None:
+                    hovered_clickable.set_clicking(True)
 
         elif event.type == pygame.MOUSEBUTTONUP:
             if event.button in (pygame.BUTTON_LEFT,pygame.BUTTON_RIGHT): 
                 res = None
-                if hovered_button is not None :
-                    if hovered_button.clicking:
-                        res = button_handling(hovered_button)
+                if hovered_clickable is not None :
+                    if hovered_clickable.clicking:
+                        res = button_handling(hovered_clickable)
                 for btn in clickable_group.sprites():
                     btn.set_clicking(False)
                 return res
@@ -239,4 +239,5 @@ def manage_states(button:Image_button):
 def button_handling(button:Button|Image_button):
 
     if button in hotbar:
+        print("appel")
         button.instant_change_border_width([button.border_width,3],[0],['linear'])

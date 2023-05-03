@@ -10,26 +10,20 @@ class Slider(Box):
         winsize:list,
         loc:list,
         background_clr:tuple,
-        hov_background_clr:list,
         font_clrs:list,
-        parent_groups:list,
         font_size:int,
         size:list,
         options_list:list[str],
         base_option:str,
+        anchor_options:bool,
         cursor_width:int,
         cursor_background_clr:list,
-        hov_cursor_background_clr:list,
-        hov_border:list,
-        anchor_options:bool = True,
-        cursor_border:list = [0,(0,0,0)],
-        hov_cursor_border:list = [0,(0,0,0)],
-        border:list = [0,(0,0,0),0,"inset"],
-        ease_seconds:int = 0,
-        ease_mode:str = "inout",
-        text:str = "{}",
-        font_family:str = "RopaSans-Regular.ttf",
-        layer:int = 0,
+        cursor_border:list,
+        border:list,
+        text:str,
+        font_family:str,
+        parent_groups:list,
+        layer:int,
         living:bool = True
     ):
         """
@@ -88,30 +82,21 @@ class Slider(Box):
             layer = layer
         )
 
-        self.base_cursor_background_clr = cursor_background_clr[:]
-        self.base_cursor_border_width = cursor_border[0]
-        self.base_cursor_border_clr = cursor_border[1][:]
-
-        self.hov_cursor_background_clr = hov_cursor_background_clr
-        self.hov_cursor_border_width = hov_cursor_border[0]
-        self.hov_cursor_border_clr = hov_cursor_border[1][:]
+        # self.base_cursor_background_clr = cursor_background_clr[:]
+        # self.base_cursor_border_width = cursor_border[0]
+        # self.base_cursor_border_clr = cursor_border[1][:]
         
-        self.base_background_clr = self.background_clr[:]
-        self.base_border_width = self.border_width
-        self.base_border_clr = self.border_clr
-        self.base_border_padding = self.border_padding
-
-        self.hov_background_clr = hov_background_clr
-        self.hov_border_width = hov_border[0]
-        self.hov_border_clr = hov_border[1]
-        self.hov_border_padding = hov_border[2]
+        # self.base_background_clr = self.background_clr[:]
+        # self.base_border_width = self.border_width
+        # self.base_border_clr = self.border_clr
+        # self.base_border_padding = self.border_padding
 
         self.anchor_options = anchor_options
         self.text_str = text
-        self.ease_seconds = ease_seconds
-        self.ease_mode = ease_mode
         self.clicking = False
         self.hovering = False
+        self.hovering_changed = False
+        self.clicking_changed = False
         self.options_list = options_list
         self.cur_option = base_option
     
@@ -142,12 +127,14 @@ class Slider(Box):
                 self.text.set_text(self.text_str.format(self.cur_option))
                 self.calc_image()
 
-        self.state_changing(cursor)
         self.manage_frames(dt)
         self.cursor.manage_frames(dt)
 
         if self.border_clr_iter_nb != 0:
             self.calc_image()
+        self.hovering_changed = False
+        self.clicking_changed = False
+        
 
 
     def calc_image(self):
@@ -165,53 +152,60 @@ class Slider(Box):
         super().rescale(new_winsize)
         self.cursor.rescale(new_winsize)
         self.text.rescale(new_winsize)
-        self.base_cursor_border_width *= self.ratio
-        self.hov_cursor_border_width *= self.ratio
+        # self.base_cursor_border_width *= self.ratio
 
-        self.base_border_width *= self.ratio
-        self.base_border_padding *= self.ratio
+        # self.base_border_width *= self.ratio
+        # self.base_border_padding *= self.ratio
         
-        self.hov_border_width *= self.ratio
-        self.hov_border_padding *= self.ratio
+        # self.hov_border_width *= self.ratio
+        # self.hov_border_padding *= self.ratio
 
         self.calc_image()
 
     
-    def state_changing(self,cursor):
+    # def state_changing(self,cursor):
 
-        if self.rect.collidepoint(cursor) or self.clicking:
-            new_state = True
-        elif self.clicking:
-            new_state = True
-        else:
-            new_state = False
+    #     if self.rect.collidepoint(cursor) or self.clicking:
+    #         new_state = True
+    #     elif self.clicking:
+    #         new_state = True
+    #     else:
+    #         new_state = False
 
-        if self.hovering != new_state:
-            self.hovering = new_state
-            if not self.hovering:
-                self.instant_change_background_clr([self.background_clr,self.base_background_clr],[self.ease_seconds],[self.ease_mode])
-                self.instant_change_border_width([self.border_width,self.base_border_width],[self.ease_seconds],[self.ease_mode])
-                self.instant_change_border_clr([self.border_clr,self.base_border_clr],[self.ease_seconds],[self.ease_mode])
-                self.instant_change_border_padding([self.border_padding,self.base_border_padding],[self.ease_seconds],[self.ease_mode])
-                self.cursor.instant_change_background_clr([self.cursor.background_clr,self.base_cursor_background_clr],[self.ease_seconds],[self.ease_mode])
-                self.cursor.instant_change_border_width([self.cursor.border_width,self.base_cursor_border_width],[self.ease_seconds],[self.ease_mode])
-                self.cursor.instant_change_border_clr([self.cursor.border_clr,self.base_cursor_border_clr],[self.ease_seconds],[self.ease_mode])
-            else:
-                self.instant_change_background_clr([self.background_clr,self.hov_background_clr],[self.ease_seconds],[self.ease_mode])
-                self.instant_change_border_width([self.border_width,self.hov_border_width],[self.ease_seconds],[self.ease_mode])
-                self.instant_change_border_clr([self.border_clr,self.hov_border_clr],[self.ease_seconds],[self.ease_mode])
-                self.instant_change_border_padding([self.border_padding,self.hov_border_padding],[self.ease_seconds],[self.ease_mode])
-                self.cursor.instant_change_background_clr([self.cursor.background_clr,self.hov_cursor_background_clr],[self.ease_seconds],[self.ease_mode])
-                self.cursor.instant_change_border_width([self.cursor.border_width,self.hov_cursor_border_width],[self.ease_seconds],[self.ease_mode])
-                self.cursor.instant_change_border_clr([self.cursor.border_clr,self.hov_cursor_border_clr],[self.ease_seconds],[self.ease_mode])
+    #     if self.hovering != new_state:
+    #         self.hovering = new_state
+    #         if not self.hovering:
+    #             self.instant_change_background_clr([self.background_clr,self.base_background_clr],[self.ease_seconds],[self.ease_mode])
+    #             self.instant_change_border_width([self.border_width,self.base_border_width],[self.ease_seconds],[self.ease_mode])
+    #             self.instant_change_border_clr([self.border_clr,self.base_border_clr],[self.ease_seconds],[self.ease_mode])
+    #             self.instant_change_border_padding([self.border_padding,self.base_border_padding],[self.ease_seconds],[self.ease_mode])
+    #             self.cursor.instant_change_background_clr([self.cursor.background_clr,self.base_cursor_background_clr],[self.ease_seconds],[self.ease_mode])
+    #             self.cursor.instant_change_border_width([self.cursor.border_width,self.base_cursor_border_width],[self.ease_seconds],[self.ease_mode])
+    #             self.cursor.instant_change_border_clr([self.cursor.border_clr,self.base_cursor_border_clr],[self.ease_seconds],[self.ease_mode])
+    #         else:
+    #             self.instant_change_background_clr([self.background_clr,self.hov_background_clr],[self.ease_seconds],[self.ease_mode])
+    #             self.instant_change_border_width([self.border_width,self.hov_border_width],[self.ease_seconds],[self.ease_mode])
+    #             self.instant_change_border_clr([self.border_clr,self.hov_border_clr],[self.ease_seconds],[self.ease_mode])
+    #             self.instant_change_border_padding([self.border_padding,self.hov_border_padding],[self.ease_seconds],[self.ease_mode])
+    #             self.cursor.instant_change_background_clr([self.cursor.background_clr,self.hov_cursor_background_clr],[self.ease_seconds],[self.ease_mode])
+    #             self.cursor.instant_change_border_width([self.cursor.border_width,self.hov_cursor_border_width],[self.ease_seconds],[self.ease_mode])
+    #             self.cursor.instant_change_border_clr([self.cursor.border_clr,self.hov_cursor_border_clr],[self.ease_seconds],[self.ease_mode])
 
     
     def set_clicking(self,state:bool):
         """
         méthode d'écriture de l'attribut 'clicking'
         """
+        if state != self.clicking:
+            self.clicking_changed = True
+            self.clicking = state
 
-        self.clicking = state
+
+    def set_hovering(self,state:bool):
+        
+        if state != self.hovering:
+            self.hovering_changed = True
+            self.hovering = state
 
     
     def set_option(self,option:str):

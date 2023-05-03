@@ -54,54 +54,71 @@ title = Title(
     parent_groups = [all_group,to_draw_group]
 )
 
+# resolution = Slider(
+#     winsize = assets.BASE_SIZE,
+#     loc = [(216,150),"center"],
+#     font_clrs=[(25,25,25)],
+#     parent_groups= [all_group, to_draw_group, clickable_group],
+#     font_size=30,
+#     size = [300,40],
+#     options_list = [f'{i}x{j}' for i,j in assets.GAME_RESOLUTIONS],
+#     base_option = '{}x{}'.format(*assets.GAME_RESOLUTIONS[0]),
+#     cursor_width = 22.5,
+#     background_clr= (250,250,250),
+#     hov_background_clr=(230,230,230),
+#     cursor_background_clr=(175,175,175),
+#     hov_cursor_background_clr=(175,175,175),
+#     cursor_border = [2,(20,20,20)],
+#     hov_cursor_border = [2,(20,20,20)],
+#     border = [2,(20,20,20),0,"inset"],
+#     hov_border=[2,(20,20,20),0],
+#     ease_seconds = 0.25,
+#     ease_mode = "inout",
+#     text = "Résolution : {}",
+#     font_family = "RopaSans-Regular.ttf",
+#     layer = 5,
+#     living = True
+# )
+
+
 resolution = Slider(
     winsize = assets.BASE_SIZE,
     loc = [(216,150),"center"],
-    font_clrs=[(25,25,25)],
-    parent_groups= [all_group, to_draw_group, clickable_group],
+    background_clr= [250,250,250],
+    font_clrs=[[25,25,25]],
     font_size=30,
     size = [300,40],
     options_list = [f'{i}x{j}' for i,j in assets.GAME_RESOLUTIONS],
     base_option = '{}x{}'.format(*assets.GAME_RESOLUTIONS[0]),
+    anchor_options = True,
     cursor_width = 22.5,
-    background_clr= (250,250,250),
-    hov_background_clr=(230,230,230),
-    cursor_background_clr=(175,175,175),
-    hov_cursor_background_clr=(175,175,175),
+    cursor_background_clr = [175,175,175],
     cursor_border = [2,(20,20,20)],
-    hov_cursor_border = [2,(20,20,20)],
     border = [2,(20,20,20),0,"inset"],
-    hov_border=[2,(20,20,20),0],
-    ease_seconds = 0.25,
-    ease_mode = "inout",
     text = "Résolution : {}",
     font_family = "RopaSans-Regular.ttf",
+    parent_groups= [all_group, to_draw_group, clickable_group],
     layer = 5,
     living = True
 )
 
 rafraichissement = Slider(
     winsize = assets.BASE_SIZE,
-    loc = [(584,150),"center"],
-    font_clrs=[(25,25,25)],
-    parent_groups= [all_group, to_draw_group, clickable_group],
+    loc = [[584,150],"center"],
+    background_clr= [250,250,250],
+    font_clrs=[[25,25,25]],
     font_size=30,
     size = [300,40],
     options_list = [str(i) for i in range(10,250,10)],
     base_option = '60',
+    anchor_options = True,
     cursor_width = 22.5,
-    background_clr= (250,250,250),
-    hov_background_clr=(230,230,230),
-    cursor_background_clr=(175,175,175),
-    hov_cursor_background_clr=(175,175,175),
+    cursor_background_clr = [175,175,175],
     cursor_border = [2,(20,20,20)],
-    hov_cursor_border = [2,(20,20,20)],
     border = [2,(20,20,20),0,"inset"],
-    hov_border=[2,(20,20,20),0],
-    ease_seconds = 0.25,
-    ease_mode = "inout",
     text = "Rafraîchissement : {} fps",
     font_family = "RopaSans-Regular.ttf",
+    parent_groups= [all_group, to_draw_group, clickable_group],
     layer = 5,
     living = True
 )
@@ -116,12 +133,6 @@ montrer_fps = Button(
     font_clrs=[(25,25,25)],
     font_size=30,
     font_family="RopaSans-Regular.ttf",
-    ease_seconds=0.25,
-    ease_mode="inout",
-    hov_background_clr=(230,230,230),
-    hov_border=[2,(25,25,25),0],
-    active_background_clr=(210,210,210),
-    active_border=[3,(25,25,25),0],
     layer = 1,
     parent_groups = [all_group,to_draw_group,clickable_group]  
 )
@@ -136,12 +147,6 @@ annuler = Button(
     font_clrs=[(25,25,25)],
     font_size=30,
     font_family="RopaSans-Regular.ttf",
-    ease_seconds=0.25,
-    ease_mode="inout",
-    hov_background_clr=(230,230,230),
-    hov_border=[2,(25,25,25),0],
-    active_background_clr=(210,210,210),
-    active_border=[3,(25,25,25),0],
     layer = 1,
     parent_groups = [all_group,to_draw_group,clickable_group]
 )
@@ -156,15 +161,12 @@ appliquer = Button(
     font_clrs=[(25,25,25)],
     font_size=30,
     font_family="RopaSans-Regular.ttf",
-    ease_seconds=0.25,
-    ease_mode="inout",
-    hov_background_clr=(230,230,230),
-    hov_border=[2,(25,25,25),0],
-    active_background_clr=(210,210,210),
-    active_border=[3,(25,25,25),0],
     layer = 1,
     parent_groups = [all_group,to_draw_group,clickable_group]
 )
+
+basic_buttons = [montrer_fps,annuler,appliquer]
+sliders = [resolution,rafraichissement]
 
 
 def loop(screen,new_winsize, dt, fps_infos, first_looping):
@@ -189,11 +191,12 @@ def loop(screen,new_winsize, dt, fps_infos, first_looping):
         
     cursor = pygame.mouse.get_pos()
 
-    hovered_button:Button = (clickable_group.get_sprites_at(cursor) or [None])[-1]
-
-    all_group.update(new_winsize,dt,cursor)
-    to_draw_group.draw(screen)
-    pygame.display.flip()
+    hovered_clickable:Button|Slider = (clickable_group.get_sprites_at(cursor) or [None])[-1]
+    if hovered_clickable is not None:
+        hovered_clickable.set_hovering(True)
+    for btn in clickable_group.sprites():
+        if btn is not hovered_clickable:
+            btn.set_hovering(False)
     
     for event in pygame.event.get():
 
@@ -202,22 +205,64 @@ def loop(screen,new_winsize, dt, fps_infos, first_looping):
             sys.exit()
 
         elif event.type == pygame.MOUSEBUTTONDOWN:
-
             if event.button in (pygame.BUTTON_LEFT,pygame.BUTTON_RIGHT):
-                if hovered_button != None :
-                    hovered_button.set_clicking(True)
+                if hovered_clickable != None :
+                    hovered_clickable.set_clicking(True)
 
         elif event.type == pygame.MOUSEBUTTONUP:
-
             if event.button in (pygame.BUTTON_LEFT,pygame.BUTTON_RIGHT): 
-                if hovered_button != None :
-                    if hovered_button.clicking:
-                        res = button_handling(hovered_button)
-                        hovered_button.set_clicking(False)
-                        return res
-                        
-                for button in clickable_group.sprites():
-                    button.set_clicking(False)
+                res = None
+                if hovered_clickable is not None :
+                    if hovered_clickable.clicking:
+                        res = button_handling(hovered_clickable)
+                for btn in clickable_group.sprites():
+                    btn.set_clicking(False)
+                return res
+
+    for btn in clickable_group.sprites():
+        manage_states(btn)
+    all_group.update(new_winsize,dt,cursor)
+    to_draw_group.draw(screen)
+    pygame.display.flip()
+
+
+def manage_states(clickable:Button|Slider):
+    
+    if not clickable.clicking_changed and not clickable.hovering_changed:
+        return
+    
+    if clickable in basic_buttons:
+        if not clickable.hovering and not clickable.clicking:
+            clickable.instant_change_background_clr([clickable.background_clr[:],[250,250,250]],[0.25],["inout"])
+            clickable.instant_change_border_width([clickable.border_width,2],[0.25],["inout"])
+            clickable.instant_change_border_padding([clickable.border_padding,2],[0.25],["inout"])
+        elif clickable.hovering and not clickable.clicking:
+            clickable.instant_change_background_clr([clickable.background_clr[:],[230,230,230]],[0.25],["inout"])
+            clickable.instant_change_border_width([clickable.border_width,2],[0.25],["inout"])
+            clickable.instant_change_border_padding([clickable.border_padding,0],[0.25],["inout"])
+        elif clickable.hovering and clickable.clicking:
+            if clickable.clicking_changed and not clickable.hovering_changed:
+                clickable.instant_change_background_clr([clickable.background_clr[:],[210,210,210]],[0.25],["inout"])
+                clickable.instant_change_border_width([clickable.border_width,3],[0.25],["inout"])
+                clickable.instant_change_border_padding([clickable.border_padding,0],[0.25],["inout"])
+        elif not clickable.hovering and clickable.clicking:
+                clickable.instant_change_background_clr([clickable.background_clr[:],[210,210,210]],[0.25],["inout"])
+                clickable.instant_change_border_width([clickable.border_width,3],[0.25],["inout"])
+                clickable.instant_change_border_padding([clickable.border_padding,0],[0.25],["inout"])
+
+    elif clickable in sliders:
+
+        if not clickable.hovering and not clickable.clicking:
+            clickable.instant_change_background_clr([clickable.background_clr[:],[250,250,250]],[0.25],['inout'])
+        elif clickable.hovering and not clickable.clicking:
+            clickable.instant_change_background_clr([clickable.background_clr[:],[230,230,230]],[0.25],['inout'])
+        elif clickable.hovering and clickable.clicking:
+            if clickable.clicking_changed and not clickable.hovering_changed:
+                pass
+        elif not clickable.hovering and clickable.clicking:
+                pass
+
+
 
 
 def button_handling(button:Button):

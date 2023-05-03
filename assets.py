@@ -1,7 +1,7 @@
 """Ce module contient toutes les constantes nécessaires au fonctionnement du programme."""
 
 BASE_SIZE = [800,450] #échelle pour laquelle on définit les valeurs de nos widgets
-TIME_TICKING = 60 #temps in game (immutable)
+TIME_TICKING = 500 #temps in game (immutable)
 START_GAME_FPS = 60 #fps au démarrage du jeu
 
 GAME_RESOLUTIONS = [

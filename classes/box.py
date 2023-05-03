@@ -3,11 +3,15 @@ from classes.transition import Transition
 
 import pygame
 
-def rescale_value(value,winsize):
-    if type(value) in (list,tuple):
-        return [rescale_value(i,winsize) for i in value]
-    ratio = winsize[0] / assets.BASE_SIZE[0]
-    return value * ratio
+def rescale_values(values,winsize,cur_value):
+    if values != cur_value:
+        if type(values) in (list,tuple):
+            return [rescale_values(i,winsize,cur_value) for i in values]
+        return values * winsize[0] / assets.BASE_SIZE[0]
+    else:
+        return values
+    
+    
 
 
 class Box(pygame.sprite.Sprite):
@@ -403,8 +407,8 @@ L'objet Box est le widget le plus bas niveau (il n'hérite de rien d'autre que p
 
 
     def change_border_width(self,values:list,ease_seconds:list,ease_modes:list,iter_nb:int = math.inf):
-
-        values = rescale_value(values,self.winsize)
+        
+        values = rescale_values(values,self.winsize,self.border_width)
         if iter_nb == math.inf:
             self.inf_border_width_frames = Transition(values,ease_seconds,ease_modes)
             if self.cur_border_width_frames is None or self.border_width_iter_nb == 0:
@@ -423,7 +427,7 @@ L'objet Box est le widget le plus bas niveau (il n'hérite de rien d'autre que p
 
     def instant_change_border_width(self,values:list,ease_seconds:list,ease_modes:list):
 
-        values = rescale_value(values,self.winsize)
+        values = rescale_values(values,self.winsize,self.border_width)
         self.cur_border_width_frames = Transition(values,ease_seconds,ease_modes)
         self.border_width_iter_nb = 1
 
@@ -454,7 +458,7 @@ L'objet Box est le widget le plus bas niveau (il n'hérite de rien d'autre que p
         
     def change_border_padding(self,values:list,ease_seconds:list,ease_modes:list,iter_nb:int = math.inf):
         
-        values = rescale_value(values,self.winsize)
+        values = rescale_values(values,self.winsize,self.border_padding)
         if iter_nb == math.inf:
             self.inf_border_padding_frames = Transition(values,ease_seconds,ease_modes)
             if self.cur_border_padding_frames is None or self.border_padding_iter_nb == 0:
@@ -472,14 +476,14 @@ L'objet Box est le widget le plus bas niveau (il n'hérite de rien d'autre que p
 
     def instant_change_border_padding(self,values:list,ease_seconds:list,ease_modes:list):
         
-        values = rescale_value(values,self.winsize)
+        values = rescale_values(values,self.winsize,self.border_padding)
         self.cur_border_padding_frames = Transition(values,ease_seconds,ease_modes)
         self.border_padding_iter_nb = 1
 
 
     def translate(self,values:list,ease_seconds:list,ease_modes:list,iter_nb:int = math.inf):
         
-        values = rescale_value(values,self.winsize)
+        values = rescale_values(values,self.winsize,self.pos)
         if iter_nb == math.inf:
             self.inf_translate_frames = Transition(values,ease_seconds,ease_modes)
             if self.cur_translate_frames is None or self.translate_iter_nb == 0:
@@ -498,7 +502,7 @@ L'objet Box est le widget le plus bas niveau (il n'hérite de rien d'autre que p
 
     def instant_translate(self,values:list,ease_seconds:list,ease_modes:list):
         
-        values = rescale_value(values,self.winsize)
+        values = rescale_values(values,self.winsize,self.pos)
         self.cur_translate_frames = Transition(values,ease_seconds,ease_modes)
         self.translate_iter_nb = 1
 
