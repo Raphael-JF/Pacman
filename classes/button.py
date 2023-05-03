@@ -16,18 +16,12 @@ class Button(Title):
         background_clr:tuple,
         font_clrs:list,
         parent_groups:list,
+        size:list,
         font_size:int = 0,
         border:list = [0,(0,0,0),0,"inset"],
-        size:list = [None,None],
-        ease_seconds:int = 0,
-        ease_mode:str = "inout",
         text:str = "",
         font_family:str = "Arial",
         text_align:list = [0,'center'],
-        hov_background_clr:tuple = None,
-        hov_border:list = None,
-        active_background_clr:tuple = None,
-        active_border:tuple = None,
         layer:int = 0,
         living:bool = True
     ):
@@ -57,102 +51,10 @@ class Button(Title):
             living = living,
             parent_groups = parent_groups
         )
-        self.ease_seconds = ease_seconds
-        self.ease_mode = ease_mode
         self.clicking = False
-        self.hoverable = True
-        self.state = "base"
-
-        self.reset_style(background_clr,border,hov_background_clr,hov_border,active_background_clr,active_border)
-        
-
-    def reset_style(
-        self,
-        background_clr = None,
-        border = None,
-        hov_background_clr = None,
-        hov_border = None,
-        active_background_clr = None,
-        active_border = None,
-        instant_change = True,
-    ):
-        """
-        Redéfinition des attributs constants du bouton. N'affecte pas l'état actuel du bouton. Cette méthode est à utiliser pour changer le style que le bouton prend en fonction de ses états : 'base' est l'état que prend le bouton quand il ne reçoit aucune interaction. 'hover' est l'état que prend le bouton au survol. 'active' est l'état que prend le bouton quand il est cliqué.
-        """
-
-        if background_clr != None:
-            self.base_background_clr = background_clr[:]
-
-        if border != None:
-            self.base_border_width = border[0]
-            self.base_border_clr = border[1][:]
-            self.base_border_padding = border[2]
-    
-        if hov_background_clr != None:
-            self.hov_background_clr = hov_background_clr[:]
-        else:
-            self.hov_background_clr = background_clr[:]
-
-        if hov_border != None:
-            self.hov_border_width = hov_border[0]
-            self.hov_border_clr = hov_border[1][:]
-            self.hov_border_padding = hov_border[2]
-        else:
-            self.hov_border_width = border[0]
-            self.hov_border_clr = border[1][:]
-            self.hov_border_padding = border[2] 
-
-
-        if active_background_clr != None:
-            self.active_background_clr = active_background_clr[:]
-        else:
-            self.active_background_clr = self.hov_background_clr[:]
-
-        if active_border != None:
-            self.active_border_width = active_border[0]
-            self.active_border_clr = active_border[1][:]
-            self.active_border_padding = active_border[2]
-        else:
-            self.active_border_width = self.hov_border_width
-            self.active_border_clr = self.hov_border_clr
-            self.active_border_padding = self.hov_border_padding
-
-        if len(self.base_background_clr) != 4:
-            self.base_background_clr = list(self.base_background_clr)
-            self.base_background_clr.append(255)
-
-        if len(self.base_border_clr) != 4:
-            self.base_border_clr = list(self.base_border_clr)
-            self.base_border_clr.append(255)
-
-        if len(self.hov_background_clr) != 4:
-            self.hov_background_clr = list(self.hov_background_clr)
-            self.hov_background_clr.append(255)
-        
-        if len(self.hov_border_clr) != 4:
-            self.hov_border_clr = list(self.hov_border_clr)
-            self.hov_border_clr.append(255)
-              
-        if len(self.active_background_clr) != 4:
-            self.active_background_clr = list(self.active_background_clr)
-            self.active_background_clr.append(255)
-        
-        if len(self.active_border_clr) != 4:
-            self.active_border_clr = list(self.active_border_clr)
-            self.active_border_clr.append(255)
-
-        if instant_change:
-            self.background_clr = self.base_background_clr[:]
-            self.border_width = self.base_border_width
-            self.border_clr = self.base_border_clr[:]
-            self.border_padding = self.base_border_padding
-            self.calc_image()
-            self.calc_rect()
-        else:
-            self.instant_change_background_clr([self.background_clr,self.base_background_clr],[self.ease_seconds],[self.ease_mode])
-            self.instant_change_border_width([self.border_width,self.base_border_width],[self.ease_seconds],[self.ease_mode])
-            self.instant_change_border_clr([self.border_clr,self.base_border_clr],[self.ease_seconds],[self.ease_mode])
-            self.instant_change_border_padding([self.border_padding,self.base_border_padding],[self.ease_seconds],[self.ease_mode])
+        self.hovering = False
+        self.hovering_changed = False
+        self.clicking_changed = False
     
     
     def update(self,new_winsize,dt,cursor):
@@ -160,68 +62,23 @@ class Button(Title):
 
         if self.winsize != new_winsize:
             self.rescale(new_winsize)
-
-        self.state_changing(cursor)
         self.manage_frames(dt)
+        self.hovering_changed = False
+        self.clicking_changed = False
 
-
-    def rescale(self,new_winsize):
-        """actualisation des valeurs en cas de changement de résolution"""
-        
-        super().rescale(new_winsize)
-
-        self.active_border_width = self.active_border_width * self.ratio
-        self.active_border_padding = self.active_border_padding * self.ratio
-        self.hov_border_padding = self.hov_border_padding * self.ratio
-        self.hov_border_width = self.hov_border_width * self.ratio
-        self.base_border_width *= self.ratio
-        self.base_border_padding *= self.ratio
-
-
-    def state_changing(self,cursor):
-        """
-        actualisation de l'état du sprite.
-        """
-
-        if self.rect.collidepoint(cursor) and self.hoverable:
-            new_state = "hover"
-        else:
-            new_state = "base"
-        if self.clicking:
-            new_state = "active"
-
-        if self.state != new_state:
-            
-            self.state = new_state
-            if self.state == "hover":
-                self.instant_change_background_clr([self.background_clr,self.hov_background_clr],[self.ease_seconds],[self.ease_mode])
-                self.instant_change_border_width([self.border_width,self.hov_border_width],[self.ease_seconds],[self.ease_mode])
-                self.instant_change_border_clr([self.border_clr,self.hov_border_clr],[self.ease_seconds],[self.ease_mode])
-                self.instant_change_border_padding([self.border_padding,self.hov_border_padding],[self.ease_seconds],[self.ease_mode])
-
-            elif self.state == "base":
-                self.instant_change_background_clr([self.background_clr,self.base_background_clr],[self.ease_seconds],[self.ease_mode])
-                self.instant_change_border_width([self.border_width,self.base_border_width],[self.ease_seconds],[self.ease_mode])
-                self.instant_change_border_clr([self.border_clr,self.base_border_clr],[self.ease_seconds],[self.ease_mode])
-                self.instant_change_border_padding([self.border_padding,self.base_border_padding],[self.ease_seconds],[self.ease_mode])
-
-            elif self.state == "active":
-                self.instant_change_background_clr([self.background_clr,self.active_background_clr],[self.ease_seconds],[self.ease_mode])
-                self.instant_change_border_width([self.border_width,self.active_border_width],[self.ease_seconds],[self.ease_mode])
-                self.instant_change_border_clr([self.border_clr,self.active_border_clr],[self.ease_seconds],[self.ease_mode])
-                self.instant_change_border_padding([self.border_padding,self.active_border_padding],[self.ease_seconds],[self.ease_mode])
-        
     
     def set_clicking(self,state:bool):
         """
         méthode d'écriture de l'attribut 'clicking'
         """
-        
-        if self.hoverable:
+        if state != self.clicking:
+            self.clicking_changed = True
             self.clicking = state
 
-    
-    def set_hoverable(self,state:bool):
 
-        self.hoverable = state
+    def set_hovering(self,state:bool):
+        
+        if state != self.hovering:
+            self.hovering_changed = True
+            self.hovering = state
 

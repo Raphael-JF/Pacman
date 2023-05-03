@@ -28,8 +28,6 @@ class Image_button(Image):
 
         if self.winsize != new_winsize:
             self.rescale(new_winsize)  
-        if self.cur_resize_frames:
-            print(self.cur_resize_frames.get_list_of_values())
         self.manage_frames(dt)
         self.hovering_changed = False
         self.clicking_changed = False

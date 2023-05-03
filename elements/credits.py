@@ -63,16 +63,11 @@ annuler = Button(
     font_clrs=[(25,25,25)],
     font_size=30,
     font_family="RopaSans-Regular.ttf",
-    ease_seconds=0.25,
-    ease_mode="inout",
-    hov_background_clr=(230,230,230),
-    hov_border=[2,(25,25,25),0],
-    active_background_clr=(210,210,210),
-    active_border=[3,(25,25,25),0],
     layer = 1,
     parent_groups = [all_group,to_draw_group,clickable_group]
 )
 
+main_buttons = [annuler]
 
 
 
@@ -92,10 +87,11 @@ def loop(screen,new_winsize, dt, fps_infos):
     cursor = pygame.mouse.get_pos()
 
     hovered_button:Button = (clickable_group.get_sprites_at(cursor) or [None])[-1]
-
-    all_group.update(new_winsize,dt,cursor)
-    to_draw_group.draw(screen)
-    pygame.display.flip()
+    if hovered_button is not None:
+        hovered_button.set_hovering(True)
+    for btn in clickable_group.sprites():
+        if btn is not hovered_button:
+            btn.set_hovering(False)
     
     for event in pygame.event.get():
 
@@ -104,23 +100,50 @@ def loop(screen,new_winsize, dt, fps_infos):
             sys.exit()
 
         elif event.type == pygame.MOUSEBUTTONDOWN:
-
             if event.button in (pygame.BUTTON_LEFT,pygame.BUTTON_RIGHT):
                 if hovered_button != None :
                     hovered_button.set_clicking(True)
 
         elif event.type == pygame.MOUSEBUTTONUP:
-
             if event.button in (pygame.BUTTON_LEFT,pygame.BUTTON_RIGHT): 
+                res = None
                 if hovered_button != None :
                     if hovered_button.clicking:
                         res = button_handling(hovered_button)
-                        hovered_button.set_clicking(False)
-                        return res
-                        
-                for button in clickable_group.sprites():
-                    button.set_clicking(False)
+                for btn in clickable_group.sprites():
+                    btn.set_clicking(False)
+                return res
+    
+    for btn in clickable_group.sprites():
+        manage_states(btn)
+    all_group.update(new_winsize,dt,cursor)
+    to_draw_group.draw(screen)
+    pygame.display.flip()
 
+
+def manage_states(button:Button):
+    
+    if not button.clicking_changed and not button.hovering_changed:
+        return
+    
+    if button in main_buttons:
+        if not button.hovering and not button.clicking:
+            button.instant_change_background_clr([button.background_clr[:],[250,250,250]],[0.25],["inout"])
+            button.instant_change_border_width([button.border_width,2],[0.25],["inout"])
+            button.instant_change_border_padding([button.border_padding,2],[0.25],["inout"])
+        elif button.hovering and not button.clicking:
+            button.instant_change_background_clr([button.background_clr[:],[230,230,230]],[0.25],["inout"])
+            button.instant_change_border_width([button.border_width,2],[0.25],["inout"])
+            button.instant_change_border_padding([button.border_padding,0],[0.25],["inout"])
+        elif button.hovering and button.clicking:
+            if button.clicking_changed and not button.hovering_changed:
+                button.instant_change_background_clr([button.background_clr[:],[210,210,210]],[0.25],["inout"])
+                button.instant_change_border_width([button.border_width,3],[0.25],["inout"])
+                button.instant_change_border_padding([button.border_padding,0],[0.25],["inout"])
+        elif not button.hovering and button.clicking:
+                button.instant_change_background_clr([button.background_clr[:],[210,210,210]],[0.25],["inout"])
+                button.instant_change_border_width([button.border_width,3],[0.25],["inout"])
+                button.instant_change_border_padding([button.border_padding,0],[0.25],["inout"])
 
 def button_handling(button:Button):
 

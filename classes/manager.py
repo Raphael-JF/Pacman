@@ -7,7 +7,7 @@ import assets
 import elements.start_menu as start_menu
 import elements.campagne as campagne
 import elements.personnalise as personnalise
-import elements.parameters as parameters
+# import elements.parameters as parameters
 import elements.credits as credits
 
 class Manager():
@@ -63,10 +63,10 @@ class Manager():
             importlib.reload(start_menu)
             self.state = self.loop_perso
             self.first_looping = True
-        if action == 2:
-            importlib.reload(start_menu)
-            self.state = self.loop_parameters
-            self.first_looping = True
+        # if action == 2:
+        #     importlib.reload(start_menu)
+        #     self.state = self.loop_parameters
+        #     self.first_looping = True
         if action == 3:
             importlib.reload(start_menu)
             self.state = self.loop_credits
@@ -98,26 +98,26 @@ class Manager():
             self.state = self.loop_start_menu
             self.first_looping = True
 
-    def loop_parameters(self):
-        if self.first_looping:
-            action = parameters.loop(self.win,self.current_winsize,self.dt,[self.fps,self.show_fps],True)
-            self.first_looping = False
-        else:
-            action = parameters.loop(self.win,self.current_winsize,self.dt,[self.fps,self.show_fps],False)
+    # def loop_parameters(self):
+    #     if self.first_looping:
+    #         action = parameters.loop(self.win,self.current_winsize,self.dt,[self.fps,self.show_fps],True)
+    #         self.first_looping = False
+    #     else:
+    #         action = parameters.loop(self.win,self.current_winsize,self.dt,[self.fps,self.show_fps],False)
         
-        if action == 0:
-            importlib.reload(start_menu)
-            self.state = self.loop_start_menu
-            self.first_looping = True
+    #     if action == 0:
+    #         importlib.reload(start_menu)
+    #         self.state = self.loop_start_menu
+    #         self.first_looping = True
             
-        elif type(action) is dict :
-            if self.current_winsize != action['resolution']:
-                self.current_winsize = action['resolution']
-                pygame.display.quit()
-                self.win = pygame.display.set_mode(self.current_winsize)
-            if self.fps != action['fps']:
-                self.fps = action['fps']
-            self.show_fps = action['montrer_fps']
+    #     elif type(action) is dict :
+    #         if self.current_winsize != action['resolution']:
+    #             self.current_winsize = action['resolution']
+    #             pygame.display.quit()
+    #             self.win = pygame.display.set_mode(self.current_winsize)
+    #         if self.fps != action['fps']:
+    #             self.fps = action['fps']
+    #         self.show_fps = action['montrer_fps']
 
 
 
