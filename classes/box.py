@@ -227,15 +227,15 @@ L'objet Box est le widget le plus bas niveau (il n'hérite de rien d'autre que p
 
         for transition in [i[0] for i in self.border_width_frames_list] + [self.cur_border_width_frames,self.inf_border_width_frames]:
             if transition is not None:
-                transition.resize_extremums(self.ratio)
+                transition.rescale_step_values(self.ratio)
 
         for transition in [i[0] for i in self.border_padding_frames_list] + [self.cur_border_padding_frames,self.inf_border_padding_frames]:
             if transition is not None:
-                transition.resize_extremums(self.ratio)
+                transition.rescale_step_values(self.ratio)
 
         for transition in [i[0] for i in self.translate_frames_list] + [self.cur_translate_frames,self.inf_translate_frames]:
             if transition is not None:
-                transition.resize_extremums(self.ratio)
+                transition.rescale_step_values(self.ratio)
         
         self.calc_image()
         self.calc_rect()

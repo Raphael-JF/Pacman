@@ -18,35 +18,36 @@ class Image_button(Image):
         super().__init__(name, winsize, scale_axis, loc, parent_groups, border, alpha, layer, living)
 
         self.clicking = False
-        self.hoverable = True
         self.hovering = False
+        self.hovering_changed = False
+        self.clicking_changed = False
 
     
     def update(self,new_winsize,dt,cursor):
         """Actualisation du sprite ayant lieu à chaque changement image"""
 
         if self.winsize != new_winsize:
-            self.rescale(new_winsize)
-
-        if self.rect.collidepoint(cursor) and self.hoverable:
-            self.hovering = True
-        else:
-            self.hovering = False
-
+            self.rescale(new_winsize)  
+        if self.cur_resize_frames:
+            print(self.cur_resize_frames.get_list_of_values())
         self.manage_frames(dt)
+        self.hovering_changed = False
+        self.clicking_changed = False
+
 
 
     def set_clicking(self,state:bool):
         """
         méthode d'écriture de l'attribut 'clicking'
         """
-        
-        if self.hoverable:
+        if state != self.clicking:
+            self.clicking_changed = True
             self.clicking = state
 
-    
-    def set_hoverable(self,state:bool):
 
-        self.hoverable = state
-
+    def set_hovering(self,state:bool):
+        
+        if state != self.hovering:
+            self.hovering_changed = True
+            self.hovering = state
 
