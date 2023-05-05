@@ -1,21 +1,33 @@
 """Ce module contient toutes les constantes nécessaires au fonctionnement du programme."""
 
-BASE_SIZE = [800,450] #échelle pour laquelle on définit les valeurs de nos widgets
+DEFAULT_SIZE = [800,450] #échelle pour laquelle on définit les valeurs de nos widgets
 TIME_TICKING = 500 #temps in game (immutable)
 START_GAME_FPS = 60 #fps au démarrage du jeu
 
 GAME_RESOLUTIONS = [
+            [1280,720],
             [800,450],
             [960,540],
-            [1280,720],
+            
             [1600,900],
             [1920,1080],
         ]
 
-INPUT_FIELD_DASH_DELAY = 0.5 # délai de disparition/apparition du curseur dans un input_field
-KEYPRESS_SPAM_DELAY = 0.5 # délai avant entrée en mode spam dans un input_field
-CHARS_SPAM_DELAY = 0.05 # délai entre chaque placement de caractère en mode spam dans un input_field
-
 
 #Game_map_editor() :
-TILES_DEFAULT_SIDE = 35
+TILE_SIZES = [10, 17, 24, 32, 39, 46, 53, 61, 68, 75]
+GME_DEFAULT_DIMENSIONS = [9,8]
+
+
+# functions
+def add_index(list,value,index):
+
+    for i,val in enumerate(list):
+        if val == value:
+            if 0 <= i+index <= len(list)-1:
+                return list[i+index]
+            elif i+index > len(list)-1:
+                return list[-1]
+            elif 0 > i+index:
+                return list[0]
+    raise ValueError("not found")

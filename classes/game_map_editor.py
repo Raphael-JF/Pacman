@@ -1,80 +1,275 @@
+import math,os
 import assets,pygame
 from classes.box import Box
 from classes.image import Image
+from classes.transition import transition_nbounds
 
-class Game_map_editor(Box):
+import pygame,os
+
+class Tile():
+    """
+    version ultra légère de Image
+    """
+    def __init__(
+            self,
+            width:int,
+            name:list[str],
+            value:str
+    ):  
+        self.value = value
+        self.width = width
+        self.contenu = pygame.image.load(os.path.join(os.getcwd(),'images',*name))
+        self.calc_image()
+    
+
+    def calc_image(self):
+
+        self.image = pygame.transform.smoothscale(self.contenu,(round(self.width),round(self.width)))
+
+
+    def set_value(self,value:str):
+        
+        self.value = value
+    
+
+    def set_namevalue(self,name,value):
+
+        self.contenu = pygame.image.load(os.path.join(os.getcwd(),'images',*name))
+        self.value = value
+        self.calc_image()
+
+
+    def set_width(self,width):
+
+        self.width = width
+        self.calc_image()
+
+
+class Game_map_editor(pygame.sprite.Sprite):
 
     def __init__(
             self,
             winsize:list,
             dimensions:list[int],
-            start_size:list[int],
-            pos:list[int],
+            scale_axis:list[int],
+            loc:list,
             background_clr:list[int],
             parent_groups:list,
-            border:list,
             living:bool,
             layer:int,
 
 
-    ):
+    ):    
+        super().__init__()
+
+        self.winsize = winsize
+        self._layer = layer
+        self.parent_groups = parent_groups
+        self.pos = list(loc[0])
+        self.placement_mode = loc[1]
+        self.background_clr = background_clr
+        self.border_width = 2
+        self.border_clr = [134, 135, 210]
+
         self.x_tiles, self.y_tiles = dimensions
         if self.x_tiles % 2 == 0:
             self.x_tiles += 1
         if self.y_tiles % 2 == 1:
             self.y_tiles += 1
-        self.tile_width = min(start_size[0]/dimensions[0], start_size[1]/dimensions[1])
 
-        super().__init__(winsize, [self.x_tiles * self.tile_width, self.y_tiles * self.tile_width], [pos,'center'], background_clr, parent_groups, border[:]+["outset"], 255, living, layer)
+        if scale_axis[1] == "x":
+            self.tile_width = scale_axis[0]/self.x_tiles
+        elif scale_axis[1] == "y":
+            self.tile_width = scale_axis[0]/self.y_tiles
 
-        self.tiles:list[list[Image]] = []
-        self.matrix:list[list[str]] = []
+        self.tile_width_choices = []
+        self.border_width_choices = []
+        for i in range(10):
+            self.tile_width_choices.append(transition_nbounds([self.tile_width*0.25,self.tile_width,self.tile_width*1.75],[5,5],['linear','linear'],i))
+            self.border_width_choices.append(transition_nbounds([self.border_width*0.25,self.border_width,self.border_width*1.75],[5,5],['linear','linear'],i))
+
+        self.tiles:list[list[Tile]] = []
         for y in range(self.y_tiles):
-            temp_tiles:list[Image] = []
-            temp_matrix:list[str] = []
+            temp_tiles:list[Tile] = []
             for x in range(self.x_tiles):
-                temp_tiles.append(Image(
-                    name = ["empty_cell.png"],
-                    winsize = self.winsize,
-                    scale_axis = ('x',self.tile_width),
-                    loc = [[(x+0.5)*self.tile_width,(y+0.5)*self.tile_width],'center'],
-                    parent_groups = [],
-                    border = [-1,(240,240,240,0,"inset")]
+                temp_tiles.append(Tile(
+                    name = ["textures","empty_tile.png"],
+                    width = self.tile_width,
+                    value = "□"
                 ))
-                temp_matrix.append("□")
             self.tiles.append(temp_tiles)
-            self.matrix.append(temp_matrix)
 
         for x in range(self.x_tiles):
-            self.matrix[0][x] = "X"
-            self.matrix[-1][x] = "X"
-            self.tiles[0][x].change_name(["wall.png"])
-            self.tiles[-1][x].change_name(["wall.png"])
+            self.tiles[0][x].set_namevalue(["textures","wall.png"],"X")
+            self.tiles[-1][x].set_namevalue(["textures","wall.png"],"X")
         
         for y in range(self.y_tiles):
-            self.matrix[y][0] = "X"
-            self.matrix[y][-1] = "X"
-            self.tiles[y][0].change_name(["wall.png"])
-            self.tiles[y][-1].change_name(["wall.png"])
+            self.tiles[y][0].set_namevalue(["textures","wall.png"],"X")
+            self.tiles[y][-1].set_namevalue(["textures","wall.png"],"X")
+
+        x,y = self.x_tiles//2 - 2, self.y_tiles//2 - 2
+
+        self.tiles[y][x].set_namevalue(["textures","wall.png"],"X")
+        self.tiles[y][x+1].set_namevalue(["textures","wall.png"],"X")
+        self.tiles[y][x+2].set_namevalue(["textures","empty_tile.png"],"O")
+        self.tiles[y][x+3].set_namevalue(["textures","wall.png"],"X")
+        self.tiles[y][x+4].set_namevalue(["textures","wall.png"],"X")
+
+        self.tiles[y+1][x].set_namevalue(["textures","wall.png"],"X")
+        self.tiles[y+1][x+1].set_namevalue(["textures","empty_tile.png"],"O")
+        self.tiles[y+1][x+2].set_namevalue(["textures","empty_tile.png"],"O")
+        self.tiles[y+1][x+3].set_namevalue(["textures","empty_tile.png"],"O")
+        self.tiles[y+1][x+4].set_namevalue(["textures","wall.png"],"X")
+
+        self.tiles[y+2][x].set_namevalue(["textures","wall.png"],"X")
+        self.tiles[y+2][x+1].set_namevalue(["textures","empty_tile.png"],"O")
+        self.tiles[y+2][x+2].set_namevalue(["textures","empty_tile.png"],"O")
+        self.tiles[y+2][x+3].set_namevalue(["textures","empty_tile.png"],"O")
+        self.tiles[y+2][x+4].set_namevalue(["textures","wall.png"],"X")
+
+        self.tiles[y+3][x].set_namevalue(["textures","wall.png"],"X")
+        self.tiles[y+3][x+1].set_namevalue(["textures","wall.png"],"X")
+        self.tiles[y+3][x+2].set_namevalue(["textures","wall.png"],"X")
+        self.tiles[y+3][x+3].set_namevalue(["textures","wall.png"],"X")
+        self.tiles[y+3][x+4].set_namevalue(["textures","wall.png"],"X")
+
+        self.tiles[y+4][x+2].set_namevalue(['textures','pacman','pacman_40.png'],'P')
+
+        self.calc_image()
+        self.calc_rect()
+
+        if living:
+            self.liven()
+
+
+    def liven(self):
+        """
+        A l'inverse de kill() (méthode de pygame.sprite.Sprite permettant de suppprimer le sprite de tous les groupes dans lesquels il se trouve), ajoute le sprite à tous ses groupes parents.
+        """
+
+        for group in self.parent_groups:
+            group.add(self)
             
         
     def calc_image(self):
-        
-        super().calc_image()
-        matrix_surface = pygame.Surface((self.width,self.height),pygame.SRCALPHA)
+
+        border_width = round(self.border_width / 2) * 2
+        tile_width = round(self.tile_width)
+        if border_width == 0:
+            border_width = 2
+        self.image = pygame.Surface([tile_width*self.x_tiles + border_width,tile_width*self.y_tiles + border_width],pygame.SRCALPHA)
         for y in range(self.y_tiles):
             for x in range(self.x_tiles):
-                matrix_surface.blit(self.tiles[y][x].image,self.tiles[y][x].rect)
-        self.image.blit(matrix_surface,matrix_surface.get_rect(center=self.rect.center))
+                if self.tiles[y][x].width != tile_width:
+                    self.tiles[y][x].set_width(tile_width)
+                self.image.blit(self.tiles[y][x].image,[border_width//2+x*tile_width,border_width//2+y*tile_width])
+
+        for x in range(self.x_tiles+1):
+            pygame.draw.line(self.image,self.border_clr,[border_width//2-1+x*tile_width,0],[border_width//2-1+x*tile_width,self.image.get_height()-1],border_width)
+        for y in range(self.y_tiles+1):
+            pygame.draw.line(self.image,self.border_clr,[0,border_width//2-1+y*tile_width],[self.image.get_width()-1,border_width//2-1+y*tile_width],border_width)
+
+
+    def calc_rect(self):
+
+        pos = [round(i) for i in self.pos]
+        if self.placement_mode == "topleft":
+            self.rect = self.image.get_rect(topleft=pos)
+        elif self.placement_mode == "topright":
+            self.rect = self.image.get_rect(topright=pos)
+        elif self.placement_mode == "bottomleft":
+            self.rect = self.image.get_rect(bottomleft=pos)
+        elif self.placement_mode == "bottomright":
+            self.rect = self.image.get_rect(bottomright=pos)
+        elif self.placement_mode == "midtop":
+            self.rect = self.image.get_rect(midtop=pos)
+        elif self.placement_mode == "midleft":
+            self.rect = self.image.get_rect(midleft=pos)
+        elif self.placement_mode == "midbottom":
+            self.rect = self.image.get_rect(midbottom=pos)
+        elif self.placement_mode == "midright":
+            self.rect = self.image.get_rect(midright=pos)
+        elif self.placement_mode == "center":
+            self.rect = self.image.get_rect(center=pos)
+
+
+    def update(self,new_winsize,dt,cursor) -> None:
+        """Actualisation du sprite ayant lieu à chaque changement image"""
+
+        if self.winsize != new_winsize:
+            self.rescale(new_winsize)
 
 
     def rescale(self,new_winsize):
+        
+        old_winsize = self.winsize[:]
+        self.winsize = new_winsize
+        self.ratio = self.winsize[0] / old_winsize[0]
 
-        super().rescale(new_winsize)
+        self.tile_width_choices = [i*self.ratio for i in self.tile_width_choices]
+        self.border_width_choices = [i*self.ratio for i in self.border_width_choices]
+        self.border_width *= self.ratio
+        self.pos = [i*self.ratio for i in self.pos]
+        self.tile_width *= self.ratio
         for y in range(self.y_tiles):
             for x in range(self.x_tiles):
-                self.tiles[y][x].rescale(new_winsize)
+                self.tiles[y][x].set_width(self.tile_width)
         self.calc_image()
+        self.calc_rect()
+
+
+    def offset(self,pos):
+
+        self.pos[0] += pos[0]
+        self.pos[1] += pos[1]
+        self.calc_rect()
 
     
+    def change_size_index(self,index):
+
+        self.tile_width = assets.add_index(self.tile_width_choices,self.tile_width,index)
+        self.border_width = assets.add_index(self.border_width_choices,self.border_width,index)
+        self.calc_image()
+        self.calc_rect()
+
+
+    def get_tile(self,abs_pos):
+
+        abs_pos = [abs_pos[i] - self.rect.topleft[i] - round(self.border_width/2) for i in range(2)]
+        tile_width = round(self.tile_width)
+        y,x = abs_pos[1]//tile_width,abs_pos[0]//tile_width
+        if y >= self.y_tiles:
+            y = self.y_tiles-1
+        if x >= self.x_tiles:
+            x = self.x_tiles-1
+        return self.tiles[y][x]
+    
+    
+    def get_abs_center(self,tile):
         
+        y,x = self.search_tile(tile)
+        pos = round(self.border_width/2)+(x+0.5)*round(self.tile_width),round(self.border_width/2)+(y+0.5)*round(self.tile_width)
+        return [pos[i] + self.rect.topleft[i] for i in range(2)]
+    
+    
+    def symetric_tile(self,tile,axis=""):
+        
+        y,x = self.search_tile(tile)
+        if axis == "x":
+            x = self.x_tiles - x - 1
+        elif axis == "y":
+            y = self.y_tiles - y - 1
+        else:
+            x = self.x_tiles - x - 1
+            y = self.y_tiles - y - 1
+        
+        return self.tiles[y][x]
+
+    
+
+    def search_tile(self,tile):
+
+        for y in range(self.y_tiles):
+            for x in range(self.x_tiles):
+                if tile is self.tiles[y][x]:
+                    return [y,x]

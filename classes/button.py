@@ -71,6 +71,7 @@ class Button(Title):
         """
         méthode d'écriture de l'attribut 'clicking'
         """
+        
         if state != self.clicking:
             self.clicking_changed = True
             self.clicking = state
