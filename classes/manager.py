@@ -21,7 +21,7 @@ class Manager():
         self.state = self.loop_start_menu
         
         #initialisation
-        self.current_winsize = assets.GAME_RESOLUTIONS[0] 
+        self.current_winsize = assets.INIT_WINSIZE
         self.win = pygame.display.set_mode(self.current_winsize)
         self.show_fps = False
         self.first_start = True
@@ -78,7 +78,7 @@ class Manager():
     def loop_campagne(self):
         action = campagne.loop(self.win,self.current_winsize,self.dt,[self.fps,self.show_fps])
         if action == 0:
-            importlib.reload(start_menu)
+            importlib.reload(campagne)
             self.state = self.loop_start_menu
             self.first_looping = True
         if action == 1:
@@ -94,7 +94,7 @@ class Manager():
     def loop_perso(self):
         action = personnalise.loop(self.win,self.current_winsize,self.dt,[self.fps,self.show_fps])
         if action == 0:
-            importlib.reload(start_menu)
+            importlib.reload(personnalise)
             self.state = self.loop_start_menu
             self.first_looping = True
 
@@ -106,7 +106,7 @@ class Manager():
             action = parameters.loop(self.win,self.current_winsize,self.dt,[self.fps,self.show_fps],False)
         
         if action == 0:
-            importlib.reload(start_menu)
+            importlib.reload(parameters)
             self.state = self.loop_start_menu
             self.first_looping = True
             
@@ -124,7 +124,7 @@ class Manager():
     def loop_credits(self):
         action = credits.loop(self.win,self.current_winsize,self.dt,[self.fps,self.show_fps])
         if action == 0:
-            importlib.reload(start_menu)
+            importlib.reload(credits)
             self.state = self.loop_start_menu
             self.first_looping = True
 

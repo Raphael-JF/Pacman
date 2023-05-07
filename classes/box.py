@@ -7,7 +7,7 @@ def rescale_values(values,winsize,cur_value):
     if values != cur_value:
         if type(values) in (list,tuple):
             return [rescale_values(i,winsize,cur_value) for i in values]
-        return values * winsize[0] / assets.DEFAULT_SIZE[0]
+        return values * winsize[0] / assets.DEFAULT_WINSIZE[0]
     else:
         return values
     

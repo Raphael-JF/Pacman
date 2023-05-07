@@ -16,7 +16,7 @@ clickable_group = pygame.sprite.LayeredUpdates()
 fps_display_update = Timer(0,'')
 
 background = Box(
-    winsize = assets.DEFAULT_SIZE,
+    winsize = assets.DEFAULT_WINSIZE,
     size = [802,452],
     loc = [[0,0],"topleft"],
     background_clr=(17, 19, 166),
@@ -25,7 +25,7 @@ background = Box(
 )
 
 fps_display = Title(
-    winsize = assets.DEFAULT_SIZE, 
+    winsize = assets.DEFAULT_WINSIZE, 
     loc = [(0,0),"topleft"], 
     background_clr = (0,0,0,0),
     size = [100 ,40],
@@ -42,7 +42,7 @@ fps_display = Title(
 
 title = Image(
     name = ["logo.png"],
-    winsize = assets.DEFAULT_SIZE,
+    winsize = assets.DEFAULT_WINSIZE,
     scale_axis = [150,'y'],
     loc = [[400,20],"midtop"],
     border = [-1,[0,0,0],0,"inset"],
@@ -51,7 +51,7 @@ title = Image(
 )
 
 campagne = Button(
-    winsize = assets.DEFAULT_SIZE, 
+    winsize = assets.DEFAULT_WINSIZE, 
     loc = [(400,215),"center"], 
     background_clr = [250,250,250],
     size = [350,40],
@@ -65,7 +65,7 @@ campagne = Button(
 )
 
 perso = Button(
-    winsize = assets.DEFAULT_SIZE, 
+    winsize = assets.DEFAULT_WINSIZE, 
     loc = [(400,261),"center"], 
     background_clr = [250,250,250],
     size = [350,40],
@@ -79,7 +79,7 @@ perso = Button(
 )
 
 options = Button(
-    winsize = assets.DEFAULT_SIZE, 
+    winsize = assets.DEFAULT_WINSIZE, 
     loc = [(400,307),"center"], 
     background_clr = [250,250,250],
     size = [350,40],
@@ -93,7 +93,7 @@ options = Button(
 )
 
 credits = Button(
-    winsize = assets.DEFAULT_SIZE, 
+    winsize = assets.DEFAULT_WINSIZE, 
     loc = [(397,353),"midright"], 
     background_clr = [250,250,250],
     size = [172 ,40],
@@ -107,7 +107,7 @@ credits = Button(
 )
 
 quitter = Button(
-    winsize = assets.DEFAULT_SIZE, 
+    winsize = assets.DEFAULT_WINSIZE, 
     loc = [(403,353),"midleft"], 
     background_clr = [250,250,250],
     size = [172,40],
@@ -170,6 +170,7 @@ def loop(screen,new_winsize, dt, fps_infos):
     all_group.update(new_winsize,dt,cursor)
     to_draw_group.draw(screen)
     pygame.display.flip()
+
 
 def manage_states(button:Button):
     

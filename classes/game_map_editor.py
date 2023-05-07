@@ -51,7 +51,6 @@ class Game_map_editor(pygame.sprite.Sprite):
             self,
             winsize:list,
             dimensions:list[int],
-            scale_axis:list[int],
             loc:list,
             background_clr:list[int],
             parent_groups:list,
@@ -68,7 +67,6 @@ class Game_map_editor(pygame.sprite.Sprite):
         self.pos = list(loc[0])
         self.placement_mode = loc[1]
         self.background_clr = background_clr
-        self.border_width = 2
         self.border_clr = [134, 135, 210]
 
         self.x_tiles, self.y_tiles = dimensions
@@ -77,16 +75,13 @@ class Game_map_editor(pygame.sprite.Sprite):
         if self.y_tiles % 2 == 1:
             self.y_tiles += 1
 
-        if scale_axis[1] == "x":
-            self.tile_width = scale_axis[0]/self.x_tiles
-        elif scale_axis[1] == "y":
-            self.tile_width = scale_axis[0]/self.y_tiles
+        self.tile_width = assets.GME_TILE_SIZES[len(assets.GME_TILE_SIZES)//2]
+        self.tile_width_choices = assets.GME_TILE_SIZES
 
-        self.tile_width_choices = []
+        self.border_width = self.tile_width/20
         self.border_width_choices = []
         for i in range(10):
-            self.tile_width_choices.append(transition_nbounds([self.tile_width*0.25,self.tile_width,self.tile_width*1.75],[5,5],['linear','linear'],i))
-            self.border_width_choices.append(transition_nbounds([self.border_width*0.25,self.border_width,self.border_width*1.75],[5,5],['linear','linear'],i))
+            self.border_width_choices.append(transition_nbounds([self.tile_width/80,self.border_width,self.tile_width*7/80],[5,5],['linear','linear'],i))
 
         self.tiles:list[list[Tile]] = []
         for y in range(self.y_tiles):
@@ -235,14 +230,15 @@ class Game_map_editor(pygame.sprite.Sprite):
 
     def get_tile(self,abs_pos):
 
-        abs_pos = [abs_pos[i] - self.rect.topleft[i] - round(self.border_width/2) for i in range(2)]
         tile_width = round(self.tile_width)
-        y,x = abs_pos[1]//tile_width,abs_pos[0]//tile_width
+        rel_pos = [abs_pos[i] - self.rect.topleft[i] for i in range(2)]
+        y,x = rel_pos[1]//tile_width,rel_pos[0]//tile_width
         if y >= self.y_tiles:
             y = self.y_tiles-1
         if x >= self.x_tiles:
             x = self.x_tiles-1
-        return self.tiles[y][x]
+
+        return self.tiles[int(y)][int(x)]
     
     
     def get_abs_center(self,tile):
@@ -266,10 +262,50 @@ class Game_map_editor(pygame.sprite.Sprite):
         return self.tiles[y][x]
 
     
-
     def search_tile(self,tile):
-
+        """
+        Recherche naïve d'une tuile dans la matrice de l'objet.
+        """
         for y in range(self.y_tiles):
             for x in range(self.x_tiles):
                 if tile is self.tiles[y][x]:
                     return [y,x]
+                
+    
+    def get_matrix(self):
+        
+        matrix = ""
+        for y in range(self.y_tiles):
+            for x in range(self.x_tiles):
+                matrix += self.tiles[y][x].value
+            matrix += "\n"
+        return matrix
+
+
+
+    def set_tile_value(self,tile:Tile,value):
+    
+        tile.set_namevalue(assets.GME_VALUE_TO_NAMES[value],value)
+        y,x = self.search_tile(tile)
+
+        border_width = round(self.border_width / 2) * 2
+        tile_width = round(self.tile_width)
+        if border_width == 0:
+            border_width = 2
+        
+        if value in ["←","→","□"]:
+            pygame.draw.rect(self.image,[0,0,0,0],pygame.Rect([x*self.tile_width+border_width//2,y*self.tile_width+border_width//2],[self.tile_width]*2))
+
+        self.image.blit(tile.image,[border_width//2+x*tile_width,border_width//2+y*tile_width])
+        for i in range(2):
+            pygame.draw.line(self.image,self.border_clr,[border_width//2-1+(x+i)*tile_width,0],[border_width//2-1+(x+i)*tile_width,self.image.get_height()-1],border_width)
+            pygame.draw.line(self.image,self.border_clr,[0,border_width//2-1+(y+i)*tile_width],[self.image.get_width()-1,border_width//2-1+(y+i)*tile_width],border_width)
+        
+        if value == "P":
+            for i in range(self.y_tiles):
+                for j in range(self.x_tiles):
+                    if self.tiles[i][j] is not tile and self.tiles[i][j].value == "P" :
+                        pygame.draw.rect(self.image,[0,0,0,0],pygame.Rect([j*self.tile_width+border_width//2,i*self.tile_width+border_width//2],[self.tile_width]*2))
+                        self.set_tile_value(self.tiles[i][j],"□")
+                        return 
+

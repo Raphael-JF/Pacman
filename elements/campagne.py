@@ -15,7 +15,7 @@ clickable_group = pygame.sprite.LayeredUpdates()
 fps_display_update = Timer(0,'')
 
 background = Box(
-    winsize = assets.DEFAULT_SIZE,
+    winsize = assets.DEFAULT_WINSIZE,
     size = [802,452],
     loc = [[0,0],"topleft"],
     background_clr=(17, 19, 166),
@@ -24,7 +24,7 @@ background = Box(
 )
 
 fps_display = Title(
-    winsize = assets.DEFAULT_SIZE, 
+    winsize = assets.DEFAULT_WINSIZE, 
     loc = [(0,0),"topleft"], 
     background_clr = (0,0,0,0),
     size = [100 ,40],
@@ -39,7 +39,7 @@ fps_display = Title(
 )
 
 title = Title(
-    winsize = assets.DEFAULT_SIZE, 
+    winsize = assets.DEFAULT_WINSIZE, 
     loc = [(400,25),"midtop"], 
     background_clr = (242,242,242),
     size = [250 ,50],
@@ -53,7 +53,7 @@ title = Title(
 )
 
 annuler = Button(
-    winsize=assets.DEFAULT_SIZE,
+    winsize=assets.DEFAULT_WINSIZE,
     loc = [(400,400),"center"],
     background_clr = (250,250,250),
     size = [235,40],
@@ -67,7 +67,7 @@ annuler = Button(
 )
 
 reset = Button(
-    winsize=assets.DEFAULT_SIZE,
+    winsize=assets.DEFAULT_WINSIZE,
     loc = [(750,400),"midright"],
     background_clr = (250,250,250),
     size = [100,30],
@@ -81,7 +81,7 @@ reset = Button(
 )
 
 lvl1 = Button(
-    winsize=assets.DEFAULT_SIZE,
+    winsize=assets.DEFAULT_WINSIZE,
     loc = [(140,225),"center"],
     background_clr = (250,250,250),
     size = [70,70],
@@ -95,7 +95,7 @@ lvl1 = Button(
 )
 
 lvl2 = Button(
-    winsize=assets.DEFAULT_SIZE,
+    winsize=assets.DEFAULT_WINSIZE,
     loc = [(270,225),"center"],
     background_clr = (250,250,250),
     size = [70,70],
@@ -109,7 +109,7 @@ lvl2 = Button(
 )
 
 lvl3 = Button(
-    winsize=assets.DEFAULT_SIZE,
+    winsize=assets.DEFAULT_WINSIZE,
     loc = [(400,225),"center"],
     background_clr = (250,250,250),
     size = [70,70],
@@ -123,7 +123,7 @@ lvl3 = Button(
 )
 
 lvl4 = Button(
-    winsize=assets.DEFAULT_SIZE,
+    winsize=assets.DEFAULT_WINSIZE,
     loc = [(530,225),"center"],
     background_clr = (250,250,250),
     size = [70,70],
@@ -137,7 +137,7 @@ lvl4 = Button(
 )
 
 lvl5 = Button(
-    winsize=assets.DEFAULT_SIZE,
+    winsize=assets.DEFAULT_WINSIZE,
     loc = [(660,225),"center"],
     background_clr = (250,250,250),
     size = [70,70],

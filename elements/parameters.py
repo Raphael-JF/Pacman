@@ -17,7 +17,7 @@ clickable_group = pygame.sprite.LayeredUpdates()
 fps_display_update = Timer(0,'')
 
 background = Box(
-    winsize = assets.DEFAULT_SIZE,
+    winsize = assets.DEFAULT_WINSIZE,
     size = [800,450],
     loc = [[0,0],"topleft"],
     background_clr=(17, 19, 166),
@@ -26,7 +26,7 @@ background = Box(
 )
 
 fps_display = Title(
-    winsize = assets.DEFAULT_SIZE, 
+    winsize = assets.DEFAULT_WINSIZE, 
     loc = [(0,0),"topleft"], 
     background_clr = (0,0,0,0),
     size = [100 ,40],
@@ -41,7 +41,7 @@ fps_display = Title(
 )
 
 title = Title(
-    winsize = assets.DEFAULT_SIZE, 
+    winsize = assets.DEFAULT_WINSIZE, 
     loc = [(400,25),"midtop"], 
     background_clr = (235,235,235),
     size = [250 ,50],
@@ -55,7 +55,7 @@ title = Title(
 )
 
 # resolution = Slider(
-#     winsize = assets.DEFAULT_SIZE,
+#     winsize = assets.DEFAULT_WINSIZE,
 #     loc = [(216,150),"center"],
 #     font_clrs=[(25,25,25)],
 #     parent_groups= [all_group, to_draw_group, clickable_group],
@@ -82,14 +82,14 @@ title = Title(
 
 
 resolution = Slider(
-    winsize = assets.DEFAULT_SIZE,
+    winsize = assets.DEFAULT_WINSIZE,
     loc = [(216,150),"center"],
     background_clr= [250,250,250],
     font_clrs=[[25,25,25]],
     font_size=30,
     size = [300,40],
     options_list = [f'{i}x{j}' for i,j in assets.GAME_RESOLUTIONS],
-    base_option = '{}x{}'.format(*assets.GAME_RESOLUTIONS[0]),
+    base_option = '{}x{}'.format(*assets.INIT_WINSIZE),
     anchor_options = True,
     cursor_width = 22.5,
     cursor_background_clr = [175,175,175],
@@ -103,7 +103,7 @@ resolution = Slider(
 )
 
 rafraichissement = Slider(
-    winsize = assets.DEFAULT_SIZE,
+    winsize = assets.DEFAULT_WINSIZE,
     loc = [[584,150],"center"],
     background_clr= [250,250,250],
     font_clrs=[[25,25,25]],
@@ -124,7 +124,7 @@ rafraichissement = Slider(
 )
 
 montrer_fps = Button(
-    winsize=assets.DEFAULT_SIZE,
+    winsize=assets.DEFAULT_WINSIZE,
     loc = [(584,210),"center"],
     background_clr = (250,250,250),
     size = [300,40],
@@ -138,7 +138,7 @@ montrer_fps = Button(
 )
 
 annuler = Button(
-    winsize=assets.DEFAULT_SIZE,
+    winsize=assets.DEFAULT_WINSIZE,
     loc = [(250,400),"center"],
     background_clr = (250,250,250),
     size = [235,40],
@@ -152,7 +152,7 @@ annuler = Button(
 )
 
 appliquer = Button(
-    winsize=assets.DEFAULT_SIZE,
+    winsize=assets.DEFAULT_WINSIZE,
     loc = [(550,400),"center"],
     background_clr = (250,250,250),
     size = [235,40],

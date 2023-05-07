@@ -6,7 +6,7 @@ def rescale_values(values,winsize,cur_value):
     if values != cur_value:
         if type(values) in (list,tuple):
             return [rescale_values(i,winsize,cur_value) for i in values]
-        return values * winsize[0] / assets.DEFAULT_SIZE[0]
+        return values * winsize[0] / assets.DEFAULT_WINSIZE[0]
     else:
         return values
 
@@ -376,9 +376,13 @@ class Image(pygame.sprite.Sprite):
 
     def set_size(self,size):
         """
-        Méthode d'écriture de l'attribut size. A manipuler avec précaution car le ratio de l'image n'est pas respecté ; pour ce faire utiliser self.resize() / self.instant_resize()
+        Méthode d'écriture de l'attribut size. A manipuler avec précaution car il faut prendre en compte le rescale si le sprite est mort et que le ratio de l'image n'est pas respecté ; pour ce faire utiliser self.resize() / self.instant_resize()
         """
-
+        self.resize_ratio = 1
+        self.cur_resize_frames:Transition = None
+        self.resize_iter_nb = 0
+        self.resize_frames_list:list[tuple[Transition,int]] = []
+        self.inf_resize_frames:Transition = None
         self.width, self.height = size
         self.calc_image()
         self.calc_rect()
