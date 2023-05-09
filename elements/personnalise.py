@@ -2,7 +2,7 @@
 Ce module contient les éléments et widgets du menu de campagne. Il contient aussi le code de gestion utilisateur pour ce menu.
 """
 
-import pygame,sys,assets
+import pygame,sys,assets,os
 pygame.init()
 from classes.timer import Timer
 from classes.box import Box
@@ -11,6 +11,7 @@ from classes.title import Title
 from classes.image_button import Image_button
 from classes.game_map_editor import Game_map_editor
 from classes.image import Image
+from classes.json_handler import JSON_handler
 
 all_group = pygame.sprite.Group()
 to_draw_group = pygame.sprite.LayeredUpdates()
@@ -329,6 +330,16 @@ hamburger_leave = Button(
     parent_groups = [all_group,to_draw_group,clickable_group]  
 )
 
+json_files:list[str] = assets.get_save_files()
+for path in json_files:
+    if path.endswith("latest.json"):
+        reader = JSON_handler(["map_editor","latest.json"])
+        os.rename(os.path.join(os.getcwd(),"backup_files","map_editor","latest.json"),os.path.join(os.getcwd(),"backup_files","map_editor",reader["date_of_creation"]+".json"))
+
+save_manager = JSON_handler({"matrix":game_map.get_matrix(),"nb_ghosts":4,"date_of_creation":assets.get_date()})
+save_manager.save(["map_editor","latest.json"])
+
+assets.open_file_dialog()
 
 
 overlays = [block_overlay,block_overlay_hor,block_overlay_ver,block_overlay_both]
@@ -380,9 +391,9 @@ def loop(screen,new_winsize, dt, fps_infos):
             if event.button in (pygame.BUTTON_LEFT,pygame.BUTTON_RIGHT):
                 if hovered_clickable is not None:
                     hovered_clickable.set_clicking(True)
-                elif (((event.button == pygame.BUTTON_LEFT and selected_block is None) or (not game_map.rect.collidepoint(cursor))) or event.button == pygame.BUTTON_RIGHT) and not buttons_container.rect.collidepoint(cursor):
+                elif (((event.button == pygame.BUTTON_LEFT and selected_block is None) or (not game_map.rect.collidepoint(cursor))) or event.button == pygame.BUTTON_RIGHT) and not buttons_container.rect.collidepoint(cursor) and not hamburger_container.rect.collidepoint(cursor):
                     user_dragging = True
-                elif game_map.rect.collidepoint(cursor) and selected_block is not None:
+                elif game_map.rect.collidepoint(cursor) and selected_block is not None and not hamburger_container.rect.collidepoint(cursor):
                     block_placing()
 
         elif event.type == pygame.MOUSEBUTTONUP:
@@ -401,8 +412,6 @@ def loop(screen,new_winsize, dt, fps_infos):
                     button_handling(hamburger)
                 else:
                     button_handling(hamburger_cross)
-            elif event.key == pygame.K_a:
-                print(game_map.get_matrix())
             
         elif event.type == pygame.MOUSEWHEEL:
             game_map.change_size_index(event.y)
@@ -589,6 +598,8 @@ def block_placing():
                 game_map.set_tile_value(game_map.get_tile(overlay.pos),"X")
             elif game_map.get_tile(overlay.pos).value in ["■",".","●"]:
                 game_map.set_tile_value(game_map.get_tile(overlay.pos),"□")
+    save_manager["matrix"] = game_map.get_matrix()
+    save_manager.save(["map_editor","latest.json"])
 
 def map_hover_manage(cursor):
 
