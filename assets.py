@@ -1,4 +1,4 @@
-"""Ce module contient toutes les constantes nécessaires au fonctionnement du programme."""
+"""Ce module contient toutes les constantes et fonctions nécessaires au fonctionnement du programme."""
 
 INIT_WINSIZE = [1280,720]
 DEFAULT_WINSIZE = [800,450] #échelle pour laquelle on définit les valeurs de nos widgets
@@ -22,6 +22,7 @@ GME_TILE_SIZES = [16.0, 19.2, 22.4, 25.6, 28.8, 32.0, 35.2, 38.4, 41.6, 44.8, 48
 GME_VALUE_TO_NAMES = {
     "X" : ["textures","wall.png"],
     "■" : ["textures","wall.png"],
+    "O" : ["textures","empty_tile.png"],
     "□" : ["textures","empty_tile.png"],
     "P" : ["textures","pacman","pacman_40.png"],
     "←" : ["textures","left_portal.png"],
@@ -68,6 +69,14 @@ def get_save_files():
 def open_file_dialog():
     root = tkinter.Tk()
     root.withdraw()
-    file_path = tkinter.filedialog.askopenfilename(filetypes=[("Fichiers JSON", "*.json")])
-    print(file_path)
+    file_path = filedialog.askopenfilename(filetypes=[("Fichiers JSON", "*.json")])
     root.destroy()
+    return file_path
+
+def open_save_dialog():
+    root = tkinter.Tk()
+    root.withdraw()
+    file_path = filedialog.asksaveasfilename(confirmoverwrite = True, defaultextension=".json", filetypes=[("Fichiers JSON", "*.json")])
+    root.destroy()
+    return file_path
+

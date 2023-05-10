@@ -12,6 +12,7 @@ from classes.image_button import Image_button
 from classes.game_map_editor import Game_map_editor
 from classes.image import Image
 from classes.json_handler import JSON_handler
+from classes.slider import Slider
 
 all_group = pygame.sprite.Group()
 to_draw_group = pygame.sprite.LayeredUpdates()
@@ -70,49 +71,45 @@ game_map = Game_map_editor(
 block_overlay = Image(
     winsize = assets.DEFAULT_WINSIZE,
     name = ["textures","empty_tile.png"],
-    scale_axis = [game_map.tile_width,'x'],
+    scale_axis = [game_map.tile_width-game_map.border_width,'x'],
     loc = [[0,0],"center"],
     border = [-1,[0,0,0],0,'inset'],
     parent_groups = [all_group,to_draw_group],
     layer = 3,
-    living = False
+    living = True
 )
 block_overlay_hor = Image(
     winsize = assets.DEFAULT_WINSIZE,
     name = ["textures","empty_tile.png"],
-    scale_axis = [game_map.tile_width,'x'],
+    scale_axis = [game_map.tile_width-game_map.border_width,'x'],
     loc = [[0,0],"center"],
     border = [-1,[0,0,0],0,'inset'],
     parent_groups = [all_group,to_draw_group],
     layer = 3,
-    living = False
+    living = True
 )
 
 block_overlay_ver = Image(
     winsize = assets.DEFAULT_WINSIZE,
     name = ["textures","empty_tile.png"],
-    scale_axis = [game_map.tile_width,'x'],
+    scale_axis = [game_map.tile_width-game_map.border_width,'x'],
     loc = [[0,0],"center"],
     border = [-1,[0,0,0],0,'inset'],
     parent_groups = [all_group,to_draw_group],
     layer = 3,
-    living = False
+    living = True
 )
 
 block_overlay_both = Image(
     winsize = assets.DEFAULT_WINSIZE,
     name = ["textures","empty_tile.png"],
-    scale_axis = [game_map.tile_width,'x'],
+    scale_axis = [game_map.tile_width-game_map.border_width,'x'],
     loc = [[0,0],"center"],
     border = [-1,[0,0,0],0,'inset'],
     parent_groups = [all_group,to_draw_group],
     layer = 3,
-    living = False
+    living = True
 )
-block_overlay.set_size([game_map.tile_width-game_map.border_width]*2)
-block_overlay_hor.set_size([game_map.tile_width-game_map.border_width]*2)
-block_overlay_ver.set_size([game_map.tile_width-game_map.border_width]*2)
-block_overlay_both.set_size([game_map.tile_width-game_map.border_width]*2)
 
 buttons_container = Box(
     winsize = assets.DEFAULT_WINSIZE,
@@ -330,6 +327,129 @@ hamburger_leave = Button(
     parent_groups = [all_group,to_draw_group,clickable_group]  
 )
 
+options_container = Box(
+    winsize = assets.DEFAULT_WINSIZE,
+    loc = [[1006.5,455],"bottomright"],
+    size = [205,366],
+    background_clr = [0,0,0,200],
+    parent_groups = [all_group,to_draw_group],
+    border = [1.5,[175,175,175,200],0,'inset'],
+    layer = 3
+)
+
+options_cross = Image_button(
+    name = ['textures','white_cross.png'],
+    winsize = assets.DEFAULT_WINSIZE,
+    scale_axis = [26,'x'],
+    loc = [[820,108],'center'],
+    border = [1,[240,240,240],0,"inset"],
+    parent_groups = [all_group,to_draw_group,clickable_group],
+    layer = 4
+)
+
+options_title = Title(
+    winsize = assets.DEFAULT_WINSIZE,
+    loc = [[901,108],'center'],
+    background_clr = (235,235,235),
+    size = [75 ,24],
+    border=[2,(25,25,25),0,"inset"],
+    text = "Options",
+    font_clrs = [(25,25,25)],
+    font_size = 22,
+    font_family = "RopaSans-Regular.ttf",
+    layer = 4,
+    parent_groups = [all_group,to_draw_group]
+)
+
+# options_open = Button(
+#     winsize=assets.DEFAULT_WINSIZE,
+#     loc = [[901,193],"center"],
+#     background_clr = (250,250,250),
+#     size = [135,32],
+#     border=[2,(25,25,25),2,"inset"],
+#     text = "Ouvrir",
+#     font_clrs=[(25,25,25)],
+#     font_size=25,
+#     font_family="RopaSans-Regular.ttf",
+#     layer = 4,
+#     parent_groups = [all_group,to_draw_group,clickable_group]  
+# )
+options_width = Slider(
+    winsize = assets.DEFAULT_WINSIZE,
+    loc = [[701,193],"center"],
+    background_clr= [250,250,250],
+    font_clrs=[[25,25,25]],
+    font_size=25,
+    size = [135,32],
+    options_list = [str(i) for i in range(7,31)],
+    base_option = '15',
+    anchor_options = True,
+    cursor_width = 10,
+    cursor_background_clr = [175,175,175],
+    cursor_border = [2,(25,25,25)],
+    border = [2,(25,25,25),0,"inset"],
+    text = "Largeur : {}",
+    font_family = "RopaSans-Regular.ttf",
+    parent_groups= [all_group, to_draw_group, clickable_group],
+    layer = 4,
+)
+
+# options_save = Button(
+#     winsize=assets.DEFAULT_WINSIZE,
+#     loc = [[901,230],"center"],
+#     background_clr = (250,250,250),
+#     size = [135,32],
+#     border=[2,(25,25,25),2,"inset"],
+#     text = "Enregistrer",
+#     font_clrs=[(25,25,25)],
+#     font_size=25,
+#     font_family="RopaSans-Regular.ttf",
+#     layer = 4,
+#     parent_groups = [all_group,to_draw_group,clickable_group]  
+# )
+
+# options_play = Button(
+#     winsize=assets.DEFAULT_WINSIZE,
+#     loc = [[901,267],"center"],
+#     background_clr = (250,250,250),
+#     size = [135,32],
+#     border=[2,(25,25,25),2,"inset"],
+#     text = "Jouer",
+#     font_clrs=[(25,25,25)],
+#     font_size=25,
+#     font_family="RopaSans-Regular.ttf",
+#     layer = 4,
+#     parent_groups = [all_group,to_draw_group,clickable_group]  
+# )
+
+options_apply = Button(
+    winsize=assets.DEFAULT_WINSIZE,
+    loc = [[901,341],"center"],
+    background_clr = (250,250,250),
+    size = [135,32],
+    border=[2,(25,25,25),2,"inset"],
+    text = "Appliquer",
+    font_clrs=[(25,25,25)],
+    font_size=25,
+    font_family="RopaSans-Regular.ttf",
+    layer = 4,
+    parent_groups = [all_group,to_draw_group,clickable_group]  
+)
+
+options_reset = Button(
+    winsize=assets.DEFAULT_WINSIZE,
+    loc = [[901,378],"center"],
+    background_clr = (250,250,250),
+    size = [135,32],
+    border=[2,(25,25,25),2,"inset"],
+    text = "Réinitialiser",
+    font_clrs=[(25,25,25)],
+    font_size=25,
+    font_family="RopaSans-Regular.ttf",
+    layer = 4,
+    parent_groups = [all_group,to_draw_group,clickable_group]  
+)
+
 json_files:list[str] = assets.get_save_files()
 for path in json_files:
     if path.endswith("latest.json"):
@@ -338,8 +458,6 @@ for path in json_files:
 
 save_manager = JSON_handler({"matrix":game_map.get_matrix(),"nb_ghosts":4,"date_of_creation":assets.get_date()})
 save_manager.save(["map_editor","latest.json"])
-
-assets.open_file_dialog()
 
 
 overlays = [block_overlay,block_overlay_hor,block_overlay_ver,block_overlay_both]
@@ -439,56 +557,62 @@ def loop(screen,new_winsize, dt, fps_infos):
     pygame.display.flip()
 
 
-def manage_states(button:Image_button|Button):
+def manage_states(clickable:Image_button|Button|Slider):
 
-    if not button.clicking_changed and not button.hovering_changed:
+    if not clickable.clicking_changed and not clickable.hovering_changed:
         return
     
-    if button in hotbar:
-        if not button.hovering and not button.clicking:
-            button.instant_resize([button.resize_ratio,1],[0.15],['out']) #état de base du bouton
-        elif button.hovering and not button.clicking:
-            button.instant_resize([button.resize_ratio,0.95],[0.15],['out'])# état hover du bouton
-        elif button.hovering and button.clicking:
-            if button.clicking_changed and not button.hovering_changed:
-                button.instant_resize([button.resize_ratio,0.9],[0.15],['in']) #état clicking du bouton
-        elif not button.hovering and button.clicking:
-            button.instant_resize([button.resize_ratio,0.9],[0.15],['in'])
+    if clickable in hotbar:
+        if not clickable.hovering and not clickable.clicking:
+            clickable.instant_resize([clickable.resize_ratio,1],[0.15],['out']) #état de base du bouton
+        elif clickable.hovering and not clickable.clicking:
+            clickable.instant_resize([clickable.resize_ratio,0.95],[0.15],['out'])# état hover du bouton
+        elif clickable.hovering and clickable.clicking:
+            if clickable.clicking_changed and not clickable.hovering_changed:
+                clickable.instant_resize([clickable.resize_ratio,0.9],[0.15],['in']) #état clicking du bouton
+        elif not clickable.hovering and clickable.clicking:
+            clickable.instant_resize([clickable.resize_ratio,0.9],[0.15],['in'])
             #état clicking du bouton
 
-    elif button in basic_buttons:
-        if not button.hovering and not button.clicking:
-            button.instant_change_background_clr([button.background_clr[:],[250,250,250]],[0.25],["inout"])
-            button.instant_change_border_width([button.border_width,2],[0.25],["inout"])
-            if button is center:
-                button.instant_change_border_padding([button.border_padding,1],[0.25],["inout"])
+    elif clickable in basic_buttons:
+        if not clickable.hovering and not clickable.clicking:
+            clickable.instant_change_background_clr([clickable.background_clr[:],[250,250,250]],[0.25],["inout"])
+            clickable.instant_change_border_width([clickable.border_width,2],[0.25],["inout"])
+            if clickable is center:
+                clickable.instant_change_border_padding([clickable.border_padding,1],[0.25],["inout"])
             else:
-                button.instant_change_border_padding([button.border_padding,2],[0.25],["inout"])
-        elif button.hovering and not button.clicking:
-            button.instant_change_background_clr([button.background_clr[:],[230,230,230]],[0.25],["inout"])
-            button.instant_change_border_width([button.border_width,2],[0.25],["inout"])
-            button.instant_change_border_padding([button.border_padding,0],[0.25],["inout"])
-        elif button.hovering and button.clicking:
-            if button.clicking_changed and not button.hovering_changed:
-                button.instant_change_background_clr([button.background_clr[:],[210,210,210]],[0.25],["inout"])
-                button.instant_change_border_width([button.border_width,3],[0.25],["inout"])
-                button.instant_change_border_padding([button.border_padding,0],[0.25],["inout"])
-        elif not button.hovering and button.clicking:
-                button.instant_change_background_clr([button.background_clr[:],[210,210,210]],[0.25],["inout"])
-                button.instant_change_border_width([button.border_width,3],[0.25],["inout"])
-                button.instant_change_border_padding([button.border_padding,0],[0.25],["inout"])
+                clickable.instant_change_border_padding([clickable.border_padding,2],[0.25],["inout"])
+        elif clickable.hovering and not clickable.clicking:
+            clickable.instant_change_background_clr([clickable.background_clr[:],[230,230,230]],[0.25],["inout"])
+            clickable.instant_change_border_width([clickable.border_width,2],[0.25],["inout"])
+            clickable.instant_change_border_padding([clickable.border_padding,0],[0.25],["inout"])
+        elif clickable.hovering and clickable.clicking:
+            if clickable.clicking_changed and not clickable.hovering_changed:
+                clickable.instant_change_background_clr([clickable.background_clr[:],[210,210,210]],[0.25],["inout"])
+                clickable.instant_change_border_width([clickable.border_width,3],[0.25],["inout"])
+                clickable.instant_change_border_padding([clickable.border_padding,0],[0.25],["inout"])
+        elif not clickable.hovering and clickable.clicking:
+                clickable.instant_change_background_clr([clickable.background_clr[:],[210,210,210]],[0.25],["inout"])
+                clickable.instant_change_border_width([clickable.border_width,3],[0.25],["inout"])
+                clickable.instant_change_border_padding([clickable.border_padding,0],[0.25],["inout"])
 
-    elif button is hamburger_cross:
-        if not button.hovering and not button.clicking:
-            button.instant_resize([button.resize_ratio,1],[0.15],['out']) #état de base du bouton
-        elif button.hovering and not button.clicking:
-            button.instant_resize([button.resize_ratio,0.95],[0.15],['out'])# état hover du bouton
-        elif button.hovering and button.clicking:
-            if button.clicking_changed and not button.hovering_changed:
-                button.instant_resize([button.resize_ratio,0.85],[0.15],['in']) #état clicking du bouton
-        elif not button.hovering and button.clicking:
-            button.instant_resize([button.resize_ratio,0.85],[0.15],['in'])
+    elif clickable is hamburger_cross:
+        if not clickable.hovering and not clickable.clicking:
+            clickable.instant_resize([clickable.resize_ratio,1],[0.15],['out']) #état de base du bouton
+        elif clickable.hovering and not clickable.clicking:
+            clickable.instant_resize([clickable.resize_ratio,0.95],[0.15],['out'])# état hover du bouton
+        elif clickable.hovering and clickable.clicking:
+            if clickable.clicking_changed and not clickable.hovering_changed:
+                clickable.instant_resize([clickable.resize_ratio,0.85],[0.15],['in']) #état clicking du bouton
+        elif not clickable.hovering and clickable.clicking:
+            clickable.instant_resize([clickable.resize_ratio,0.85],[0.15],['in'])
             #état clicking du bouton
+
+    elif type(clickable) is Slider:
+        if not clickable.hovering and not clickable.clicking:
+            clickable.instant_change_background_clr([clickable.background_clr[:],[250,250,250]],[0.25],['inout'])
+        elif clickable.hovering and not clickable.clicking:
+            clickable.instant_change_background_clr([clickable.background_clr[:],[230,230,230]],[0.25],['inout'])
 
 
 def button_handling(button:Button|Image_button):
@@ -540,6 +664,25 @@ def button_handling(button:Button|Image_button):
         positions = [[1006.5,455],[820,108],[901,108],[901,193],[901,230],[901,267],[901,341],[901,378]]
         for elt,pos in zip(hamburger_menu,positions):
             elt.instant_translate([elt.pos,pos],[0.35],['in'])
+    
+    elif button is hamburger_open:
+        path = assets.open_file_dialog()
+        if path != "":
+            data = JSON_handler(path)
+            if len(data.data.keys()) == 3 and set(data.data.keys()) == {"matrix","nb_ghosts","date_of_creation"}:
+                game_map.set_matrix(data["matrix"])
+                button_handling(center)
+                
+    elif button is hamburger_save:
+        path = assets.open_save_dialog()
+        if path != "":
+            save_manager.save(path)
+        
+    elif button is hamburger_options:
+        cur_menu = "options"
+        positions = [[806.5,455],[620,108],[701,108],[701,193],[701,230],[701,267],[701,341],[701,378]]
+        for elt,pos in zip(hamburger_menu,positions):
+            elt.instant_translate([elt.pos,pos],[0.35],['out'])
     
     elif button is hamburger_leave:
         return 0
@@ -600,6 +743,7 @@ def block_placing():
                 game_map.set_tile_value(game_map.get_tile(overlay.pos),"□")
     save_manager["matrix"] = game_map.get_matrix()
     save_manager.save(["map_editor","latest.json"])
+
 
 def map_hover_manage(cursor):
 
