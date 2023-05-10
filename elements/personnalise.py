@@ -118,7 +118,7 @@ buttons_container = Box(
     background_clr = [0,0,0,200],
     parent_groups = [all_group,to_draw_group],
     border = [1.5,[175,175,175,200],0,'inset'],
-    layer = 4 
+    layer = 10 
 )
 
 wall = Image_button(
@@ -128,7 +128,7 @@ wall = Image_button(
     loc = [[42.75,42.75],'center'],
     border = [1,[240,240,240],0,"inset"],
     parent_groups = [all_group,to_draw_group,clickable_group],
-    layer = 5
+    layer = 11
 )
 
 coin = Image_button(
@@ -138,7 +138,7 @@ coin = Image_button(
     loc = [[123.25,42.75],'center'],
     border = [1,[240,240,240],0,"inset"],
     parent_groups = [all_group,to_draw_group,clickable_group],
-    layer = 5
+    layer = 11
 )
 
 super_coin = Image_button(
@@ -148,7 +148,7 @@ super_coin = Image_button(
     loc = [[203.75,42.75],'center'],
     border = [1,[240,240,240],0,"inset"],
     parent_groups = [all_group,to_draw_group,clickable_group],
-    layer = 5
+    layer = 11
 )
 
 pacman = Image_button(
@@ -158,7 +158,7 @@ pacman = Image_button(
     loc = [[284.25,42.75],'center'],
     border = [1,[240,240,240],0,"inset"],
     parent_groups = [all_group,to_draw_group,clickable_group],
-    layer = 5
+    layer = 11
 )
 
 portal = Image_button(
@@ -168,7 +168,7 @@ portal = Image_button(
     loc = [[364.75,42.75],'center'],
     border = [1,[240,240,240],0,"inset"],
     parent_groups = [all_group,to_draw_group,clickable_group],
-    layer = 5
+    layer = 11
 )
 
 trash_can = Image_button(
@@ -178,7 +178,7 @@ trash_can = Image_button(
     loc = [[445.25,42.75],'center'],
     border = [1,[240,240,240],0,"inset"],
     parent_groups = [all_group,to_draw_group,clickable_group],
-    layer = 5
+    layer = 11
 )
 
 placement_options = [wall,coin,super_coin,pacman,portal,trash_can]
@@ -190,7 +190,7 @@ separator = Box(
     background_clr = [0,0,0,75],
     parent_groups = [all_group,to_draw_group],
     border = [3,[215,215,215],0,'inset'],
-    layer = 5
+    layer = 11
 )
 
 horizontal_symetry = Image_button(
@@ -200,7 +200,7 @@ horizontal_symetry = Image_button(
     loc = [[596.25,42.75],'center'],
     border = [1,[240,240,240],0,"inset"],
     parent_groups = [all_group,to_draw_group,clickable_group],
-    layer = 5
+    layer = 11
 )
 
 vertical_symetry = Image_button(
@@ -210,7 +210,7 @@ vertical_symetry = Image_button(
     loc = [[676.75,42.75],'center'],
     border = [1,[240,240,240],0,"inset"],
     parent_groups = [all_group,to_draw_group,clickable_group],
-    layer = 5
+    layer = 11
 )
 
 hamburger = Image_button(
@@ -220,7 +220,7 @@ hamburger = Image_button(
     loc = [[757.25,42.75],'center'],
     border = [1,[240,240,240],0,"inset"],
     parent_groups = [all_group,to_draw_group,clickable_group],
-    layer = 5
+    layer = 11
 )
 
 hamburger_container = Box(
@@ -230,7 +230,7 @@ hamburger_container = Box(
     background_clr = [0,0,0,200],
     parent_groups = [all_group,to_draw_group],
     border = [1.5,[175,175,175,200],0,'inset'],
-    layer = 3
+    layer = 5
 )
 
 hamburger_cross = Image_button(
@@ -240,7 +240,7 @@ hamburger_cross = Image_button(
     loc = [[820,108],'center'],
     border = [1,[240,240,240],0,"inset"],
     parent_groups = [all_group,to_draw_group,clickable_group],
-    layer = 4
+    layer = 6
 )
 
 hamburger_title = Title(
@@ -253,7 +253,7 @@ hamburger_title = Title(
     font_clrs = [(25,25,25)],
     font_size = 22,
     font_family = "RopaSans-Regular.ttf",
-    layer = 4,
+    layer = 6,
     parent_groups = [all_group,to_draw_group]
 )
 
@@ -267,7 +267,7 @@ hamburger_open = Button(
     font_clrs=[(25,25,25)],
     font_size=25,
     font_family="RopaSans-Regular.ttf",
-    layer = 4,
+    layer = 6,
     parent_groups = [all_group,to_draw_group,clickable_group]  
 )
 
@@ -281,7 +281,7 @@ hamburger_save = Button(
     font_clrs=[(25,25,25)],
     font_size=25,
     font_family="RopaSans-Regular.ttf",
-    layer = 4,
+    layer = 6,
     parent_groups = [all_group,to_draw_group,clickable_group]  
 )
 
@@ -295,7 +295,7 @@ hamburger_play = Button(
     font_clrs=[(25,25,25)],
     font_size=25,
     font_family="RopaSans-Regular.ttf",
-    layer = 4,
+    layer = 6,
     parent_groups = [all_group,to_draw_group,clickable_group]  
 )
 
@@ -309,7 +309,7 @@ hamburger_options = Button(
     font_clrs=[(25,25,25)],
     font_size=25,
     font_family="RopaSans-Regular.ttf",
-    layer = 4,
+    layer = 6,
     parent_groups = [all_group,to_draw_group,clickable_group]  
 )
 
@@ -323,7 +323,7 @@ hamburger_leave = Button(
     font_clrs=[(25,25,25)],
     font_size=25,
     font_family="RopaSans-Regular.ttf",
-    layer = 4,
+    layer = 6,
     parent_groups = [all_group,to_draw_group,clickable_group]  
 )
 
@@ -361,27 +361,14 @@ options_title = Title(
     parent_groups = [all_group,to_draw_group]
 )
 
-# options_open = Button(
-#     winsize=assets.DEFAULT_WINSIZE,
-#     loc = [[901,193],"center"],
-#     background_clr = (250,250,250),
-#     size = [135,32],
-#     border=[2,(25,25,25),2,"inset"],
-#     text = "Ouvrir",
-#     font_clrs=[(25,25,25)],
-#     font_size=25,
-#     font_family="RopaSans-Regular.ttf",
-#     layer = 4,
-#     parent_groups = [all_group,to_draw_group,clickable_group]  
-# )
 options_width = Slider(
     winsize = assets.DEFAULT_WINSIZE,
-    loc = [[701,193],"center"],
+    loc = [[901,193],"center"],
     background_clr= [250,250,250],
     font_clrs=[[25,25,25]],
     font_size=25,
     size = [135,32],
-    options_list = [str(i) for i in range(7,31)],
+    options_list = [str(i) for i in range(9,31)],
     base_option = '15',
     anchor_options = True,
     cursor_width = 10,
@@ -394,33 +381,45 @@ options_width = Slider(
     layer = 4,
 )
 
-# options_save = Button(
-#     winsize=assets.DEFAULT_WINSIZE,
-#     loc = [[901,230],"center"],
-#     background_clr = (250,250,250),
-#     size = [135,32],
-#     border=[2,(25,25,25),2,"inset"],
-#     text = "Enregistrer",
-#     font_clrs=[(25,25,25)],
-#     font_size=25,
-#     font_family="RopaSans-Regular.ttf",
-#     layer = 4,
-#     parent_groups = [all_group,to_draw_group,clickable_group]  
-# )
+options_height = Slider(
+    winsize = assets.DEFAULT_WINSIZE,
+    loc = [[901,230],"center"],
+    background_clr= [250,250,250],
+    font_clrs=[[25,25,25]],
+    font_size=25,
+    size = [135,32],
+    options_list = [str(i) for i in range(8,31)],
+    base_option = '15',
+    anchor_options = True,
+    cursor_width = 10,
+    cursor_background_clr = [175,175,175],
+    cursor_border = [2,(25,25,25)],
+    border = [2,(25,25,25),0,"inset"],
+    text = "Hauteur : {}",
+    font_family = "RopaSans-Regular.ttf",
+    parent_groups= [all_group, to_draw_group, clickable_group],
+    layer = 4,
+)
 
-# options_play = Button(
-#     winsize=assets.DEFAULT_WINSIZE,
-#     loc = [[901,267],"center"],
-#     background_clr = (250,250,250),
-#     size = [135,32],
-#     border=[2,(25,25,25),2,"inset"],
-#     text = "Jouer",
-#     font_clrs=[(25,25,25)],
-#     font_size=25,
-#     font_family="RopaSans-Regular.ttf",
-#     layer = 4,
-#     parent_groups = [all_group,to_draw_group,clickable_group]  
-# )
+options_ghosts = Slider(
+    winsize = assets.DEFAULT_WINSIZE,
+    loc = [[901,267],"center"],
+    background_clr= [250,250,250],
+    font_clrs=[[25,25,25]],
+    font_size=25,
+    size = [135,32],
+    options_list = [str(i) for i in range(2,9)],
+    base_option = '4',
+    anchor_options = True,
+    cursor_width = 10,
+    cursor_background_clr = [175,175,175],
+    cursor_border = [2,(25,25,25)],
+    border = [2,(25,25,25),0,"inset"],
+    text = "Hauteur : {}",
+    font_family = "RopaSans-Regular.ttf",
+    parent_groups= [all_group, to_draw_group, clickable_group],
+    layer = 4,
+)
 
 options_apply = Button(
     winsize=assets.DEFAULT_WINSIZE,
@@ -465,6 +464,7 @@ hotbar = [wall,coin,super_coin,pacman,portal,trash_can,horizontal_symetry,vertic
 hotbar_blocks = [wall,coin,super_coin,pacman,portal,trash_can]
 basic_buttons = [center,hamburger_open,hamburger_save,hamburger_play,hamburger_options,hamburger_leave,hamburger_leave]
 hamburger_menu = [hamburger_container,hamburger_cross,hamburger_title,hamburger_open,hamburger_save,hamburger_play,hamburger_options,hamburger_leave]
+options_menu = [options_container,options_cross,options_title,options_width,options_height,options_ghosts,options_apply,options_reset]
 
 selected_block = None
 hor_sym = False
@@ -596,7 +596,7 @@ def manage_states(clickable:Image_button|Button|Slider):
                 clickable.instant_change_border_width([clickable.border_width,3],[0.25],["inout"])
                 clickable.instant_change_border_padding([clickable.border_padding,0],[0.25],["inout"])
 
-    elif clickable is hamburger_cross:
+    elif clickable in [hamburger_cross,options_cross]:
         if not clickable.hovering and not clickable.clicking:
             clickable.instant_resize([clickable.resize_ratio,1],[0.15],['out']) #état de base du bouton
         elif clickable.hovering and not clickable.clicking:
@@ -653,17 +653,18 @@ def button_handling(button:Button|Image_button):
     elif button is hamburger:
         if cur_menu is None:
             cur_menu = "hamburger"
-            positions = [[806.5,455],[620,108],[701,108],[701,193],[701,230],[701,267],[701,341],[701,378]]
-            for elt,pos in zip(hamburger_menu,positions):
-                elt.instant_translate([elt.pos,pos],[0.35],['out'])
-        else:
-            return button_handling(hamburger_cross)
+            show_hamburger()
+        elif cur_menu == "hamburger":
+            cur_menu = None
+            hide_hamburger()
+        elif cur_menu == "options":
+            cur_menu = None
+            hide_options()
+            swap_menu_layers()
 
     elif button is hamburger_cross:
         cur_menu = None
-        positions = [[1006.5,455],[820,108],[901,108],[901,193],[901,230],[901,267],[901,341],[901,378]]
-        for elt,pos in zip(hamburger_menu,positions):
-            elt.instant_translate([elt.pos,pos],[0.35],['in'])
+        hide_hamburger()
     
     elif button is hamburger_open:
         path = assets.open_file_dialog()
@@ -680,15 +681,47 @@ def button_handling(button:Button|Image_button):
         
     elif button is hamburger_options:
         cur_menu = "options"
-        positions = [[806.5,455],[620,108],[701,108],[701,193],[701,230],[701,267],[701,341],[701,378]]
-        for elt,pos in zip(hamburger_menu,positions):
-            elt.instant_translate([elt.pos,pos],[0.35],['out'])
+        hide_hamburger()
+        show_options()
+        swap_menu_layers()
+
+    elif button is options_cross:
+        cur_menu = "hamburger"
+        hide_options()
+        show_hamburger()        
+        swap_menu_layers()
+        button_handling(hamburger)
     
     elif button is hamburger_leave:
         return 0
 
     kill_overlay()
 
+def show_hamburger():
+    positions = [[806.5,455],[620,108],[701,108],[701,193],[701,230],[701,267],[701,341],[701,378]]
+    for elt,pos in zip(hamburger_menu,positions):
+        elt.instant_translate([elt.pos,pos],[0.35],['out'])
+
+def hide_hamburger():
+    positions = [[1006.5,455],[820,108],[901,108],[901,193],[901,230],[901,267],[901,341],[901,378]]
+    for elt,pos in zip(hamburger_menu,positions):
+        elt.instant_translate([elt.pos,pos],[0.35],['in'])
+
+def show_options():
+    positions = [[806.5,455],[620,108],[701,108],[701,193],[701,230],[701,267],[701,341],[701,378]]
+    for elt,pos in zip(options_menu,positions):
+        elt.instant_translate([elt.pos,pos],[0.35],['out'])
+
+def hide_options():
+    positions = [[1006.5,455],[820,108],[901,108],[901,193],[901,230],[901,267],[901,341],[901,378]]
+    for elt,pos in zip(options_menu,positions):
+        elt.instant_translate([elt.pos,pos],[0.35],['in'])
+
+def swap_menu_layers():
+    for hamb,option in zip(hamburger_menu,options_menu):
+            layer = to_draw_group.get_layer_of_sprite(option)
+            to_draw_group.change_layer(option,to_draw_group.get_layer_of_sprite(hamb))
+            to_draw_group.change_layer(hamb,layer)
 
 def kill_overlay(overlay:Image|None = None):
 
