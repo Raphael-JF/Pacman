@@ -415,7 +415,7 @@ options_ghosts = Slider(
     cursor_background_clr = [175,175,175],
     cursor_border = [2,(25,25,25)],
     border = [2,(25,25,25),0,"inset"],
-    text = "Hauteur : {}",
+    text = "Fantômes : {}",
     font_family = "RopaSans-Regular.ttf",
     parent_groups= [all_group, to_draw_group, clickable_group],
     layer = 4,
@@ -462,7 +462,7 @@ save_manager.save(["map_editor","latest.json"])
 overlays = [block_overlay,block_overlay_hor,block_overlay_ver,block_overlay_both]
 hotbar = [wall,coin,super_coin,pacman,portal,trash_can,horizontal_symetry,vertical_symetry,hamburger]
 hotbar_blocks = [wall,coin,super_coin,pacman,portal,trash_can]
-basic_buttons = [center,hamburger_open,hamburger_save,hamburger_play,hamburger_options,hamburger_leave,hamburger_leave]
+basic_buttons = [center,hamburger_open,hamburger_save,hamburger_play,hamburger_options,hamburger_leave,hamburger_leave,options_apply,options_reset]
 hamburger_menu = [hamburger_container,hamburger_cross,hamburger_title,hamburger_open,hamburger_save,hamburger_play,hamburger_options,hamburger_leave]
 options_menu = [options_container,options_cross,options_title,options_width,options_height,options_ghosts,options_apply,options_reset]
 
@@ -651,6 +651,7 @@ def button_handling(button:Button|Image_button):
         game_map.calc_rect()
 
     elif button is hamburger:
+        print(cur_menu)
         if cur_menu is None:
             cur_menu = "hamburger"
             show_hamburger()
@@ -690,7 +691,30 @@ def button_handling(button:Button|Image_button):
         hide_options()
         show_hamburger()        
         swap_menu_layers()
-        button_handling(hamburger)
+
+    elif button is options_apply:
+        dim = [game_map.x_tiles,game_map.y_tiles]
+        change = False
+        if int(options_width.cur_option) != dim[0]:
+            change = True
+            dim[0] = int(options_width.cur_option)
+        if int(options_height.cur_option) != dim[1]:
+            change = True
+            dim[1] = int(options_height.cur_option)
+        if change:
+            game_map.fill(dim)
+            save_manager["matrix"] = game_map.get_matrix()
+            button_handling(center)
+        if int(options_ghosts.cur_option) != save_manager["nb_ghosts"]:
+            save_manager["nb_ghosts"] = int(options_ghosts.cur_option)
+        save_manager.save(["map_editor","latest.json"])
+    
+    elif button is options_reset:
+        game_map.fill([game_map.x_tiles,game_map.y_tiles])
+        save_manager["matrix"] = game_map.get_matrix()
+        save_manager.save(["map_editor","latest.json"])
+        button_handling(center)
+
     
     elif button is hamburger_leave:
         return 0

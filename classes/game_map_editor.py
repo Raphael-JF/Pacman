@@ -72,12 +72,6 @@ class Game_map_editor(pygame.sprite.Sprite):
         self.background_clr = background_clr
         self.border_clr = [134, 135, 210]
 
-        self.x_tiles, self.y_tiles = dimensions
-        if self.x_tiles % 2 == 0:
-            self.x_tiles += 1
-        if self.y_tiles % 2 == 1:
-            self.y_tiles += 1
-
         self.tile_width = assets.GME_TILE_SIZES[len(assets.GME_TILE_SIZES)//2]
         self.tile_width_choices = assets.GME_TILE_SIZES
 
@@ -85,6 +79,19 @@ class Game_map_editor(pygame.sprite.Sprite):
         self.border_width_choices = []
         for i in range(10):
             self.border_width_choices.append(transition_nbounds([self.tile_width/80,self.border_width,self.tile_width*7/80],[5,5],['linear','linear'],i))
+
+        self.fill(dimensions)
+
+        if living:
+            self.liven()
+
+    def fill(self,dimensions):
+        
+        self.x_tiles, self.y_tiles = dimensions
+        if self.x_tiles % 2 == 0:
+            self.x_tiles += 1
+        if self.y_tiles % 2 == 1:
+            self.y_tiles += 1
 
         self.tiles:list[list[Tile]] = []
         for y in range(self.y_tiles):
@@ -132,12 +139,8 @@ class Game_map_editor(pygame.sprite.Sprite):
         self.tiles[y+3][x+4].set_namevalue(["textures","wall.png"],"X")
 
         self.tiles[y+4][x+2].set_namevalue(['textures','pacman','pacman_40.png'],'P')
-
         self.calc_image()
         self.calc_rect()
-
-        if living:
-            self.liven()
 
 
     def liven(self):
