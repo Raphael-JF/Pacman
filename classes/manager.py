@@ -9,6 +9,7 @@ import elements.campagne as campagne
 import elements.personnalise as personnalise
 import elements.parameters as parameters
 import elements.credits as credits
+import elements.game as game
 
 class Manager():
     """L'objet Manager gère le comportement du jeu à chaque image. Il redirige vers les instructions à exécuter en fonction des actions utilisateur."""
@@ -28,6 +29,7 @@ class Manager():
         self.clock = pygame.time.Clock()
         self.first_looping = True
         self.game_screen = None
+        self.lvl_path = None
 
     
     def tick(self):
@@ -97,6 +99,9 @@ class Manager():
             importlib.reload(personnalise)
             self.state = self.loop_start_menu
             self.first_looping = True
+        
+        elif type(action) is str:
+            self.lvl_path = action
 
     def loop_parameters(self):
         if self.first_looping:
@@ -120,11 +125,19 @@ class Manager():
             self.show_fps = action['montrer_fps']
 
 
-
     def loop_credits(self):
         action = credits.loop(self.win,self.current_winsize,self.dt,[self.fps,self.show_fps])
         if action == 0:
             importlib.reload(credits)
             self.state = self.loop_start_menu
+            self.first_looping = True
+
+
+    def loop_game(self):
+        action = game.loop(self.win,self.current_winsize,self.dt,self.lvl_path,[self.fps,self.show_fps])
+        if action == 0:
+            importlib.reload(game)
+            self.state = self.loop_start_menu
+            self.lvl_path = None
             self.first_looping = True
 

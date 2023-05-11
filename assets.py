@@ -24,6 +24,7 @@ GME_VALUE_TO_NAMES = {
     "■" : ["textures","wall.png"],
     "O" : ["textures","empty_tile.png"],
     "□" : ["textures","empty_tile.png"],
+    "_" : ["textures","ghost_door.png"],
     "P" : ["textures","pacman","pacman_40.png"],
     "←" : ["textures","left_portal.png"],
     "→" : ["textures","right_portal.png"],

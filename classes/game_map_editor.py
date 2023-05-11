@@ -116,7 +116,7 @@ class Game_map_editor(pygame.sprite.Sprite):
 
         self.tiles[y][x].set_namevalue(["textures","wall.png"],"X")
         self.tiles[y][x+1].set_namevalue(["textures","wall.png"],"X")
-        self.tiles[y][x+2].set_namevalue(["textures","empty_tile.png"],"O")
+        self.tiles[y][x+2].set_namevalue(["textures","ghost_door.png"],"_")
         self.tiles[y][x+3].set_namevalue(["textures","wall.png"],"X")
         self.tiles[y][x+4].set_namevalue(["textures","wall.png"],"X")
 

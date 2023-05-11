@@ -23,7 +23,7 @@ background = Box(
     winsize = assets.DEFAULT_WINSIZE,
     size = [800,450],
     loc = [[0,0],"topleft"],
-    background_clr=[7, 9, 83],
+    background_clr=[17, 19, 166],
     border = [-1,(0,0,0),0,"inset"],
     parent_groups = [all_group, to_draw_group],
     layer = 0
@@ -673,6 +673,8 @@ def button_handling(button:Button|Image_button):
             data = JSON_handler(path)
             if len(data.data.keys()) == 3 and set(data.data.keys()) == {"matrix","nb_ghosts","date_of_creation"}:
                 game_map.set_matrix(data["matrix"])
+                save_manager["matrix"] = game_map.get_matrix()
+                save_manager.save(["map_editor","latest.json"])
                 button_handling(center)
                 
     elif button is hamburger_save:
