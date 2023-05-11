@@ -1,0 +1,1 @@
+Ce fichier ne sert qu'à maintenir backup_files\map_editor dans le git
