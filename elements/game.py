@@ -52,7 +52,7 @@ def loop(screen,new_winsize, dt, new_lvl_path, fps_infos):
         fps_display_update.__init__(1,'')
 
     if lvl_path != new_lvl_path:
-        load_lvl(new_lvl_path)
+        load_lvl(new_lvl_path,new_winsize)
 
     cursor = pygame.mouse.get_pos()
 
@@ -96,10 +96,13 @@ def manage_states(btn):
 def button_handling(clickable:Button):
     pass
 
-def load_lvl(new_lvl_path):
+def load_lvl(new_lvl_path,winsize):
     global lvl_path
     
     lvl_path = new_lvl_path
     save_manager = JSON_handler()
     save_manager.read(lvl_path)
+
+    tile_width = min(winsize[0]/)
+    
     
