@@ -5,6 +5,7 @@ from classes.timer import Timer
 from classes.title import Title
 from classes.button import Button
 from classes.json_handler import JSON_handler
+from classes.game_map import Game_map
 
 all_group = pygame.sprite.Group()
 to_draw_group = pygame.sprite.LayeredUpdates()
@@ -35,11 +36,14 @@ fps_display = Title(
     living = False
 )
 
+game_map = None
+
 cells:list[Image] = []
 lvl_path = None
 
 
 def loop(screen,new_winsize, dt, new_lvl_path, fps_infos):
+    global game_map
 
     if fps_display.alive() != fps_infos[1]:
         if fps_infos[1]:
@@ -52,7 +56,13 @@ def loop(screen,new_winsize, dt, new_lvl_path, fps_infos):
         fps_display_update.__init__(1,'')
 
     if lvl_path != new_lvl_path:
-        load_lvl(new_lvl_path,new_winsize)
+        game_map = Game_map(
+            winsize = assets.DEFAULT_WINSIZE,
+            lvl_path = new_lvl_path,
+            size = [800,450],
+            parent_groups = [all_group,to_draw_group]
+
+        )
 
     cursor = pygame.mouse.get_pos()
 
@@ -96,13 +106,6 @@ def manage_states(btn):
 def button_handling(clickable:Button):
     pass
 
-def load_lvl(new_lvl_path,winsize):
-    global lvl_path
-    
-    lvl_path = new_lvl_path
-    save_manager = JSON_handler()
-    save_manager.read(lvl_path)
 
-    tile_width = min(winsize[0]/)
     
     

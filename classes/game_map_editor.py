@@ -59,8 +59,6 @@ class Game_map_editor(pygame.sprite.Sprite):
             parent_groups:list,
             living:bool,
             layer:int,
-
-
     ):    
         super().__init__()
 
