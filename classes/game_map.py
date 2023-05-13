@@ -42,6 +42,15 @@ class Game_map():
         self.x_tiles = len(matrix[0:matrix.find("\n")])
         self.y_tiles = matrix.count("\n")
         self.cell_width = min(self.winsize[0] // self.x_tiles, self.winsize[1] // self.y_tiles)
+        self.cells = []
+
+        for y in range(self.y_tiles):
+            temp_cells = []
+            for x in range(self.x_tiles):
+                temp_cells.append()
+
+
+
 
         if living:
             self.liven()
@@ -57,4 +66,4 @@ class Game_map():
 
     def calc_image(self):
 
-        pass
+        
