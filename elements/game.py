@@ -39,7 +39,6 @@ fps_display = Title(
 game_map = None
 
 cells:list[Image] = []
-lvl_path = None
 
 
 def loop(screen,new_winsize, dt, new_lvl_path, fps_infos):
@@ -55,9 +54,11 @@ def loop(screen,new_winsize, dt, new_lvl_path, fps_infos):
         fps_display.set_text(f"max fps : {fps_infos[0]}\nfps : {1/dt:.2f}")
         fps_display_update.__init__(1,'')
 
-    if lvl_path != new_lvl_path:
+    if game_map is None:
+
         game_map = Game_map(
             winsize = assets.DEFAULT_WINSIZE,
+            loc = [[400,225],"center"],
             lvl_path = new_lvl_path,
             size = [800,450],
             parent_groups = [all_group,to_draw_group]
@@ -94,6 +95,7 @@ def loop(screen,new_winsize, dt, new_lvl_path, fps_infos):
                     btn.set_clicking(False)
                 return res
     
+    game_map.handle_input(pygame.key.get_pressed())
     for btn in clickable_group.sprites():
         manage_states(btn)
     all_group.update(new_winsize,dt,cursor)

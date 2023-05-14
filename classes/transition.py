@@ -162,7 +162,7 @@ class Transition():
 
         self.nb_frames = []
         for ease_second in ease_seconds:
-            self.nb_frames.append(round(ease_second*assets.TIME_TICKING))
+            self.nb_frames.append(round(ease_second * assets.TIME_TICKING))
         self.ease_modes = ease_modes
         self.values = values
         self.index = 0

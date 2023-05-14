@@ -229,12 +229,6 @@ L'objet Box est le widget le plus bas niveau (il n'hérite de rien d'autre que p
         self.border_padding *= self.ratio
         self.pos = [i*self.ratio for i in self.pos]
 
-        if round(self.width) % 2 != 1:
-            self.width += 1
-
-        if round(self.height) %2 != 1:
-            self.height += 1
-
         for transition in [i[0] for i in self.border_width_frames_list] + [self.cur_border_width_frames,self.inf_border_width_frames]:
             if transition is not None:
                 transition.rescale_step_values(self.ratio)

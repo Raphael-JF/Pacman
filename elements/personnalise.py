@@ -784,22 +784,22 @@ def block_placing():
     for overlay in overlays:
         if overlay.alive():
             if selected_block is wall:
-                game_map.set_tile_value(game_map.get_tile(overlay.pos),"■") 
+                game_map.set_tile_value(game_map.locate_tile(overlay.pos),"■") 
             elif selected_block is coin:
-                game_map.set_tile_value(game_map.get_tile(overlay.pos),".") 
+                game_map.set_tile_value(game_map.locate_tile(overlay.pos),".") 
             elif selected_block is super_coin:
-                game_map.set_tile_value(game_map.get_tile(overlay.pos),"●")
+                game_map.set_tile_value(game_map.locate_tile(overlay.pos),"●")
             elif selected_block is pacman:
-                game_map.set_tile_value(game_map.get_tile(overlay.pos),"P")
+                game_map.set_tile_value(game_map.locate_tile(overlay.pos),"P")
             elif selected_block is portal:
                 if overlay.name == assets.GME_VALUE_TO_NAMES["→"]:
-                    game_map.set_tile_value(game_map.get_tile(overlay.pos),"→")
+                    game_map.set_tile_value(game_map.locate_tile(overlay.pos),"→")
                 else:
-                    game_map.set_tile_value(game_map.get_tile(overlay.pos),"←")
-            elif game_map.get_tile(overlay.pos).value in ["→","←"]:
-                game_map.set_tile_value(game_map.get_tile(overlay.pos),"X")
-            elif game_map.get_tile(overlay.pos).value in ["■",".","●"]:
-                game_map.set_tile_value(game_map.get_tile(overlay.pos),"□")
+                    game_map.set_tile_value(game_map.locate_tile(overlay.pos),"←")
+            elif game_map.locate_tile(overlay.pos).value in ["→","←"]:
+                game_map.set_tile_value(game_map.locate_tile(overlay.pos),"X")
+            elif game_map.locate_tile(overlay.pos).value in ["■",".","●"]:
+                game_map.set_tile_value(game_map.locate_tile(overlay.pos),"□")
     save_manager["matrix"] = game_map.get_matrix()
     save_manager.save(["map_editor","latest.json"])
 
@@ -809,7 +809,7 @@ def map_hover_manage(cursor):
     if not game_map.rect.collidepoint(cursor) or user_dragging or center.hovering:
         kill_overlay()
     else:
-        tile = game_map.get_tile(cursor)
+        tile = game_map.locate_tile(cursor)
         if selected_block in [wall,coin,super_coin]:
             if tile.value == "□":
                 if block_overlay.pos != game_map.get_abs_center(tile):

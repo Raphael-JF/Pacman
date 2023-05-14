@@ -169,6 +169,7 @@ def loop(screen,new_winsize, dt, fps_infos):
         manage_states(btn)
     all_group.update(new_winsize,dt,cursor)
     to_draw_group.draw(screen)
+    
     pygame.display.flip()
 
 

@@ -231,3 +231,6 @@ def button_handling(button:Button):
 
     if button is annuler:
         return 0
+    
+    elif button is lvl1:
+        return "1"

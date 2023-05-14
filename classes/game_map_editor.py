@@ -232,7 +232,7 @@ class Game_map_editor(pygame.sprite.Sprite):
         self.calc_rect()
 
 
-    def get_tile(self,abs_pos):
+    def locate_tile(self,abs_pos):
 
         tile_width = round(self.tile_width)
         rel_pos = [abs_pos[i] - self.rect.topleft[i] for i in range(2)]

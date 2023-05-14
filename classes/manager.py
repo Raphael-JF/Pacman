@@ -1,7 +1,7 @@
 import importlib
 import pygame
 import sys
-import itertools
+import os
 
 import assets
 import elements.start_menu as start_menu
@@ -83,15 +83,12 @@ class Manager():
             importlib.reload(campagne)
             self.state = self.loop_start_menu
             self.first_looping = True
-        if action == 1:
-            pass
-        if action == 2:
-            pass
-        if action == 3:
-            pass
-        if action == 4:
-            pygame.quit()
-            sys.exit()
+        elif type(action) is str:
+            importlib.reload(campagne)
+            self.lvl_path = os.path.join(os.getcwd(),
+            "levels","lvl"+action+".json")
+            self.state = self.loop_game
+            self.first_looping = True
 
     def loop_perso(self):
         action = personnalise.loop(self.win,self.current_winsize,self.dt,[self.fps,self.show_fps])

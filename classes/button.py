@@ -1,8 +1,4 @@
-import pygame
 from classes.title import Title
-from classes.transition import Transition
-
-from assets import TIME_TICKING
 
 class Button(Title):
     """
