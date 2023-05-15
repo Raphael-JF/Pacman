@@ -7,4 +7,4 @@ if __name__ == "__main__":
     while True:
         MAIN.manage_state()
 
-#faut régler le voisinage
+#faut s'occuper de pouvoir changer de direction 

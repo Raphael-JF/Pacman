@@ -1,6 +1,6 @@
 """Ce module contient toutes les constantes et fonctions nécessaires au fonctionnement du programme."""
 
-INIT_WINSIZE = [800,450]#[1280,720]
+INIT_WINSIZE = [1280,720]
 DEFAULT_WINSIZE = [800,450] #échelle pour laquelle on définit les valeurs de nos widgets
 TIME_TICKING = 60 #temps in game (immutable)
 START_GAME_FPS = 60 #fps au démarrage du jeu

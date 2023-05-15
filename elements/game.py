@@ -94,6 +94,10 @@ def loop(screen,new_winsize, dt, new_lvl_path, fps_infos):
                 for btn in clickable_group.sprites():
                     btn.set_clicking(False)
                 return res
+            
+        elif event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_ESCAPE:
+                return 0
     
     game_map.handle_input(pygame.key.get_pressed())
     for btn in clickable_group.sprites():

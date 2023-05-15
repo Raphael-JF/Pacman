@@ -253,29 +253,15 @@ class Game_map(pygame.sprite.Sprite):
 
         self.pacman.kill()
         pacman_pos = [i*self.ratio for i in self.pacman.pos]
-        adjacent_to_pacman = [self.locate_cell(pacman_pos)] + list(self.locate_cell(pacman_pos).next.values())
+        sprites = self.group.sprites()
         adjacent_rects= []
-        for sprite in adjacent_to_pacman:
+        for sprite in sprites:
             if isinstance(sprite,Empty_cell):
                 matrix = self.save_manager["matrix"].replace("\n","")
                 y,x = self.search_cell(sprite)
-                print(matrix,y,x,y*self.y_cells + x,matrix[y*self.y_cells + x])
-                if matrix[y*self.y_cells + x +2] == "□":
+                if matrix[y*self.x_cells + x] in ["□","P"]:
                     adjacent_rects.append(sprite.rect)
         pacman_pos = closest_rect(self.pacman.rect,adjacent_rects).topleft
- 
-        # remainder_0 = pacman_pos[0] % cell_width
-        # remainder_1 = pacman_pos[1] % cell_width
-        # if remainder_0 != 0:
-        #     if remainder_0 <= cell_width//2:
-        #         pacman_pos[0] -= remainder_0
-        #     else:
-        #         pacman_pos[0] += remainder_0
-        # if remainder_1 != 0:
-        #     if remainder_1 <= cell_width//2:
-        #         pacman_pos[1] -= remainder_1
-        #     else:
-        #         pacman_pos[1] += remainder_1
         self.pacman = Pacman(
             self.winsize,
             topleft = pacman_pos,
