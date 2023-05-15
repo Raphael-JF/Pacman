@@ -1,6 +1,20 @@
-import pygame,os,assets
+import pygame,os,assets,math
 from classes.json_handler import JSON_handler
 from classes.blocks import *
+
+
+def closest_rect(rect, rect_list):
+
+    closest_rect = rect_list.pop(0)
+    closest_distance = math.sqrt((rect.centerx - closest_rect.centerx) ** 2 + (rect.centery - closest_rect.centery) ** 2)
+
+    for r in rect_list:
+        distance = math.sqrt((rect.centerx - r.centerx) ** 2 + (rect.centery - r.centery) ** 2)
+        if distance < closest_distance:
+            closest_distance = distance
+            closest_rect = r
+
+    return closest_rect
 
 
 class Game_map(pygame.sprite.Sprite):
@@ -83,11 +97,7 @@ class Game_map(pygame.sprite.Sprite):
                         group = self.group))
                 i+=1
             self.cells.append(temp_cells)
-
-        for y in range(self.y_cells):
-            for x in range(self.x_cells):
-                self.set_neighbors(y,x)
-
+        self.link_neighbors()
         if living:
             self.liven()
 
@@ -108,6 +118,7 @@ class Game_map(pygame.sprite.Sprite):
         cell_width = round(self.cell_width) + round(self.cell_width) % 2
         self.image = pygame.Surface([self.x_cells*cell_width,self.y_cells*cell_width],pygame.SRCALPHA)
         self.group.draw(self.image)
+
     
     def calc_rect(self):
 
@@ -140,8 +151,6 @@ class Game_map(pygame.sprite.Sprite):
 
         if self.pacman.direction is None:
             return
-        
-
         self.pacman.rect = self.pacman.get_next_rect(dt)
         colliding = pygame.sprite.spritecollide(self.pacman,self.group,False,lambda a,b :a.rect.colliderect(b.rect))
         walls = [sprite for sprite in colliding if isinstance(sprite, Wall) or isinstance(sprite,Ghost_door)]
@@ -156,25 +165,41 @@ class Game_map(pygame.sprite.Sprite):
             elif self.pacman.direction == "right" and self.pacman.rect.right >= wall.rect.left:
                 self.pacman.rect.right = wall.rect.left #+1
 
-        # under_pacman = self.locate_cell(self.pacman.rect.center)
-        # pygame.draw.rect(self.image,[0,0,0,0],under_pacman.rect)
-        # self.image.blit(under_pacman.image,under_pacman.rect)
-        # if under_pacman.next["top"] is not None:
-        #     pygame.draw.rect(self.image,[0,0,0,0],under_pacman.next["top"].rect)
-        #     self.image.blit(under_pacman.next["top"].image,under_pacman.next["top"].rect)
-        # if under_pacman.next["bottom"] is not None:
-        #     pygame.draw.rect(self.image,[0,0,0,0],under_pacman.next["bottom"].rect)
-        #     self.image.blit(under_pacman.next["bottom"].image,under_pacman.next["bottom"].rect)
-        # if under_pacman.next["left"] is not None:
-        #     pygame.draw.rect(self.image,[0,0,0,0],under_pacman.next["left"].rect)
-        #     self.image.blit(under_pacman.next["left"].image,under_pacman.next["left"].rect)
-        # if under_pacman.next["right"] is not None:
-        #     pygame.draw.rect(self.image,[0,0,0,0],under_pacman.next["right"].rect)
-        #     self.image.blit(under_pacman.next["right"].image,under_pacman.next["right"].rect)
-        # self.image.blit(self.pacman.image,self.pacman.rect)
-        self.calc_image()
+        under_pacman = self.locate_cell(self.pacman.rect.center)
+        pygame.draw.rect(self.image,[0,0,0,0],under_pacman.rect)
+        self.image.blit(under_pacman.image,under_pacman.rect)
+        if under_pacman.next["top"] is not None:
+            pygame.draw.rect(self.image,[0,0,0,0],under_pacman.next["top"].rect)
+            self.image.blit(under_pacman.next["top"].image,under_pacman.next["top"].rect)
+        if under_pacman.next["bottom"] is not None:
+            pygame.draw.rect(self.image,[0,0,0,0],under_pacman.next["bottom"].rect)
+            self.image.blit(under_pacman.next["bottom"].image,under_pacman.next["bottom"].rect)
+        if under_pacman.next["left"] is not None:
+            pygame.draw.rect(self.image,[0,0,0,0],under_pacman.next["left"].rect)
+            self.image.blit(under_pacman.next["left"].image,under_pacman.next["left"].rect)
+        if under_pacman.next["right"] is not None:
+            pygame.draw.rect(self.image,[0,0,0,0],under_pacman.next["right"].rect)
+            self.image.blit(under_pacman.next["right"].image,under_pacman.next["right"].rect)
+        self.image.blit(self.pacman.image,self.pacman.rect)
+        # self.calc_image()
 
 
+    def link_neighbors(self):
+        for y in range(self.y_cells):
+            for x in range(self.x_cells):
+                cell = self.cells[y][x]
+                y_top = y - 1
+                y_bottom = y + 1
+                x_left = x - 1
+                x_right = x + 1
+                if y_top >= 0:
+                    cell.next["top"] = self.cells[y_top][x]
+                if y_bottom < self.y_cells:
+                    cell.next["bottom"] = self.cells[y_bottom][x]
+                if x_left >= 0:
+                    cell.next["left"] = self.cells[y][x_left]
+                if x_right < self.x_cells:
+                    cell.next["right"] = self.cells[y][x_right]
 
     def rescale(self,new_winsize):
         
@@ -183,30 +208,82 @@ class Game_map(pygame.sprite.Sprite):
         self.ratio = self.winsize[0] / old_winsize[0]
         self.pos = [i*self.ratio for i in self.pos]
         self.cell_width *= self.ratio
+        
+        cell_width = round(self.cell_width) + round(self.cell_width) % 2
+        new_cells = []
         for y in range(self.y_cells):
+            temp_cells = []
             for x in range(self.x_cells):
-                self.cells[y][x].rescale(new_winsize)
-        self.pacman.rescale(new_winsize)
+                cell = self.cells[y][x]
+                if isinstance(cell,Wall):
+                    temp_cells.append(Wall(
+                        winsize = self.winsize,
+                        topleft = [x*cell_width,y*cell_width],
+                        width = cell_width,
+                        group = self.group))
+                elif isinstance(cell,Ghost_door):
+                    temp_cells.append(Ghost_door(
+                        winsize = self.winsize,
+                        topleft = [x*cell_width,y*cell_width],
+                        width = cell_width,
+                        group = self.group))
+                elif isinstance(cell,Empty_cell):
+                    temp_cells.append(Empty_cell(
+                        winsize = self.winsize,
+                        topleft = [x*cell_width,y*cell_width],
+                        width = cell_width,
+                        group = self.group))
+                elif isinstance(cell,Coin):
+                    temp_cells.append(Coin(
+                        winsize = self.winsize,
+                        topleft = [x*cell_width,y*cell_width],
+                        width = cell_width,
+                        group = self.group))
+                elif isinstance(cell,Super_coin):
+                    temp_cells.append(Super_coin(
+                        winsize = self.winsize,
+                        topleft = [x*cell_width,y*cell_width],
+                        width = cell_width,
+                        group = self.group))
+                cell.kill()
+            new_cells.append(temp_cells)
+
+        self.cells = new_cells[:]
+        self.link_neighbors()
+
+        self.pacman.kill()
+        pacman_pos = [i*self.ratio for i in self.pacman.pos]
+        adjacent_to_pacman = [self.locate_cell(pacman_pos)] + list(self.locate_cell(pacman_pos).next.values())
+        adjacent_rects= []
+        for sprite in adjacent_to_pacman:
+            if isinstance(sprite,Empty_cell):
+                matrix = self.save_manager["matrix"].replace("\n","")
+                y,x = self.search_cell(sprite)
+                print(matrix,y,x,y*self.y_cells + x,matrix[y*self.y_cells + x])
+                if matrix[y*self.y_cells + x +2] == "□":
+                    adjacent_rects.append(sprite.rect)
+        pacman_pos = closest_rect(self.pacman.rect,adjacent_rects).topleft
+ 
+        # remainder_0 = pacman_pos[0] % cell_width
+        # remainder_1 = pacman_pos[1] % cell_width
+        # if remainder_0 != 0:
+        #     if remainder_0 <= cell_width//2:
+        #         pacman_pos[0] -= remainder_0
+        #     else:
+        #         pacman_pos[0] += remainder_0
+        # if remainder_1 != 0:
+        #     if remainder_1 <= cell_width//2:
+        #         pacman_pos[1] -= remainder_1
+        #     else:
+        #         pacman_pos[1] += remainder_1
+        self.pacman = Pacman(
+            self.winsize,
+            topleft = pacman_pos,
+            width = cell_width,
+            group = self.group
+        )
         self.calc_image()
         self.calc_rect()
-
-
-    def set_neighbors(self,y,x):
-
-        cell = self.cells[y][x]
-        y_top = y - 1
-        y_bottom = y + 1
-        x_left = x - 1
-        x_right = x + 1
-
-        if y_top >= 0:
-            cell.next["top"] = self.cells[y_top][x]
-        if y_bottom < self.y_cells:
-            cell.next["bottom"] = self.cells[y_bottom][x]
-        if x_left >= 0:
-            cell.next["left"] = self.cells[y][x_left]
-        if x_right < self.x_cells:
-            cell.next["right"] = self.cells[y][x_right]
     
     def handle_input(self, keys):
 

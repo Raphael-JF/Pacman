@@ -651,7 +651,6 @@ def button_handling(button:Button|Image_button):
         game_map.calc_rect()
 
     elif button is hamburger:
-        print(cur_menu)
         if cur_menu is None:
             cur_menu = "hamburger"
             show_hamburger()

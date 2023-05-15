@@ -1,5 +1,6 @@
-import assets
+import assets,pygame,os
 from classes.image import Image
+
 
 class Empty_cell(Image):
 
