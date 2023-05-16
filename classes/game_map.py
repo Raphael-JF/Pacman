@@ -157,13 +157,14 @@ class Game_map(pygame.sprite.Sprite):
         if walls:
             wall = walls[0]
             if self.pacman.direction == "top" and self.pacman.rect.top <= wall.rect.bottom:
-                self.pacman.rect.top = wall.rect.bottom #-1
+                self.pacman.rect.top = wall.rect.bottom
             elif self.pacman.direction == "bottom" and self.pacman.rect.bottom >= wall.rect.top:
-                self.pacman.rect.bottom = wall.rect.top #+1
+                self.pacman.rect.bottom = wall.rect.top
             elif self.pacman.direction == "left" and self.pacman.rect.left <= wall.rect.right:
-                self.pacman.rect.left = wall.rect.right #-1
+                self.pacman.rect.left = wall.rect.right
             elif self.pacman.direction == "right" and self.pacman.rect.right >= wall.rect.left:
-                self.pacman.rect.right = wall.rect.left #+1
+                self.pacman.rect.right = wall.rect.left
+            self.pacman.direction = None
 
         under_pacman = self.locate_cell(self.pacman.rect.center)
         pygame.draw.rect(self.image,[0,0,0,0],under_pacman.rect)
@@ -273,14 +274,33 @@ class Game_map(pygame.sprite.Sprite):
     
     def handle_input(self, keys):
 
-        if keys[pygame.K_LEFT]:
-            self.pacman.direction = "left"
-        elif keys[pygame.K_RIGHT]:
-            self.pacman.direction = "right"
-        elif keys[pygame.K_UP]:
-            self.pacman.direction = "top"
-        elif keys[pygame.K_DOWN]:
-            self.pacman.direction = "bottom"
+        if self.pacman.direction is None:
+            if keys[pygame.K_LEFT]:
+                self.pacman.direction = "left"
+            elif keys[pygame.K_RIGHT]:
+                self.pacman.direction = "right"
+            elif keys[pygame.K_UP]:
+                self.pacman.direction = "top"
+            elif keys[pygame.K_DOWN]:
+                self.pacman.direction = "bottom"
+        elif self.pacman.direction in ["right","left"]:
+            if keys[pygame.K_LEFT]:
+                self.pacman.direction = "left"
+            if keys[pygame.K_RIGHT]:
+                self.pacman.direction = "right"
+            elif keys[pygame.K_UP]:
+                self.pacman.next_direction = "top"
+            elif keys[pygame.K_DOWN]:
+                self.pacman.next_direction = "bottom"
+        elif self.pacman.direction in ["top","bottom"]:
+            if keys[pygame.K_LEFT]:
+                self.pacman.next_direction = "left"
+            if keys[pygame.K_RIGHT]:
+                self.pacman.next_direction = "right"
+            elif keys[pygame.K_UP]:
+                self.pacman.direction = "top"
+            elif keys[pygame.K_DOWN]:
+                self.pacman.direction = "bottom"
 
 
     def search_cell(self,cell):

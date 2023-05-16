@@ -127,6 +127,7 @@ class Pacman(Image):
             "left" : None,
         }
         self.direction = None
+        self.next_direction = None
     
 
     def get_next_rect(self,dt):

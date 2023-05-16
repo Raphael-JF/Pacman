@@ -7,4 +7,4 @@ if __name__ == "__main__":
     while True:
         MAIN.manage_state()
 
-#faut s'occuper de pouvoir changer de direction 
+#faut s'occuper de pouvoir changer de direction
