@@ -449,14 +449,8 @@ options_reset = Button(
     parent_groups = [all_group,to_draw_group,clickable_group]  
 )
 
-json_files:list[str] = assets.get_save_files()
-for path in json_files:
-    if path.endswith("latest.json"):
-        reader = JSON_handler(["map_editor","latest.json"])
-        os.rename(os.path.join(os.getcwd(),"backup_files","map_editor","latest.json"),os.path.join(os.getcwd(),"backup_files","map_editor",reader["date_of_creation"]+".json"))
 
 save_manager = JSON_handler({"matrix":game_map.get_matrix(),"nb_ghosts":4,"date_of_creation":assets.get_date()})
-save_manager.save(["map_editor","latest.json"])
 
 
 overlays = [block_overlay,block_overlay_hor,block_overlay_ver,block_overlay_both]
@@ -473,9 +467,17 @@ user_dragging = False
 user_placing = False
 cur_menu = None
 
-def loop(screen,new_winsize, dt, fps_infos):
+def loop(screen,new_winsize, dt, fps_infos, first_loop):
 
     global user_dragging
+
+    if first_loop:
+        json_files:list[str] = assets.get_save_files()
+        for path in json_files:
+            if path.endswith("latest.json"):
+                reader = JSON_handler(["map_editor","latest.json"])
+                os.rename(os.path.join(os.getcwd(),"backup_files","map_editor","latest.json"),os.path.join(os.getcwd(),"backup_files","map_editor",reader["date_of_creation"]+".json"))
+        save_manager.save(["map_editor","latest.json"])
 
     if fps_display.alive() != fps_infos[1]:
         if fps_infos[1]:

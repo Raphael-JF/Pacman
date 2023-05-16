@@ -98,8 +98,16 @@ def loop(screen,new_winsize, dt, new_lvl_path, fps_infos):
         elif event.type == pygame.KEYDOWN:
             if event.key == pygame.K_ESCAPE:
                 return 0
+            elif event.key in [pygame.K_UP,pygame.K_z]:
+                game_map.handle_input("top")
+            elif event.key in [pygame.K_DOWN,pygame.K_s]:
+                game_map.handle_input("bottom")
+            elif event.key in [pygame.K_LEFT,pygame.K_q]:
+                game_map.handle_input("left")
+            elif event.key in [pygame.K_RIGHT,pygame.K_d]:
+                game_map.handle_input("right")
+            
     
-    game_map.handle_input(pygame.key.get_pressed())
     for btn in clickable_group.sprites():
         manage_states(btn)
     all_group.update(new_winsize,dt,cursor)

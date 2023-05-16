@@ -149,8 +149,13 @@ class Game_map(pygame.sprite.Sprite):
         if self.winsize != new_winsize:
             self.rescale(new_winsize)
 
+
+        print(self.pacman.rect.centerx % self.cell_width == self.cell_width//2, self.pacman.rect.centery % self.cell_width == self.cell_width//2)
         if self.pacman.direction is None:
             return
+        
+        
+        old_pacman_rect = self.pacman.rect
         self.pacman.rect = self.pacman.get_next_rect(dt)
         colliding = pygame.sprite.spritecollide(self.pacman,self.group,False,lambda a,b :a.rect.colliderect(b.rect))
         walls = [sprite for sprite in colliding if isinstance(sprite, Wall) or isinstance(sprite,Ghost_door)]
@@ -165,6 +170,13 @@ class Game_map(pygame.sprite.Sprite):
             elif self.pacman.direction == "right" and self.pacman.rect.right >= wall.rect.left:
                 self.pacman.rect.right = wall.rect.left
             self.pacman.direction = None
+        
+        if self.pacman.next_direction is not None and self.pacman.direction is not None:
+            if self.pacman.direction == "top":
+                if self.pacman.direction == "left":
+                    #l'idée est de prendre le haut de la case vers le haut qui a pour voisine une case vide.
+                #pareil pour right
+
 
         under_pacman = self.locate_cell(self.pacman.rect.center)
         pygame.draw.rect(self.image,[0,0,0,0],under_pacman.rect)
@@ -272,34 +284,27 @@ class Game_map(pygame.sprite.Sprite):
         self.calc_image()
         self.calc_rect()
     
-    def handle_input(self, keys):
+    def handle_input(self, dir):
 
         if self.pacman.direction is None:
-            if keys[pygame.K_LEFT]:
-                self.pacman.direction = "left"
-            elif keys[pygame.K_RIGHT]:
-                self.pacman.direction = "right"
-            elif keys[pygame.K_UP]:
-                self.pacman.direction = "top"
-            elif keys[pygame.K_DOWN]:
-                self.pacman.direction = "bottom"
+            self.pacman.direction = dir
         elif self.pacman.direction in ["right","left"]:
-            if keys[pygame.K_LEFT]:
+            if dir == "left":
                 self.pacman.direction = "left"
-            if keys[pygame.K_RIGHT]:
+            if dir == "right":
                 self.pacman.direction = "right"
-            elif keys[pygame.K_UP]:
+            elif dir == "top":
                 self.pacman.next_direction = "top"
-            elif keys[pygame.K_DOWN]:
+            elif dir == "bottom":
                 self.pacman.next_direction = "bottom"
         elif self.pacman.direction in ["top","bottom"]:
-            if keys[pygame.K_LEFT]:
+            if dir == "left":
                 self.pacman.next_direction = "left"
-            if keys[pygame.K_RIGHT]:
+            if dir == "right":
                 self.pacman.next_direction = "right"
-            elif keys[pygame.K_UP]:
+            elif dir == "top":
                 self.pacman.direction = "top"
-            elif keys[pygame.K_DOWN]:
+            elif dir == "bottom":
                 self.pacman.direction = "bottom"
 
 

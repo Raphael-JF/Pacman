@@ -91,7 +91,8 @@ class Manager():
             self.first_looping = True
 
     def loop_perso(self):
-        action = personnalise.loop(self.win,self.current_winsize,self.dt,[self.fps,self.show_fps])
+        action = personnalise.loop(self.win,self.current_winsize,self.dt,[self.fps,self.show_fps],self.first_looping)
+        self.first_looping = False
         if action == 0:
             importlib.reload(personnalise)
             self.state = self.loop_start_menu
