@@ -17,7 +17,7 @@ from classes.slider import Slider
 all_group = pygame.sprite.Group()
 to_draw_group = pygame.sprite.LayeredUpdates()
 clickable_group = pygame.sprite.LayeredUpdates()
-fps_display_update = Timer(0,'')
+fps_display_update = Timer(0)
 
 background = Box(
     winsize = assets.DEFAULT_WINSIZE,
@@ -487,7 +487,7 @@ def loop(screen,new_winsize, dt, fps_infos, first_loop):
     fps_display_update.pass_time(dt)
     if fps_infos[1] and fps_display_update.finished:
         fps_display.set_text(f"max fps : {fps_infos[0]}\nfps : {1/dt:.2f}")
-        fps_display_update.__init__(1,'')
+        fps_display_update.__init__(1)
 
     cursor = pygame.mouse.get_pos()
     cursor_offset = pygame.mouse.get_rel()

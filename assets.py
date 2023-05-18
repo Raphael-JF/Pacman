@@ -2,7 +2,7 @@
 
 INIT_WINSIZE = [1280,720]
 DEFAULT_WINSIZE = [800,450] #échelle pour laquelle on définit les valeurs de nos widgets
-TIME_TICKING = 60 #temps in game (immutable)
+TIME_TICKING = 5000 #temps in game (immutable)
 START_GAME_FPS = 60 #fps au démarrage du jeu
 
 GAME_RESOLUTIONS = [
@@ -33,7 +33,8 @@ GME_VALUE_TO_NAMES = {
 }
 
 #Game_map() :
-PACMAN_SPEED = lambda cell_width : 5*cell_width
+PACMAN_SPEED = lambda cell_width : 4*cell_width
+SPRITES_DELAY = 0.035
 
 # functions
 from datetime import datetime

@@ -12,7 +12,7 @@ from classes.timer import Timer
 all_group = pygame.sprite.Group()
 to_draw_group = pygame.sprite.LayeredUpdates()
 clickable_group = pygame.sprite.LayeredUpdates()
-fps_display_update = Timer(0,'')
+fps_display_update = Timer(0)
 
 background = Box(
     winsize = assets.DEFAULT_WINSIZE,
@@ -163,7 +163,7 @@ def loop(screen,new_winsize, dt,fps_infos):
     fps_display_update.pass_time(dt)
     if fps_infos[1] and fps_display_update.finished:
         fps_display.set_text(f"max fps : {fps_infos[0]}\nfps : {1/dt:.2f}")
-        fps_display_update.__init__(1,'')
+        fps_display_update.__init__(1)
 
     cursor = pygame.mouse.get_pos()
 
@@ -234,3 +234,12 @@ def button_handling(button:Button):
     
     elif button is lvl1:
         return "1"
+    
+    elif button is lvl2:
+        return "2"
+    
+    elif button is lvl3:
+        return "3"
+    
+    elif button is lvl4:
+        return "4"

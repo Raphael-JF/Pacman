@@ -1,1 +1,3 @@
-print(type(None))
+a = lambda *args: None
+
+print(a("bonjp"))

@@ -6,5 +6,3 @@ if __name__ == "__main__":
     MAIN = Manager()
     while True:
         MAIN.manage_state()
-
-#faut s'occuper de pouvoir changer de direction

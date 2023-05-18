@@ -149,52 +149,32 @@ class Game_map(pygame.sprite.Sprite):
         if self.winsize != new_winsize:
             self.rescale(new_winsize)
 
+        self.pacman.update(dt)
 
-        print(self.pacman.rect.centerx % self.cell_width == self.cell_width//2, self.pacman.rect.centery % self.cell_width == self.cell_width//2)
-        if self.pacman.direction is None:
-            return
+        if self.pacman.direction is not None:
+            old_pacman_rect = self.pacman.rect
+            self.pacman.rect = self.pacman.get_next_rect(dt)
+            self.pacman_path(old_pacman_rect)
+            self.check_walls()
         
-        
-        old_pacman_rect = self.pacman.rect
-        self.pacman.rect = self.pacman.get_next_rect(dt)
-        colliding = pygame.sprite.spritecollide(self.pacman,self.group,False,lambda a,b :a.rect.colliderect(b.rect))
-        walls = [sprite for sprite in colliding if isinstance(sprite, Wall) or isinstance(sprite,Ghost_door)]
-        if walls:
-            wall = walls[0]
-            if self.pacman.direction == "top" and self.pacman.rect.top <= wall.rect.bottom:
-                self.pacman.rect.top = wall.rect.bottom
-            elif self.pacman.direction == "bottom" and self.pacman.rect.bottom >= wall.rect.top:
-                self.pacman.rect.bottom = wall.rect.top
-            elif self.pacman.direction == "left" and self.pacman.rect.left <= wall.rect.right:
-                self.pacman.rect.left = wall.rect.right
-            elif self.pacman.direction == "right" and self.pacman.rect.right >= wall.rect.left:
-                self.pacman.rect.right = wall.rect.left
-            self.pacman.direction = None
-        
-        if self.pacman.next_direction is not None and self.pacman.direction is not None:
-            if self.pacman.direction == "top":
-                if self.pacman.direction == "left":
-                    #l'idée est de prendre le haut de la case vers le haut qui a pour voisine une case vide.
-                #pareil pour right
-
-
-        under_pacman = self.locate_cell(self.pacman.rect.center)
-        pygame.draw.rect(self.image,[0,0,0,0],under_pacman.rect)
-        self.image.blit(under_pacman.image,under_pacman.rect)
-        if under_pacman.next["top"] is not None:
-            pygame.draw.rect(self.image,[0,0,0,0],under_pacman.next["top"].rect)
-            self.image.blit(under_pacman.next["top"].image,under_pacman.next["top"].rect)
-        if under_pacman.next["bottom"] is not None:
-            pygame.draw.rect(self.image,[0,0,0,0],under_pacman.next["bottom"].rect)
-            self.image.blit(under_pacman.next["bottom"].image,under_pacman.next["bottom"].rect)
-        if under_pacman.next["left"] is not None:
-            pygame.draw.rect(self.image,[0,0,0,0],under_pacman.next["left"].rect)
-            self.image.blit(under_pacman.next["left"].image,under_pacman.next["left"].rect)
-        if under_pacman.next["right"] is not None:
-            pygame.draw.rect(self.image,[0,0,0,0],under_pacman.next["right"].rect)
-            self.image.blit(under_pacman.next["right"].image,under_pacman.next["right"].rect)
+        colliding_cells = pygame.sprite.spritecollide(self.pacman,self.group,False)
+        if self.pacman in colliding_cells:
+            colliding_cells.remove(self.pacman)
+        to_draw = []
+        for sprite in colliding_cells:
+            for neighbor in list(sprite.next.values()) + [sprite]:
+                if neighbor is not None:
+                    to_draw.append(neighbor)
+        for cell in list(set(to_draw)):
+            if cell is not None:
+                self.draw_cell(cell)
         self.image.blit(self.pacman.image,self.pacman.rect)
-        # self.calc_image()
+
+
+    def draw_cell(self,cell):
+
+        pygame.draw.rect(self.image,[0,0,0,0],cell.rect)
+        self.image.blit(cell.image,cell.rect)
 
 
     def link_neighbors(self):
@@ -287,12 +267,14 @@ class Game_map(pygame.sprite.Sprite):
     def handle_input(self, dir):
 
         if self.pacman.direction is None:
-            self.pacman.direction = dir
+            self.pacman.set_direction(dir)
         elif self.pacman.direction in ["right","left"]:
             if dir == "left":
-                self.pacman.direction = "left"
-            if dir == "right":
-                self.pacman.direction = "right"
+                self.pacman.set_direction("left")
+                self.pacman.next_direction = None
+            elif dir == "right":
+                self.pacman.set_direction("right")
+                self.pacman.next_direction = None
             elif dir == "top":
                 self.pacman.next_direction = "top"
             elif dir == "bottom":
@@ -300,12 +282,14 @@ class Game_map(pygame.sprite.Sprite):
         elif self.pacman.direction in ["top","bottom"]:
             if dir == "left":
                 self.pacman.next_direction = "left"
-            if dir == "right":
+            elif dir == "right":
                 self.pacman.next_direction = "right"
             elif dir == "top":
-                self.pacman.direction = "top"
+                self.pacman.set_direction("top")
+                self.pacman.next_direction = None
             elif dir == "bottom":
-                self.pacman.direction = "bottom"
+                self.pacman.set_direction("bottom")
+                self.pacman.next_direction = None
 
 
     def search_cell(self,cell):
@@ -328,3 +312,83 @@ class Game_map(pygame.sprite.Sprite):
             x = self.x_cells-1
 
         return self.cells[int(y)][int(x)]
+    
+
+    def pacman_path(self,old_pacman_rect):
+
+        if self.pacman.next_direction is not None:
+            cell_width = round(self.cell_width) + round(self.cell_width) % 2
+            if self.pacman.direction == "top":
+                old_top = old_pacman_rect.top
+                new_top = self.pacman.rect.top
+                fixed_y = old_top - old_top%cell_width
+                if old_top  >= fixed_y >=  new_top and type(self.locate_cell(self.pacman.rect.center).next[self.pacman.next_direction]) in [Coin,Super_coin,Empty_cell]:
+                    self.pacman.rect.top = fixed_y
+                    if self.pacman.next_direction == "left":
+                        self.pacman.rect.centerx -= old_top - new_top
+                    else:
+                        self.pacman.rect.centerx += old_top - new_top
+                    self.pacman.set_direction(self.pacman.next_direction)
+                    self.pacman.next_direction = None
+
+            elif self.pacman.direction == "bottom":
+                old_bottom = old_pacman_rect.bottom
+                new_bottom = self.pacman.rect.bottom
+                fixed_y = old_bottom+cell_width-old_bottom%cell_width
+                if old_bottom  <= fixed_y <=  new_bottom and type(self.locate_cell(self.pacman.rect.center).next[self.pacman.next_direction]) in [Coin,Super_coin,Empty_cell]:
+                    self.pacman.rect.bottom = fixed_y
+                    if self.pacman.next_direction == "left":
+                        self.pacman.rect.centerx -= new_bottom - old_bottom
+                    else:
+                        self.pacman.rect.centerx += new_bottom - old_bottom
+                    self.pacman.set_direction(self.pacman.next_direction)
+                    self.pacman.next_direction = None
+
+            elif self.pacman.direction == "left":
+                old_left = old_pacman_rect.left
+                new_left = self.pacman.rect.left
+                fixed_x = old_left - old_left%cell_width
+                if old_left  >= fixed_x >=  new_left and type(self.locate_cell(self.pacman.rect.center).next[self.pacman.next_direction]) in [Coin,Super_coin,Empty_cell]:
+                    self.pacman.rect.left = fixed_x
+                    if self.pacman.next_direction == "top":
+                        self.pacman.rect.centery -= old_left - new_left
+                    else:
+                        self.pacman.rect.centery += old_left - new_left
+                    self.pacman.set_direction(self.pacman.next_direction)
+                    self.pacman.next_direction = None
+
+            elif self.pacman.direction == "right":
+                old_right = old_pacman_rect.right
+                new_right = self.pacman.rect.right
+                fixed_x = old_right+cell_width-old_right%cell_width
+                if old_right  <= fixed_x <=  new_right and type(self.locate_cell(self.pacman.rect.center).next[self.pacman.next_direction]) in [Coin,Super_coin,Empty_cell]:
+                    self.pacman.rect.right = fixed_x
+                    if self.pacman.next_direction == "top":
+                        self.pacman.rect.centery -= new_right - old_right
+                    else:
+                        self.pacman.rect.centery += new_right - old_right
+                    self.pacman.set_direction(self.pacman.next_direction)
+                    self.pacman.next_direction = None
+
+    def check_walls(self):
+
+        colliding = pygame.sprite.spritecollide(self.pacman,self.group,False,lambda a,b :a.rect.colliderect(b.rect))
+        walls = [sprite for sprite in colliding if isinstance(sprite, Wall) or isinstance(sprite,Ghost_door)]
+        if walls:
+            wall = walls[0]
+            if self.pacman.direction == "top" and self.pacman.rect.top <= wall.rect.bottom:
+                self.pacman.rect.top = wall.rect.bottom
+            elif self.pacman.direction == "bottom" and self.pacman.rect.bottom >= wall.rect.top:
+                self.pacman.rect.bottom = wall.rect.top
+            elif self.pacman.direction == "left" and self.pacman.rect.left <= wall.rect.right:
+                self.pacman.rect.left = wall.rect.right
+            elif self.pacman.direction == "right" and self.pacman.rect.right >= wall.rect.left:
+                self.pacman.rect.right = wall.rect.left
+            self.pacman.direction = None
+            self.pacman.next_direction = None
+
+        cell_width = round(self.cell_width) + round(self.cell_width) % 2
+        if self.pacman.rect.left > self.x_cells * cell_width:
+            self.pacman.rect.right = 0
+        elif self.pacman.rect.right < 0:
+            self.pacman.rect.left = self.x_cells * cell_width

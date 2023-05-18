@@ -1,5 +1,6 @@
 import assets,pygame,os
 from classes.image import Image
+from classes.timer import Timer
 
 
 class Empty_cell(Image):
@@ -111,14 +112,13 @@ class Pacman(Image):
     def __init__(self,winsize,topleft,width,group):
 
         super().__init__(
-            # name = ["textures","pacman","pacman_40.png"],
-            name = ["textures","r.png"],
+            name = ["textures","pacman","pacman_40.png"],
             winsize = winsize,
             scale_axis = [width,"x"],
             loc = [topleft,"topleft"],
             parent_groups = [group],
             border = [-1,[0,0,0,0],0,"inset"],
-            layer = 2
+            layer = 10
         )
         self.next = {
             "top" : None,
@@ -128,9 +128,44 @@ class Pacman(Image):
         }
         self.direction = None
         self.next_direction = None
+        self.sprite_sheets = []
+        self.moving_anim_timer = Timer(assets.SPRITES_DELAY,self.animate_moving)
+        self.animate_moving()
+
+    def update(self,dt):
+
+        if self.direction is not None:
+            self.moving_anim_timer.pass_time(dt)
+
+
+    def animate_moving(self):
+        
+        if len(self.sprite_sheets) == 0:
+            self.sprite_sheets = [["textures","pacman","pacman_0.png"],["textures","pacman","pacman_20.png"],["textures","pacman","pacman_40.png"],["textures","pacman","pacman_60.png"],["textures","pacman","pacman_80.png"],["textures","pacman","pacman_60.png"],["textures","pacman","pacman_40.png"],["textures","pacman","pacman_20.png"]]
+        self.set_name(self.sprite_sheets.pop(0))
+        self.moving_anim_timer = Timer(assets.SPRITES_DELAY,self.animate_moving)
+
+
+    def set_direction(self,new_dir):
+
+        if self.direction != new_dir:
+            self.direction = new_dir
+            if self.direction == "top":
+                self.degrees = 90
+            elif self.direction == "left":
+                self.degrees = 180
+            elif self.direction == "bottom":
+                self.degrees = 270
+            elif self.direction == "right":
+                self.degrees = 0
+            self.calc_image()
+        
+
     
 
     def get_next_rect(self,dt):
+
+        print(assets.PACMAN_SPEED(self.width)*dt)
 
         offset = [0,0]
         if self.direction is not None:
