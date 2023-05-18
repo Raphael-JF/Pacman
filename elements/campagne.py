@@ -82,7 +82,7 @@ reset = Button(
 
 lvl1 = Button(
     winsize=assets.DEFAULT_WINSIZE,
-    loc = [(140,225),"center"],
+    loc = [(140,150),"center"],
     background_clr = (250,250,250),
     size = [70,70],
     border=[2,(25,25,25),2,"inset"],
@@ -96,7 +96,7 @@ lvl1 = Button(
 
 lvl2 = Button(
     winsize=assets.DEFAULT_WINSIZE,
-    loc = [(270,225),"center"],
+    loc = [(270,150),"center"],
     background_clr = (250,250,250),
     size = [70,70],
     border=[2,(25,25,25),2,"inset"],
@@ -110,7 +110,7 @@ lvl2 = Button(
 
 lvl3 = Button(
     winsize=assets.DEFAULT_WINSIZE,
-    loc = [(400,225),"center"],
+    loc = [(400,150),"center"],
     background_clr = (250,250,250),
     size = [70,70],
     border=[2,(25,25,25),2,"inset"],
@@ -124,7 +124,7 @@ lvl3 = Button(
 
 lvl4 = Button(
     winsize=assets.DEFAULT_WINSIZE,
-    loc = [(530,225),"center"],
+    loc = [(530,150),"center"],
     background_clr = (250,250,250),
     size = [70,70],
     border=[2,(25,25,25),2,"inset"],
@@ -138,7 +138,7 @@ lvl4 = Button(
 
 lvl5 = Button(
     winsize=assets.DEFAULT_WINSIZE,
-    loc = [(660,225),"center"],
+    loc = [(660,150),"center"],
     background_clr = (250,250,250),
     size = [70,70],
     border=[2,(25,25,25),2,"inset"],
@@ -149,7 +149,77 @@ lvl5 = Button(
     layer = 1,
     parent_groups = [all_group,to_draw_group,clickable_group]
 )
-basic_buttons = [annuler,reset,lvl1,lvl2,lvl3,lvl4,lvl5]
+
+lvl6 = Button(
+    winsize=assets.DEFAULT_WINSIZE,
+    loc = [(140,300),"center"],
+    background_clr = (250,250,250),
+    size = [70,70],
+    border=[2,(25,25,25),2,"inset"],
+    text = "6",
+    font_clrs=[(25,25,25)],
+    font_size=35,
+    font_family="RopaSans-Regular.ttf",
+    layer = 1,
+    parent_groups = [all_group,to_draw_group,clickable_group]
+)
+
+lvl7 = Button(
+    winsize=assets.DEFAULT_WINSIZE,
+    loc = [(270,300),"center"],
+    background_clr = (250,250,250),
+    size = [70,70],
+    border=[2,(25,25,25),2,"inset"],
+    text = "7",
+    font_clrs=[(25,25,25)],
+    font_size=35,
+    font_family="RopaSans-Regular.ttf",
+    layer = 1,
+    parent_groups = [all_group,to_draw_group,clickable_group]
+)
+
+lvl8 = Button(
+    winsize=assets.DEFAULT_WINSIZE,
+    loc = [(400,300),"center"],
+    background_clr = (250,250,250),
+    size = [70,70],
+    border=[2,(25,25,25),2,"inset"],
+    text = "8",
+    font_clrs=[(25,25,25)],
+    font_size=35,
+    font_family="RopaSans-Regular.ttf",
+    layer = 1,
+    parent_groups = [all_group,to_draw_group,clickable_group]
+)
+
+lvl9 = Button(
+    winsize=assets.DEFAULT_WINSIZE,
+    loc = [(530,300),"center"],
+    background_clr = (250,250,250),
+    size = [70,70],
+    border=[2,(25,25,25),2,"inset"],
+    text = "9",
+    font_clrs=[(25,25,25)],
+    font_size=35,
+    font_family="RopaSans-Regular.ttf",
+    layer = 1,
+    parent_groups = [all_group,to_draw_group,clickable_group]
+)
+
+lvl10 = Button(
+    winsize=assets.DEFAULT_WINSIZE,
+    loc = [(660,300),"center"],
+    background_clr = (250,250,250),
+    size = [70,70],
+    border=[2,(25,25,25),2,"inset"],
+    text = "10",
+    font_clrs=[(25,25,25)],
+    font_size=35,
+    font_family="RopaSans-Regular.ttf",
+    layer = 1,
+    parent_groups = [all_group,to_draw_group,clickable_group]
+)
+basic_buttons = [annuler,reset,lvl1,lvl2,lvl3,lvl4,lvl5,lvl6,lvl7,lvl8,lvl9,lvl10]
 
 
 
@@ -243,3 +313,21 @@ def button_handling(button:Button):
     
     elif button is lvl4:
         return "4"
+    
+    elif button is lvl5:
+        return "5"
+    
+    elif button is lvl6:
+        return "6"
+    
+    elif button is lvl7:
+        return "7"
+    
+    elif button is lvl8:
+        return "8"
+    
+    elif button is lvl9:
+        return "9"
+    
+    elif button is lvl10:
+        return "10"
