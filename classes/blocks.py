@@ -270,18 +270,23 @@ class Pacman(Image):
             self.rect.left = self.game_map.y_cells * cell_width
             
 
+
+
+
+
+
 class Ghost(Image):
 
     def __init__(self,winsize,topleft,width,game_map,group):
 
         super().__init__(
-            name = ["textures","pacman","pacman_40.png"],
+            name = ["textures","ghost.png"],
             winsize = winsize,
             scale_axis = [width,"x"],
             loc = [topleft,"topleft"],
             parent_groups = [group],
             border = [-1,[0,0,0,0],0,"inset"],
-            layer = 10
+            layer = 3
         )
         self.game_map = game_map
         self.direction = None
@@ -295,9 +300,9 @@ class Ghost(Image):
 
         if self.direction is not None:
             self.moving_anim_timer.pass_time(dt)
-            old_pacman_rect = self.rect
+            old_rect = self.rect
             self.rect = self.get_next_rect(dt)
-            self.path(old_pacman_rect)
+            self.path(old_rect)
             self.check_walls()
 
         a = self.game_map.locate_pos
@@ -309,14 +314,6 @@ class Ghost(Image):
             print(a([self.rect.left+1,self.rect.centery]))
         if self.direction == "right":
             print(a([self.rect.right-1,self.rect.centery]))
-
-
-    def animate_moving(self):
-        
-        if len(self.sprite_sheets) == 0:
-            self.sprite_sheets = [["textures","pacman","pacman_0.png"],["textures","pacman","pacman_20.png"],["textures","pacman","pacman_40.png"],["textures","pacman","pacman_60.png"],["textures","pacman","pacman_80.png"],["textures","pacman","pacman_60.png"],["textures","pacman","pacman_40.png"],["textures","pacman","pacman_20.png"]]
-        self.set_name(self.sprite_sheets.pop(0))
-        self.moving_anim_timer = Timer(assets.SPRITES_DELAY,self.animate_moving)
 
 
     def set_direction(self,new_dir):
