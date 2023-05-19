@@ -2,6 +2,7 @@ import importlib
 import pygame
 import sys
 import os
+import time
 
 import assets
 import elements.start_menu as start_menu
@@ -18,7 +19,7 @@ class Manager():
         pygame.init()
         #variables
         self.fps = assets.START_GAME_FPS
-        self.last_time = pygame.time.get_ticks()/1000
+        self.last_time = time.perf_counter()
         self.state = self.loop_start_menu
         
         #initialisation
@@ -37,8 +38,8 @@ class Manager():
         Gestion du temps. A chaque tour de boucle, l'attribut dt est affecté et contient la durée en ms depuis la dernière exécution de cete méthode.
         """
 
-        self.dt = (pygame.time.get_ticks()/1000 - self.last_time)
-        self.last_time = pygame.time.get_ticks()/1000
+        self.dt = (time.perf_counter() - self.last_time)
+        self.last_time = time.perf_counter()
         self.clock.tick(self.fps)
         
 
@@ -118,8 +119,8 @@ class Manager():
                 self.current_winsize = action['resolution']
                 pygame.display.quit()
                 self.win = pygame.display.set_mode(self.current_winsize)
-            if self.fps != action['fps']:
-                self.fps = action['fps']
+            # if self.fps != action['fps']:
+            #     self.fps = action['fps']
             self.show_fps = action['montrer_fps']
 
 

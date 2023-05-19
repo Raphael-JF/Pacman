@@ -93,3 +93,15 @@ def search_type_in_list(lst:list,type:type):
 
 def collide(sprite_a,sprite_b):
     return sprite_a.rect.colliderect(sprite_b)
+
+
+def opposite_side(side):
+
+    if side == "left":
+        return "right"
+    elif side == "right":
+        return "left"
+    elif side == "top":
+        return "bottom"
+    elif side == "bottom":
+        return "top"

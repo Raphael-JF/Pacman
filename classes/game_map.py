@@ -1,6 +1,7 @@
 import pygame,os,assets,math
 from classes.json_handler import JSON_handler
 from classes.blocks import *
+from classes.graph import Graph,Node
 
 
 def closest_rect(rect, rect_list):
@@ -71,7 +72,8 @@ class Game_map(pygame.sprite.Sprite):
                         winsize = self.winsize,
                         topleft = [x*cell_width,y*cell_width],
                         width = cell_width,
-                        group = self.group)
+                        group = self.group,
+                        game_map = self)
                     temp_cells.append(Empty_cell(
                         winsize = self.winsize,
                         topleft = [x*cell_width,y*cell_width],
@@ -98,6 +100,7 @@ class Game_map(pygame.sprite.Sprite):
                 i+=1
             self.cells.append(temp_cells)
         self.link_neighbors()
+        self.generate_graph()
         if living:
             self.liven()
 
@@ -150,12 +153,8 @@ class Game_map(pygame.sprite.Sprite):
             self.rescale(new_winsize)
 
         self.pacman.update(dt)
-
-        if self.pacman.direction is not None:
-            old_pacman_rect = self.pacman.rect
-            self.pacman.rect = self.pacman.get_next_rect(dt)
-            self.pacman_path(old_pacman_rect)
-            self.check_walls()
+        a = self.locate_pos(self.pacman.rect.center)
+        print(a,self.graph.dijkstra([1,1],a))
         
         colliding_cells = pygame.sprite.spritecollide(self.pacman,self.group,False)
         if self.pacman in colliding_cells:
@@ -259,11 +258,13 @@ class Game_map(pygame.sprite.Sprite):
             self.winsize,
             topleft = pacman_pos,
             width = cell_width,
-            group = self.group
+            group = self.group,
+            game_map = self
         )
         self.calc_image()
         self.calc_rect()
     
+
     def handle_input(self, dir):
 
         if self.pacman.direction is None:
@@ -302,93 +303,56 @@ class Game_map(pygame.sprite.Sprite):
                     return [y,x]
                 
 
-    def locate_cell(self,pos):
+    def locate_cell(self,abs_pos):
+
+        x,y = self.locate_pos(abs_pos)
+        return self.cells[y][x]
+
+
+    def locate_pos(self,abs_pos):
 
         cell_width = round(self.cell_width) + round(self.cell_width) % 2
-        y,x = pos[1]//cell_width,pos[0]//cell_width
+        y,x = abs_pos[1]//cell_width,abs_pos[0]//cell_width
         if y >= self.y_cells:
             y = self.y_cells-1
         if x >= self.x_cells:
             x = self.x_cells-1
+        
+        return  [int(x),int(y)]
 
-        return self.cells[int(y)][int(x)]
-    
 
-    def pacman_path(self,old_pacman_rect):
+    def generate_graph(self):
 
-        if self.pacman.next_direction is not None:
-            cell_width = round(self.cell_width) + round(self.cell_width) % 2
-            if self.pacman.direction == "top":
-                old_top = old_pacman_rect.top
-                new_top = self.pacman.rect.top
-                fixed_y = old_top - old_top%cell_width
-                if old_top  >= fixed_y >=  new_top and type(self.locate_cell(self.pacman.rect.center).next[self.pacman.next_direction]) in [Coin,Super_coin,Empty_cell]:
-                    self.pacman.rect.top = fixed_y
-                    if self.pacman.next_direction == "left":
-                        self.pacman.rect.centerx -= old_top - new_top
-                    else:
-                        self.pacman.rect.centerx += old_top - new_top
-                    self.pacman.set_direction(self.pacman.next_direction)
-                    self.pacman.next_direction = None
+        self.graph = Graph(self)
+        for y in range(self.y_cells):
+            for x in range(self.x_cells):
+                cell = self.cells[y][x]
+                if type(cell) in [Empty_cell,Coin,Super_coin,Ghost_door]:
+                    next = {}
+                    for side,c in cell.next.items():
+                        next[side] =  type(c) in [Empty_cell,Coin,Super_coin,Ghost_door]
+                    nb_cells = list(next.values()).count(True)
+                    if nb_cells == 4 or nb_cells == 3:
+                        self.graph.add_node(Node([x,y]))
+                    elif nb_cells == 2:
+                        if (next["top"] and next["left"]) or (next["left"] and next["bottom"]) or (next["top"] and next["right"]) or (next["bottom"] and next["right"]):
+                            self.graph.add_node(Node([x,y]))
+        
+        for node in self.graph.nodes.values():
+            top = self.graph.nearest_node(node.pos,"top")
+            bottom = self.graph.nearest_node(node.pos,"bottom")
+            left = self.graph.nearest_node(node.pos,"left")
+            right = self.graph.nearest_node(node.pos,"right")
 
-            elif self.pacman.direction == "bottom":
-                old_bottom = old_pacman_rect.bottom
-                new_bottom = self.pacman.rect.bottom
-                fixed_y = old_bottom+cell_width-old_bottom%cell_width
-                if old_bottom  <= fixed_y <=  new_bottom and type(self.locate_cell(self.pacman.rect.center).next[self.pacman.next_direction]) in [Coin,Super_coin,Empty_cell]:
-                    self.pacman.rect.bottom = fixed_y
-                    if self.pacman.next_direction == "left":
-                        self.pacman.rect.centerx -= new_bottom - old_bottom
-                    else:
-                        self.pacman.rect.centerx += new_bottom - old_bottom
-                    self.pacman.set_direction(self.pacman.next_direction)
-                    self.pacman.next_direction = None
-
-            elif self.pacman.direction == "left":
-                old_left = old_pacman_rect.left
-                new_left = self.pacman.rect.left
-                fixed_x = old_left - old_left%cell_width
-                if old_left  >= fixed_x >=  new_left and type(self.locate_cell(self.pacman.rect.center).next[self.pacman.next_direction]) in [Coin,Super_coin,Empty_cell]:
-                    self.pacman.rect.left = fixed_x
-                    if self.pacman.next_direction == "top":
-                        self.pacman.rect.centery -= old_left - new_left
-                    else:
-                        self.pacman.rect.centery += old_left - new_left
-                    self.pacman.set_direction(self.pacman.next_direction)
-                    self.pacman.next_direction = None
-
-            elif self.pacman.direction == "right":
-                old_right = old_pacman_rect.right
-                new_right = self.pacman.rect.right
-                fixed_x = old_right+cell_width-old_right%cell_width
-                if old_right  <= fixed_x <=  new_right and type(self.locate_cell(self.pacman.rect.center).next[self.pacman.next_direction]) in [Coin,Super_coin,Empty_cell]:
-                    self.pacman.rect.right = fixed_x
-                    if self.pacman.next_direction == "top":
-                        self.pacman.rect.centery -= new_right - old_right
-                    else:
-                        self.pacman.rect.centery += new_right - old_right
-                    self.pacman.set_direction(self.pacman.next_direction)
-                    self.pacman.next_direction = None
-
-    def check_walls(self):
-
-        colliding = pygame.sprite.spritecollide(self.pacman,self.group,False,lambda a,b :a.rect.colliderect(b.rect))
-        walls = [sprite for sprite in colliding if isinstance(sprite, Wall) or isinstance(sprite,Ghost_door)]
-        if walls:
-            wall = walls[0]
-            if self.pacman.direction == "top" and self.pacman.rect.top <= wall.rect.bottom:
-                self.pacman.rect.top = wall.rect.bottom
-            elif self.pacman.direction == "bottom" and self.pacman.rect.bottom >= wall.rect.top:
-                self.pacman.rect.bottom = wall.rect.top
-            elif self.pacman.direction == "left" and self.pacman.rect.left <= wall.rect.right:
-                self.pacman.rect.left = wall.rect.right
-            elif self.pacman.direction == "right" and self.pacman.rect.right >= wall.rect.left:
-                self.pacman.rect.right = wall.rect.left
-            self.pacman.direction = None
-            self.pacman.next_direction = None
-
-        cell_width = round(self.cell_width) + round(self.cell_width) % 2
-        if self.pacman.rect.left > self.x_cells * cell_width:
-            self.pacman.rect.right = 0
-        elif self.pacman.rect.right < 0:
-            self.pacman.rect.left = self.x_cells * cell_width
+            if top:
+                self.graph.add_edge(node,top)
+                self.graph.add_edge(top,node)
+            if bottom:
+                self.graph.add_edge(node,bottom)
+                self.graph.add_edge(bottom,node)
+            if left:
+                self.graph.add_edge(node,left)
+                self.graph.add_edge(left,node)
+            if right:
+                self.graph.add_edge(node,right)
+                self.graph.add_edge(right,node)

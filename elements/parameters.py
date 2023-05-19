@@ -54,33 +54,6 @@ title = Title(
     parent_groups = [all_group,to_draw_group]
 )
 
-# resolution = Slider(
-#     winsize = assets.DEFAULT_WINSIZE,
-#     loc = [(216,150),"center"],
-#     font_clrs=[(25,25,25)],
-#     parent_groups= [all_group, to_draw_group, clickable_group],
-#     font_size=30,
-#     size = [300,40],
-#     options_list = [f'{i}x{j}' for i,j in assets.GAME_RESOLUTIONS],
-#     base_option = '{}x{}'.format(*assets.GAME_RESOLUTIONS[0]),
-#     cursor_width = 22.5,
-#     background_clr= (250,250,250),
-#     hov_background_clr=(230,230,230),
-#     cursor_background_clr=(175,175,175),
-#     hov_cursor_background_clr=(175,175,175),
-#     cursor_border = [2,(20,20,20)],
-#     hov_cursor_border = [2,(20,20,20)],
-#     border = [2,(20,20,20),0,"inset"],
-#     hov_border=[2,(20,20,20),0],
-#     ease_seconds = 0.25,
-#     ease_mode = "inout",
-#     text = "Résolution : {}",
-#     font_family = "RopaSans-Regular.ttf",
-#     layer = 5,
-#     living = True
-# )
-
-
 resolution = Slider(
     winsize = assets.DEFAULT_WINSIZE,
     loc = [(216,150),"center"],
@@ -102,30 +75,30 @@ resolution = Slider(
     living = True
 )
 
-rafraichissement = Slider(
-    winsize = assets.DEFAULT_WINSIZE,
-    loc = [[584,150],"center"],
-    background_clr= [250,250,250],
-    font_clrs=[[25,25,25]],
-    font_size=30,
-    size = [300,40],
-    options_list = [str(i) for i in range(10,250,10)],
-    base_option = '60',
-    anchor_options = True,
-    cursor_width = 22.5,
-    cursor_background_clr = [175,175,175],
-    cursor_border = [2,(20,20,20)],
-    border = [2,(20,20,20),0,"inset"],
-    text = "Rafraîchissement : {} fps",
-    font_family = "RopaSans-Regular.ttf",
-    parent_groups= [all_group, to_draw_group, clickable_group],
-    layer = 5,
-    living = True
-)
+# rafraichissement = Slider(
+#     winsize = assets.DEFAULT_WINSIZE,
+#     loc = [[584,150],"center"],
+#     background_clr= [250,250,250],
+#     font_clrs=[[25,25,25]],
+#     font_size=30,
+#     size = [300,40],
+#     options_list = [str(i) for i in range(10,250,10)],
+#     base_option = '60',
+#     anchor_options = True,
+#     cursor_width = 22.5,
+#     cursor_background_clr = [175,175,175],
+#     cursor_border = [2,(20,20,20)],
+#     border = [2,(20,20,20),0,"inset"],
+#     text = "Rafraîchissement : {} fps",
+#     font_family = "RopaSans-Regular.ttf",
+#     parent_groups= [all_group, to_draw_group, clickable_group],
+#     layer = 5,
+#     living = True
+# )
 
 montrer_fps = Button(
     winsize=assets.DEFAULT_WINSIZE,
-    loc = [(584,210),"center"],
+    loc = [[584,150],"center"],
     background_clr = (250,250,250),
     size = [300,40],
     border=[2,(25,25,25),2,"inset"],
@@ -166,14 +139,13 @@ appliquer = Button(
 )
 
 basic_buttons = [montrer_fps,annuler,appliquer]
-sliders = [resolution,rafraichissement]
+sliders = [resolution]
 
 
 def loop(screen,new_winsize, dt, fps_infos, first_looping):
 
     if first_looping :
         resolution.set_option(f"{new_winsize[0]}x{new_winsize[1]}")
-        rafraichissement.set_option(str(fps_infos[0]))
         if fps_infos[1]:
             montrer_fps.set_text("Montrer les fps : Oui")
         else:
@@ -272,7 +244,6 @@ def button_handling(button:Button):
     
     elif button is appliquer :
         return {'resolution' : [int(i) for i in resolution.cur_option.split('x')],
-                'fps' : int(rafraichissement.cur_option),
                 'montrer_fps' : montrer_fps.texte == "Montrer les fps : Oui"}
 
     elif button is montrer_fps :

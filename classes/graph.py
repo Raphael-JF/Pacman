@@ -1,4 +1,5 @@
-import math,heapq
+import math,heapq,assets
+from classes.blocks import *
 
 class Node:
 
@@ -41,18 +42,19 @@ class Node:
 
 class Graph:
     
-    def __init__(self):
+    def __init__(self,game_map):
         self.nodes = {}
+        self.game_map = game_map
 
 
     def add_node(self, node:Node):
-        self.nodes[node.pos] = node
+        self.nodes[tuple(node.pos)] = node
 
 
     def insert(self,pos) -> Node:
 
         try:
-            self.nodes[pos]
+            self.nodes[tuple(pos)]
             return
         except:
             pass
@@ -78,51 +80,78 @@ class Graph:
     
 
     def delete(self,pos):
+
         try:
-            self.nodes[pos]
+            self.nodes[tuple(pos)]
         except:
             return
         next_top = self.nearest_node(pos,"top")
         next_bottom = self.nearest_node(pos,"bottom")
         next_left = self.nearest_node(pos,"left")
         next_right = self.nearest_node(pos,"right")
-        if next_top is not None:
-            self.add_edge(next_top,next_bottom)
-        if next_bottom is not None:
-            self.add_edge(next_bottom,next_top)
-        if next_left is not None:
-            self.add_edge(next_left,next_right)
-        if next_right is not None:
-            self.add_edge(next_right,next_left)
-        del self.nodes[pos]
+        if next_top:
+            if next_bottom:
+                self.add_edge(next_top,next_bottom)
+            else:
+                next_top.next["bottom"] = [None,None]
+        if next_bottom:
+            if next_top:
+                self.add_edge(next_bottom,next_top)
+            else:
+                next_bottom.next["top"] = [None,None]
+        if next_left:
+            if next_right:
+                self.add_edge(next_left,next_right)
+            else:
+                next_left.next["right"] = [None,None]
+        if next_right:
+            if next_left:
+                self.add_edge(next_right,next_left)
+            else:
+                next_right.next["left"] = [None,None]
+        del self.nodes[tuple(pos)]
 
 
     def nearest_node(self,pos,side):
 
+        temp_pos = list(pos)
+
         if side == "top":
-            while pos[1] >= 0:
+            while temp_pos[1] >= 0:
+                if type((self.game_map.cells[temp_pos[1]][temp_pos[0]])) is Wall:
+                    return
+                temp_pos[1] -= 1
                 try:
-                    return self.nodes[tuple(pos)]
+                    return self.nodes[tuple(temp_pos)]
                 except:
-                    pos[1] -= 1
+                    pass
         elif side == "bottom":
-            while pos[1] < 5:
+            while temp_pos[1] < self.game_map.y_cells:
+                if type((self.game_map.cells[temp_pos[1]][temp_pos[0]])) is Wall:
+                    return
+                temp_pos[1] += 1
                 try:
-                    return self.nodes[tuple(pos)]
+                    return self.nodes[tuple(temp_pos)]
                 except:
-                    pos[1] += 1
+                    pass
         elif side == "left":
-            while pos[0] >= 0:
+            while temp_pos[0] >= 0:
+                if type((self.game_map.cells[temp_pos[1]][temp_pos[0]])) is Wall:
+                    return
+                temp_pos[0] -= 1
                 try:
-                    return self.nodes[tuple(pos)]
+                    return self.nodes[tuple(temp_pos)]
                 except:
-                    pos[0] -= 1
+                    pass
         elif side == "right":
-            while pos[0] < 5:
+            while temp_pos[0] < self.game_map.x_cells:
+                if type((self.game_map.cells[temp_pos[1]][temp_pos[0]])) is Wall:
+                    return
+                temp_pos[0] += 1
                 try:
-                    return self.nodes[tuple(pos)]
+                    return self.nodes[tuple(temp_pos)]
                 except:
-                    pos[0] += 1
+                    pass
 
 
     def add_edge(self, node1:Node, node2:Node):
@@ -146,22 +175,19 @@ class Graph:
 
     def dijkstra(self, start_pos, target_pos):
         
-        # created_start = False
-        # try:
-        #     start_node = self.nodes[tuple(start_pos)]
-        # except:
-        #     created_start = True
-        #     start_node = self.insert(start_pos)
+        created_start = False
+        try:
+            start_node = self.nodes[tuple(start_pos)]
+        except:
+            created_start = True
+            start_node = self.insert(start_pos)
 
-        # created_target = False
-        # try:
-        #     target_node = self.nodes[tuple(target_pos)]
-        # except:
-        #     created_target = True
-        #     target_node = self.insert(target_pos)
-        start_node = self.nodes[tuple(start_pos)]
-        target_node = self.nodes[tuple(target_pos)]
-
+        created_target = False
+        try:
+            target_node = self.nodes[tuple(target_pos)]
+        except:
+            created_target = True
+            target_node = self.insert(target_pos)
 
         for node in self.nodes.values():
             node.set_distance(math.inf)
@@ -197,53 +223,12 @@ class Graph:
             current_node.set_previous(None)
             current_node = temp_current_node
         
-        # if created_start:
-        #     self.delete(start_pos)
-        # if created_target:
-        #     self.delete(target_pos)
+        if created_start:
+            self.delete(start_pos)
+        if created_target:
+            self.delete(target_pos)
 
         # if len(path) == 1:
         #     return []
         path.reverse()
         return path
-    
-# Création du graphe
-graph = Graph()
-
-# Création des nœuds
-A = Node([0,0])
-B = Node([3,0])
-C = Node([3,3])
-D = Node([0,3])
-E = Node([2,1])
-F = Node([3,1])
-G = Node([2,2])
-H = Node([1,2])
-I = Node([1,0])
-# Ajout des nœuds au graphe
-graph.add_node(A)
-graph.add_node(B)
-graph.add_node(C)
-graph.add_node(D)
-graph.add_node(E)
-graph.add_node(F)
-graph.add_node(G)
-graph.add_node(H)
-graph.add_node(I)
-
-# Ajout des arêtes
-graph.add_edge(A, D)
-graph.add_edge(A, I)
-graph.add_edge(B, F)
-graph.add_edge(B, I)
-graph.add_edge(C, D)
-graph.add_edge(C, F)
-graph.add_edge(E, G)
-graph.add_edge(E, F)
-graph.add_edge(F, B)
-graph.add_edge(G, H)
-graph.add_edge(H, I)
-
-# Exécution de l'algorithme de Dijkstra
-print(graph.dijkstra([0,0], [1,2]))
-print(graph.dijkstra([0,0], [3,3]))
