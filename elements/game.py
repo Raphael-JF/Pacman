@@ -57,7 +57,7 @@ def loop(screen,new_winsize, dt, new_lvl_path, fps_infos):
     if game_map is None:
 
         game_map = Game_map(
-            winsize = assets.DEFAULT_WINSIZE,
+            winsize = new_winsize,
             loc = [[400,225],"center"],
             lvl_path = new_lvl_path,
             size = [800,450],

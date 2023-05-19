@@ -35,6 +35,7 @@ GME_VALUE_TO_NAMES = {
 #Game_map() :
 PACMAN_SPEED = lambda cell_width : 4*cell_width
 SPRITES_DELAY = 0.035
+GHOST_COLORS = ["red","blue","pink","orange","green","purple","brown","gray"]
 
 # functions
 from datetime import datetime

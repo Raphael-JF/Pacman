@@ -1,7 +1,8 @@
-import pygame,os,assets,math
+import pygame,assets,math,random
 from classes.json_handler import JSON_handler
 from classes.blocks import *
 from classes.graph import Graph,Node
+from classes.transition import transition_2bounds
 
 
 def closest_rect(rect, rect_list):
@@ -34,9 +35,10 @@ class Game_map(pygame.sprite.Sprite):
         super().__init__()
 
         
-        self.winsize = winsize
+        ratio = winsize[0] / assets.DEFAULT_WINSIZE[0]
+
         self._layer = layer
-        self.pos = list(loc[0])
+        self.pos = [i*ratio for i in loc[0]]
         self.placement_mode = loc[1]
         self.lvl_path = lvl_path
         self.parent_groups = parent_groups
@@ -48,57 +50,79 @@ class Game_map(pygame.sprite.Sprite):
         self.x_cells = len(matrix[0:matrix.find("\n")])
         self.y_cells = matrix.count("\n")
         matrix = matrix.replace("\n","")
-        self.cell_width = min(size[0] / self.x_cells, size[1] / self.y_cells)
+        self.cell_width = (min(size[0] / self.x_cells, size[1] / self.y_cells))*ratio
+        self.cell_width = round(self.cell_width) + round(self.cell_width) % 2
         self.cells = []
         i = 0
-        cell_width = round(self.cell_width) + round(self.cell_width) % 2
         for y in range(self.y_cells):
             temp_cells = []
             for x in range(self.x_cells):
                 if matrix[i] in ["X","■"]:
                     temp_cells.append(Wall(
-                        winsize = self.winsize,
-                        topleft = [x*cell_width,y*cell_width],
-                        width = cell_width,
+                        winsize = winsize,
+                        topleft = [x*self.cell_width,y*self.cell_width],
+                        width = self.cell_width,
                         group = self.group))
                 elif matrix[i] == "_":
                     temp_cells.append(Ghost_door(
-                        winsize = self.winsize,
-                        topleft = [x*cell_width,y*cell_width],
-                        width = cell_width,
+                        winsize = winsize,
+                        topleft = [x*self.cell_width,y*self.cell_width],
+                        width = self.cell_width,
                         group = self.group))
                 elif matrix[i] == "P":
                     self.pacman = Pacman(
-                        winsize = self.winsize,
-                        topleft = [x*cell_width,y*cell_width],
-                        width = cell_width,
+                        winsize = winsize,
+                        topleft = [x*self.cell_width,y*self.cell_width],
+                        width = self.cell_width,
                         group = self.group,
                         game_map = self)
                     temp_cells.append(Empty_cell(
-                        winsize = self.winsize,
-                        topleft = [x*cell_width,y*cell_width],
-                        width = cell_width,
+                        winsize = winsize,
+                        topleft = [x*self.cell_width,y*self.cell_width],
+                        width = self.cell_width,
                         group = self.group))
                 elif matrix[i] == ".":
                     temp_cells.append(Coin(
-                        winsize = self.winsize,
-                        topleft = [x*cell_width,y*cell_width],
-                        width = cell_width,
+                        winsize = winsize,
+                        topleft = [x*self.cell_width,y*self.cell_width],
+                        width = self.cell_width,
                         group = self.group))
                 elif matrix[i] == "●":
                     temp_cells.append(Super_coin(
-                        winsize = self.winsize,
-                        topleft = [x*cell_width,y*cell_width],
-                        width = cell_width,
+                        winsize = winsize,
+                        topleft = [x*self.cell_width,y*self.cell_width],
+                        width = self.cell_width,
                         group = self.group))
                 else:
                     temp_cells.append(Empty_cell(
-                        winsize = self.winsize,
-                        topleft = [x*cell_width,y*cell_width],
-                        width = cell_width,
+                        winsize = winsize,
+                        topleft = [x*self.cell_width,y*self.cell_width],
+                        width = self.cell_width,
                         group = self.group))
                 i+=1
             self.cells.append(temp_cells)
+
+        x,y = self.x_cells//2, self.y_cells//2
+        locs = [[(x-1)*self.cell_width,(y-1)*self.cell_width],
+        [(x+1)*self.cell_width,(y-1)*self.cell_width],
+        [(x-1)*self.cell_width,y*self.cell_width],
+        [(x+1)*self.cell_width,y*self.cell_width]]
+        self.ghosts = []
+        for i in range(self.save_manager["nb_ghosts"]):
+            self.ghosts.append(Ghost(
+                winsize = winsize,
+                topleft = random.choice(locs),
+                color = assets.GHOST_COLORS[i],
+                width = self.cell_width,
+                group = self.group,
+                game_map = self,
+                speed = transition_2bounds(3,5,self.save_manager["nb_ghosts"],'linear',i)
+            ))
+        [(x-1)*self.cell_width,(y-1)*self.cell_width]
+        [(x+1)*self.cell_width,(y-1)*self.cell_width]
+        [(x-1)*self.cell_width,y*self.cell_width]
+        [(x+1)*self.cell_width,y*self.cell_width]
+
         self.link_neighbors()
         self.generate_graph()
         if living:
@@ -118,8 +142,7 @@ class Game_map(pygame.sprite.Sprite):
 
     def calc_image(self):
 
-        cell_width = round(self.cell_width) + round(self.cell_width) % 2
-        self.image = pygame.Surface([self.x_cells*cell_width,self.y_cells*cell_width],pygame.SRCALPHA)
+        self.image = pygame.Surface([self.x_cells*self.cell_width,self.y_cells*self.cell_width],pygame.SRCALPHA)
         self.group.draw(self.image)
 
     
@@ -149,25 +172,24 @@ class Game_map(pygame.sprite.Sprite):
     def update(self,new_winsize,dt,cursor):
         """Actualisation du sprite ayant lieu à chaque changement image"""
 
-        if self.winsize != new_winsize:
-            self.rescale(new_winsize)
-
         self.pacman.update(dt)
         a = self.locate_pos(self.pacman.rect.center)
-        print(a,self.graph.dijkstra([1,1],a))
+        # print(self.get_moves(self.graph.dijkstra([1,1],a)))
         
         colliding_cells = pygame.sprite.spritecollide(self.pacman,self.group,False)
-        if self.pacman in colliding_cells:
-            colliding_cells.remove(self.pacman)
+        
         to_draw = []
         for sprite in colliding_cells:
-            for neighbor in list(sprite.next.values()) + [sprite]:
-                if neighbor is not None:
-                    to_draw.append(neighbor)
+            if type(sprite) not in [Ghost,Pacman]:
+                for neighbor in list(sprite.next.values()) + [sprite]:
+                    if neighbor is not None:
+                        to_draw.append(neighbor)
         for cell in list(set(to_draw)):
             if cell is not None:
                 self.draw_cell(cell)
         self.image.blit(self.pacman.image,self.pacman.rect)
+        for ghost in self.ghosts:
+            self.image.blit(ghost.image,ghost.rect)
 
 
     def draw_cell(self,cell):
@@ -193,77 +215,6 @@ class Game_map(pygame.sprite.Sprite):
                 if x_right < self.x_cells:
                     cell.next["right"] = self.cells[y][x_right]
 
-    def rescale(self,new_winsize):
-        
-        old_winsize = self.winsize[:]
-        self.winsize = new_winsize
-        self.ratio = self.winsize[0] / old_winsize[0]
-        self.pos = [i*self.ratio for i in self.pos]
-        self.cell_width *= self.ratio
-        
-        cell_width = round(self.cell_width) + round(self.cell_width) % 2
-        new_cells = []
-        for y in range(self.y_cells):
-            temp_cells = []
-            for x in range(self.x_cells):
-                cell = self.cells[y][x]
-                if isinstance(cell,Wall):
-                    temp_cells.append(Wall(
-                        winsize = self.winsize,
-                        topleft = [x*cell_width,y*cell_width],
-                        width = cell_width,
-                        group = self.group))
-                elif isinstance(cell,Ghost_door):
-                    temp_cells.append(Ghost_door(
-                        winsize = self.winsize,
-                        topleft = [x*cell_width,y*cell_width],
-                        width = cell_width,
-                        group = self.group))
-                elif isinstance(cell,Empty_cell):
-                    temp_cells.append(Empty_cell(
-                        winsize = self.winsize,
-                        topleft = [x*cell_width,y*cell_width],
-                        width = cell_width,
-                        group = self.group))
-                elif isinstance(cell,Coin):
-                    temp_cells.append(Coin(
-                        winsize = self.winsize,
-                        topleft = [x*cell_width,y*cell_width],
-                        width = cell_width,
-                        group = self.group))
-                elif isinstance(cell,Super_coin):
-                    temp_cells.append(Super_coin(
-                        winsize = self.winsize,
-                        topleft = [x*cell_width,y*cell_width],
-                        width = cell_width,
-                        group = self.group))
-                cell.kill()
-            new_cells.append(temp_cells)
-
-        self.cells = new_cells[:]
-        self.link_neighbors()
-
-        self.pacman.kill()
-        pacman_pos = [i*self.ratio for i in self.pacman.pos]
-        sprites = self.group.sprites()
-        adjacent_rects= []
-        for sprite in sprites:
-            if isinstance(sprite,Empty_cell):
-                matrix = self.save_manager["matrix"].replace("\n","")
-                y,x = self.search_cell(sprite)
-                if matrix[y*self.x_cells + x] in ["□","P"]:
-                    adjacent_rects.append(sprite.rect)
-        pacman_pos = closest_rect(self.pacman.rect,adjacent_rects).topleft
-        self.pacman = Pacman(
-            self.winsize,
-            topleft = pacman_pos,
-            width = cell_width,
-            group = self.group,
-            game_map = self
-        )
-        self.calc_image()
-        self.calc_rect()
-    
 
     def handle_input(self, dir):
 
@@ -311,8 +262,7 @@ class Game_map(pygame.sprite.Sprite):
 
     def locate_pos(self,abs_pos):
 
-        cell_width = round(self.cell_width) + round(self.cell_width) % 2
-        y,x = abs_pos[1]//cell_width,abs_pos[0]//cell_width
+        y,x = abs_pos[1]//self.cell_width,abs_pos[0]//self.cell_width
         if y >= self.y_cells:
             y = self.y_cells-1
         if x >= self.x_cells:
@@ -337,13 +287,23 @@ class Game_map(pygame.sprite.Sprite):
                     elif nb_cells == 2:
                         if (next["top"] and next["left"]) or (next["left"] and next["bottom"]) or (next["top"] and next["right"]) or (next["bottom"] and next["right"]):
                             self.graph.add_node(Node([x,y]))
+        left_portals = []
+        right_portals = []
+        for y in range(self.y_cells):
+            if type(self.cells[y][0]) is Empty_cell:
+                left_node = Node([0,y])
+                right_node = Node([self.x_cells-1,y])
+                left_portals.append(left_node)
+                self.graph.add_node(left_node)
+                right_portals.append(right_node)
+                self.graph.add_node(right_node)
+
         
         for node in self.graph.nodes.values():
             top = self.graph.nearest_node(node.pos,"top")
             bottom = self.graph.nearest_node(node.pos,"bottom")
             left = self.graph.nearest_node(node.pos,"left")
             right = self.graph.nearest_node(node.pos,"right")
-
             if top:
                 self.graph.add_edge(node,top)
                 self.graph.add_edge(top,node)
@@ -356,3 +316,31 @@ class Game_map(pygame.sprite.Sprite):
             if right:
                 self.graph.add_edge(node,right)
                 self.graph.add_edge(right,node)
+
+        for left,right in zip(left_portals,right_portals):
+            left.next["left"] = [right,1]
+            right.next["right"] = [left,1]
+
+
+    def get_moves(self,coords):
+
+        directions = []
+
+        for i in range(len(coords) - 1):
+            x1, y1 = coords[i]
+            x2, y2 = coords[i + 1]
+            if y2 < y1:
+                directions.append("top")
+            elif y2 > y1:
+                directions.append("bottom")
+            elif x2 < x1:
+                if x2 == 0 and x1 == self.x_cells-1:
+                    directions.append("right")
+                else:
+                    directions.append("left")
+            elif x2 > x1:
+                if x1 == 0 and x2 == self.x_cells-1:
+                    directions.append("left")
+                else:
+                    directions.append("right")
+        return directions
