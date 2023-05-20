@@ -6,18 +6,7 @@ from classes.transition import transition_2bounds
 from classes.timer import Timer
 
 
-def closest_rect(rect, rect_list):
 
-    closest_rect = rect_list.pop(0)
-    closest_distance = math.sqrt((rect.centerx - closest_rect.centerx) ** 2 + (rect.centery - closest_rect.centery) ** 2)
-
-    for r in rect_list:
-        distance = math.sqrt((rect.centerx - r.centerx) ** 2 + (rect.centery - r.centery) ** 2)
-        if distance < closest_distance:
-            closest_distance = distance
-            closest_rect = r
-
-    return closest_rect
 
 
 class Game_map(pygame.sprite.Sprite):
@@ -54,6 +43,7 @@ class Game_map(pygame.sprite.Sprite):
         self.cell_width = round(self.cell_width) + round(self.cell_width) % 2
         self.cells = []
         self.pause = True
+        self.finished = False
         
         matrix = self.save_manager["matrix"].replace("\n","")
         i = 0
@@ -105,6 +95,11 @@ class Game_map(pygame.sprite.Sprite):
                         group = self.group))
                 i+=1
             self.cells.append(temp_cells)
+        
+        self.max_nb_coins = self.count_coins()
+        self.nb_coins = self.max_nb_coins
+        self.max_nb_super_coins = self.count_super_coins()
+        self.nb_super_coins = self.max_nb_super_coins
 
         x,y = self.x_cells//2, self.y_cells//2
         locs = [[(x-1)*self.cell_width,(y-1)*self.cell_width],
@@ -138,8 +133,7 @@ class Game_map(pygame.sprite.Sprite):
         self.calc_rect()
 
 
-    def ghost_chase(self,index):    
-        print(index)
+    def ghost_chase(self,index):
         
         ghost = self.ghosts[index]
 
@@ -154,7 +148,7 @@ class Game_map(pygame.sprite.Sprite):
             t_index = assets.GHOST_CHASING_TIME(self.x_cells,self.y_cells,ghost.speed)
             ghost.state_timer = Timer(t_index,ghost.set_state,"wandering")
             ghost.set_state("chasing")
-            self.ghost_timer = Timer(t_index+assets.GHOSTS_CHASE_COOLDOWN, self.ghost_chase,0)
+            self.ghost_timer = Timer(t_index+assets.GHOSTS_CHASE_COOLDOWN(self.save_manager["nb_ghosts"]), self.ghost_chase,0)
 
 
     def liven(self):
@@ -198,18 +192,23 @@ class Game_map(pygame.sprite.Sprite):
     def update(self,new_winsize,dt,cursor):
         """Actualisation du sprite ayant lieu à chaque changement image"""
 
-        print([ghost.state == "chasing" for ghost in self.ghosts])
-        if self.pause:
+
+        if self.pause or self.finished:
             return
 
         if self.ghost_timer:
             self.ghost_timer.pass_time(dt)
 
         self.pacman.update(dt)
+
+
         colliding_cells = pygame.sprite.spritecollide(self.pacman,self.group,False)
         for ghost in self.ghosts:
-            ghost.update(dt)
+            if self.pacman.state != "dying":
+                ghost.update(dt)
             colliding_cells += pygame.sprite.spritecollide(ghost,self.group,False)
+            if ghost.rect.collidepoint(self.pacman.rect.center):
+                self.pacman.set_state("dying")
 
         to_draw = []
         for sprite in colliding_cells:
@@ -217,12 +216,36 @@ class Game_map(pygame.sprite.Sprite):
                 for neighbor in list(sprite.next.values()) + [sprite]:
                     if neighbor is not None:
                         to_draw.append(neighbor)
+                if sprite.rect.collidepoint(self.pacman.rect.center):
+                    if isinstance(sprite,Coin):
+                        self.nb_coins -= 1
+                        self.check_coins()
+                        self.delete_cell(sprite)
+                    elif isinstance(sprite,Super_coin):
+                        self.nb_super_coins -= 1
+                        self.check_coins()
+                        self.delete_cell(sprite)
+                        self.ghost_escape()
+
+
+
+                
         for cell in list(set(to_draw)):
             if cell is not None:
                 self.draw_cell(cell)
         self.image.blit(self.pacman.image,self.pacman.rect)
         for ghost in self.ghosts:
             self.image.blit(ghost.image,ghost.rect)
+
+
+    def ghost_escape(self):
+        
+        time = assets.GHOSTS_ESCAPE_TIME(self.x_cells,self.y_cells) 
+        self.ghost_timer = Timer(time+assets.GHOSTS_CHASE_COOLDOWN(self.save_manager["nb_ghosts"]),self.ghost_chase,0)
+        for ghost in self.ghosts:
+            ghost.set_state("escaping")
+            ghost.state_timer = Timer(time,ghost.set_state,"wandering")
+
 
 
     def draw_cell(self,cell):
@@ -277,6 +300,25 @@ class Game_map(pygame.sprite.Sprite):
                 self.pacman.next_direction = None
 
 
+    def delete_cell(self,sprite):
+
+        sprite.kill()
+        pos = self.locate_pos(sprite.rect.center)
+        self.cells[pos[1]][pos[0]] = Empty_cell(
+            winsize = sprite.winsize,
+            topleft = sprite.rect.topleft,
+            width = sprite.width,
+            group = self.group,
+        )
+        new = self.cells[pos[1]][pos[0]]
+        for side,n in sprite.next.items():
+            if n:
+                n.next[assets.opposite_side(side)] = new
+            new.next[side] = n
+
+        
+
+
     def search_cell(self,cell):
         """
         Recherche naïve d'une cellule dans la matrice de l'objet.
@@ -296,6 +338,30 @@ class Game_map(pygame.sprite.Sprite):
 
         x,y = self.locate_pos(abs_pos)
         return self.cells[y][x]
+    
+
+    def check_coins(self):
+        if self.nb_coins == self.max_nb_coins and self.nb_super_coins == self.max_nb_super_coins:
+            self.finished = True
+
+
+    def count_coins(self):
+
+        res = 0
+        for y in range(self.y_cells):
+            for x in range(self.x_cells):
+                if isinstance(self.cells[y][x],Coin):
+                    res += 1
+        return res
+    
+    def count_super_coins(self):
+
+        res = 0
+        for y in range(self.y_cells):
+            for x in range(self.x_cells):
+                if isinstance(self.cells[y][x],Super_coin):
+                    res += 1
+        return res
 
 
     def locate_pos(self,abs_pos):
@@ -307,6 +373,45 @@ class Game_map(pygame.sprite.Sprite):
             x = self.x_cells-1
         
         return  [int(x),int(y)]
+
+    def farest_cell(self, corner, types:list[type]):
+
+        if corner == "topleft":
+            for sum in range(self.y_cells + self.x_cells - 1):
+                start_y = max(0, sum - self.x_cells + 1)
+                end_y = min(sum, self.y_cells - 1)
+                for y in range(start_y, end_y + 1):
+                    x = sum - y
+                    if type(self.cells[y][x]) in types:
+                        return self.cells[y][x]
+
+        elif corner == "topright":
+            for sum in range(self.y_cells + self.x_cells - 1):
+                start_y = max(0, sum - self.x_cells + 1)
+                end_y = min(sum, self.y_cells - 1)
+                for y in range(start_y, end_y + 1):
+                    x = self.x_cells - 1 - (sum - y)
+                    if type(self.cells[y][x]) in types:
+                        return self.cells[y][x]
+
+        elif corner == "bottomleft":
+            for sum in range(self.y_cells + self.x_cells - 1):
+                start_y = max(0, sum - self.x_cells + 1)
+                end_y = min(sum, self.y_cells - 1)
+                for y in range(start_y, end_y + 1):
+                    x = sum - y
+                    if type(self.cells[y][x]) in types:
+                        return self.cells[self.y_cells - 1 - y][x]
+
+        elif corner == "bottomright":
+            for sum in range(self.y_cells + self.x_cells - 1):
+                start_y = max(0, sum - self.x_cells + 1)
+                end_y = min(sum, self.y_cells - 1)
+                for y in range(start_y, end_y + 1):
+                    x = self.x_cells - 1 - (sum - y)
+                    if type(self.cells[y][x]) in types:
+                        return self.cells[self.y_cells - 1 - y][x]
+
 
 
     def generate_graph(self):

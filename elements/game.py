@@ -63,6 +63,57 @@ fps_display = Title(
     living = False
 )
 
+coin_image = Image(
+    name = ["textures","coin_logo.png"],
+    winsize = assets.DEFAULT_WINSIZE,
+    scale_axis = [18,'x'],
+    loc = [[20,20],"center"],
+    border = [-1,[0,0,0],0,"inset"],
+    layer = 1,
+    parent_groups = [all_group, to_draw_group],
+)
+
+coin_count = Title(
+    winsize = assets.DEFAULT_WINSIZE, 
+    loc = [[35,20],"midleft"], 
+    background_clr = (0,0,0,0),
+    size = [58,40],
+    border=[-1,(0,0,0,0),0,"inset"],
+    text = "888/888",
+    font_clrs = [[240,240,240]],
+    font_size = 21,
+    font_family = "LiberationMono-Regular.ttf",
+    layer = 1,
+    parent_groups = [all_group,to_draw_group],
+    living = True
+)
+
+super_coin_image = Image(
+    name = ["textures","super_coin_logo.png"],
+    winsize = assets.DEFAULT_WINSIZE,
+    scale_axis = [25,'x'],
+    loc = [[20,50],"center"],
+    border = [-1,[0,0,0],0,"inset"],
+    layer = 1,
+    parent_groups = [all_group, to_draw_group],
+)
+
+super_coin_count = Title(
+    winsize = assets.DEFAULT_WINSIZE, 
+    loc = [[35,50],"midleft"], 
+    background_clr = (0,0,0,0),
+    size = [58,40],
+    border=[-1,(0,0,0,0),0,"inset"],
+    text = "888/888",
+    font_clrs = [[240,240,240]],
+    font_size = 21,
+    font_family = "LiberationMono-Regular.ttf",
+    layer = 1,
+    parent_groups = [all_group,to_draw_group],
+    living = True
+)
+
+
 game_map = None
 
 cells:list[Image] = []
@@ -86,8 +137,9 @@ def loop(screen,new_winsize, dt, new_lvl_path, fps_infos):
             winsize = new_winsize,
             loc = [[400,225],"center"],
             lvl_path = new_lvl_path,
-            size = [800,450],
-            parent_groups = [all_group,to_draw_group])
+            size = [600,450],
+            parent_groups = [all_group,to_draw_group],
+            layer = 1)
         show_start_title()
         
 
@@ -140,7 +192,8 @@ def loop(screen,new_winsize, dt, new_lvl_path, fps_infos):
                 if start_title.alpha == 255:
                     hide_start_title()
                 game_map.handle_input("right")
-            
+    
+    update_counts()
     for btn in clickable_group.sprites():
         manage_states(btn)
     all_group.update(new_winsize,dt,cursor)
@@ -164,3 +217,7 @@ def hide_start_title():
     start_title.instant_change_alpha([255,0],[0.2],["in"])
     start_title.instant_translate([[400,225],[400,175]],[0.2],["in"])
     game_map.set_pause(False)
+
+def update_counts():
+    coin_count.set_text(f"{game_map.max_nb_coins-game_map.nb_coins}/{game_map.max_nb_coins}")
+    super_coin_count.set_text(f"{game_map.max_nb_super_coins-game_map.nb_super_coins}/{game_map.max_nb_super_coins}")

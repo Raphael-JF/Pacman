@@ -34,14 +34,17 @@ GME_VALUE_TO_NAMES = {
 
 #Game_map() :
 PACMAN_SPEED = lambda cell_width : 4*cell_width
+PACMAN_MOVING_SPRITES = [["textures","pacman","pacman_0.png"],["textures","pacman","pacman_20.png"],["textures","pacman","pacman_40.png"],["textures","pacman","pacman_60.png"],["textures","pacman","pacman_80.png"],["textures","pacman","pacman_60.png"],["textures","pacman","pacman_40.png"],["textures","pacman","pacman_20.png"]]
+PACMAN_DYING_SPRITES = [["textures","pacman","pacman_0.png"],["textures","pacman","pacman_20.png"],["textures","pacman","pacman_40.png"],["textures","pacman","pacman_60.png"],["textures","pacman","pacman_80.png"],["textures","pacman","pacman_100.png"],["textures","pacman","pacman_120.png"],["textures","pacman","pacman_140.png"],["textures","pacman","pacman_160.png"],["textures","pacman","pacman_180.png"],["textures","pacman","pacman_200.png"],["textures","pacman","pacman_220.png"],["textures","pacman","pacman_240.png"],["textures","pacman","pacman_260.png"],["textures","pacman","pacman_280.png"],["textures","pacman","pacman_300.png"],["textures","pacman","pacman_320.png"],["textures","pacman","pacman_340.png"],["textures","pacman","pacman_360.png"]]
 SPRITES_DELAY = 0.035
 GHOST_COLORS = ["red","blue","pink","orange","green","purple","brown","gray"]
 GHOST_CHASING_TIME = lambda cell_x,cell_y,speed: cell_x*cell_y/speed**2.5
-GHOSTS_CHASE_COOLDOWN = 5
+GHOSTS_CHASE_COOLDOWN = lambda nb_ghosts: 2*nb_ghosts
+GHOSTS_ESCAPE_TIME = lambda cell_x,cell_y : ((cell_x*cell_y)**0.5)/3
 
 # functions
 from datetime import datetime
-import os,tkinter
+import os,tkinter,math
 from tkinter import filedialog
 
 def add_index(list,value,index):
@@ -108,3 +111,28 @@ def opposite_side(side):
         return "bottom"
     elif side == "bottom":
         return "top"
+    
+def closest_rect(rect, rect_list):
+
+    closest_rect = rect_list.pop(0)
+    closest_distance = math.sqrt((rect.centerx - closest_rect.centerx) ** 2 + (rect.centery - closest_rect.centery) ** 2)
+
+    for r in rect_list:
+        distance = math.sqrt((rect.centerx - r.centerx) ** 2 + (rect.centery - r.centery) ** 2)
+        if distance < closest_distance:
+            closest_distance = distance
+            closest_rect = r
+    return closest_rect
+
+
+def farest_rect(rect,rect_list):
+
+    farest_rect = rect_list.pop(0)
+    max_distance = math.sqrt((rect.centerx - farest_rect.centerx) ** 2 + (rect.centery - farest_rect.centery) ** 2)
+
+    for r in rect_list:
+        distance = math.sqrt((rect.centerx - r.centerx) ** 2 + (rect.centery - r.centery) ** 2)
+        if distance > max_distance:
+            max_distance = distance
+            farest_rect = rect
+    return farest_rect

@@ -128,7 +128,8 @@ class Title(Box):
 
 
     def set_text(self,text:str):
-
-        self.texte = text
-        self.calc_image()
+        
+        if self.texte != text:
+            self.texte = text
+            self.calc_image()
 

@@ -138,6 +138,7 @@ class Pacman(Image):
         self.direction = None
         self.next_direction = None
         self.group = group
+        self.state = "idle"
         self.sprite_sheets = []
         self.anim_timer = Timer(assets.SPRITES_DELAY,self.animate)
         self.animate()
@@ -158,19 +159,30 @@ class Pacman(Image):
         
         self.anim_timer = Timer(assets.SPRITES_DELAY,self.animate)
 
-        if self.direction is not None:
+        if self.state == "idle":
+            return
+        elif self.state == "moving":
             if len(self.sprite_sheets) == 0:
-                self.sprite_sheets = [["textures","pacman","pacman_0.png"],["textures","pacman","pacman_20.png"],["textures","pacman","pacman_40.png"],["textures","pacman","pacman_60.png"],["textures","pacman","pacman_80.png"],["textures","pacman","pacman_60.png"],["textures","pacman","pacman_40.png"],["textures","pacman","pacman_20.png"]]
-            self.set_name(self.sprite_sheets.pop(0))
+                self.sprite_sheets = assets.PACMAN_MOVING_SPRITES[:]
+            
+        elif self.state == "dying":
+            if len(self.sprite_sheets) == 0:
+                self.sprite_sheets = assets.PACMAN_DYING_SPRITES[:]
+            elif len(self.sprite_sheets) == 1:
+                self.game_map.finished = True
+
+        self.set_name(self.sprite_sheets.pop(0))
             
         
 
 
     def set_direction(self,new_dir):
 
-        import time
-        self.test = time.perf_counter()
+        if self.state == "dying":
+            return
+        
         if self.direction != new_dir:
+            self.set_state("moving")
             self.direction = new_dir
             if self.direction == "top":
                 self.degrees = 90
@@ -180,7 +192,19 @@ class Pacman(Image):
                 self.degrees = 270
             elif self.direction == "right":
                 self.degrees = 0
+            else:
+                self.set_state("idle")
             self.calc_image()
+
+
+    def set_state(self,state:str):
+    
+        if state != self.state:
+            self.state = state
+            self.sprite_sheets = []
+            if state == "dying":
+                self.direction = None
+                self.next_direction = None
 
 
     def get_next_rect(self,dt):
@@ -285,6 +309,7 @@ class Pacman(Image):
                 self.rect.left = wall.rect.right
             elif self.direction == "right" and self.rect.right >= wall.rect.left:
                 self.rect.right = wall.rect.left
+            self.set_state("idle")
             self.direction = None
             self.next_direction = None
 
@@ -341,6 +366,7 @@ class Ghost(Image):
         self.game_map = game_map
         self.color = color
         self.speed = speed
+        self.speed_multiplier = 1
         self.direction = None
         self.next_moves = []
         self.group = group
@@ -349,6 +375,7 @@ class Ghost(Image):
         self.state_timer:Timer = None
         # self.anim_timer = Timer(assets.SPRITES_DELAY,self.animate)
         # self.animate()
+
 
     def update(self,dt):
 
@@ -360,7 +387,7 @@ class Ghost(Image):
             if len(self.next_moves) == 0:
                 self.next_moves = ["top","bottom"]
             if self.direction is None:
-                self.direction = self.next_moves.pop(0)
+                self.set_direction(self.next_moves.pop(0))
                 
         elif self.state == "wandering":
             if len(self.next_moves) == 0:
@@ -368,17 +395,25 @@ class Ghost(Image):
                 random.shuffle(self.next_moves)
                 self.next_moves.pop(0)
             if self.direction is None:
-                self.direction = self.next_moves.pop(0)
+                self.set_direction(self.next_moves.pop(0))
 
         elif self.state == "chasing":
             if len(self.next_moves) == 0:
                 self.next_moves = self.game_map.get_moves(self.game_map.graph.dijkstra(self.next_fixed_pos(),self.game_map.pacman.next_fixed_pos()))
             if self.direction is None:
                 try:
-                    self.direction = self.next_moves.pop(0)
+                    self.set_direction(self.next_moves.pop(0))
                 except:
-                    self.direction = random.choice(self.available_dir())
-
+                    self.set_direction(random.choice(self.available_dir()))
+        
+        elif self.state == "escaping":
+            if len(self.next_moves) == 0:
+                self.next_moves = self.game_map.get_moves(self.game_map.graph.dijkstra(self.next_fixed_pos(),self.farest_from_pacman()))
+            if self.direction is None:
+                try:
+                    self.set_direction(self.next_moves.pop(0))
+                except:
+                    self.set_direction(random.choice(self.available_dir()))
 
 
         if self.direction is not None:
@@ -387,6 +422,21 @@ class Ghost(Image):
             self.path(old_rect)
             self.check_walls()
 
+    def farest_from_pacman(self):
+
+        pos = self.game_map.locate_pos(self.game_map.pacman.rect.center)
+        if pos[1] <= self.game_map.y_cells//2:
+            if pos[0] <= self.game_map.x_cells//2:
+                res = self.game_map.farest_cell("bottomright",[Empty_cell,Coin,Super_coin]).rect 
+            else:
+                res = self.game_map.farest_cell("bottomleft",[Empty_cell,Coin,Super_coin]).rect 
+        else:
+            if pos[0] <= self.game_map.x_cells//2:
+                res = self.game_map.farest_cell("topright",[Empty_cell,Coin,Super_coin]).rect 
+            else:
+                res = self.game_map.farest_cell("topleft",[Empty_cell,Coin,Super_coin]).rect 
+        return self.game_map.locate_pos(res.center)
+
 
     def get_next_rect(self,dt):
 
@@ -394,22 +444,22 @@ class Ghost(Image):
         if self.direction is not None:
             match self.direction:
                 case "top":
-                    offset[1] -= self.speed*self.width*dt
+                    offset[1] -= self.speed*self.width*dt*self.speed_multiplier
                 case "bottom":
-                    offset[1] += self.speed*self.width*dt
+                    offset[1] += self.speed*self.width*dt*self.speed_multiplier
                 case "left":
-                    offset[0] -= self.speed*self.width*dt
+                    offset[0] -= self.speed*self.width*dt*self.speed_multiplier
                 case "right":
-                    offset[0] += self.speed*self.width*dt
+                    offset[0] += self.speed*self.width*dt*self.speed_multiplier
         return self.rect.move(offset)
-
+        
 
     def available_dir(self):
         
-        cell = self.game_map.locate_cell(self.rect.center)
+        cell = self.game_map.cells[self.next_fixed_pos()[1]][self.next_fixed_pos()[0]]
         res = []
         for dir,c in cell.next.items():
-            if type(c) in [Empty_cell,Coin,Super_coin,Ghost_door]:
+            if type(c) in [Empty_cell,Coin,Super_coin]:
                 res.append(dir)
         return res
 
@@ -428,18 +478,52 @@ class Ghost(Image):
         else:
             return a(self.rect.center)
         
-    
+
+    def set_direction(self,dir):
+
+        if self.direction == dir:
+            return
+        elif dir == "top":
+            pass
+        elif dir == "bottom":
+            pass
+        elif dir == "left":
+            pass
+        elif dir == "right":
+            pass
+        elif dir == None:
+            self.direction = dir
+            return
+        new_name = self.name[:]
+        new_name[-2] = dir
+        self.set_name(new_name)
+        self.direction = dir
+
+
     def set_state(self,state):
         
         if state == self.state:
             return
         
         elif state == "chasing":
+            self.speed_multiplier = 1
             self.next_moves = []
 
         elif state == "wandering":
+            self.speed_multiplier = 1
             self.next_moves = []
+
+        elif state == "escaping":
+            self.speed_multiplier = 0.75
+            self.next_moves = []
+            self.set_direction(assets.opposite_side(self.direction))
+        
+        elif state == "imprisoned":
+            self.speed_multiplier = 1
+            self.next_moves = []
+
         self.state = state
+        
 
 
     def path(self,old_rect:pygame.Rect):
@@ -453,7 +537,7 @@ class Ghost(Image):
                 fixed_y = old_top - old_top%cell_width
                 if old_top  > fixed_y >=  new_top and type(self.game_map.locate_cell(self.rect.center).next[next_direction]) in [Coin,Super_coin,Empty_cell,Ghost_door]:
                     self.rect.top = fixed_y
-                    self.direction = self.next_moves.pop(0)
+                    self.set_direction(self.next_moves.pop(0))
                     if next_direction == "left":
                         self.rect.centerx -= old_top - new_top
                     elif next_direction == "right":
@@ -465,7 +549,7 @@ class Ghost(Image):
                 fixed_y = old_bottom+cell_width-old_bottom%cell_width
                 if old_bottom  < fixed_y <=  new_bottom and type(self.game_map.locate_cell(self.rect.center).next[next_direction]) in [Coin,Super_coin,Empty_cell,Ghost_door]:
                     self.rect.bottom = fixed_y
-                    self.direction = self.next_moves.pop(0)
+                    self.set_direction(self.next_moves.pop(0))
                     if next_direction == "left":
                         self.rect.centerx -= new_bottom - old_bottom
                     elif next_direction == "right":
@@ -477,7 +561,7 @@ class Ghost(Image):
                 fixed_x = old_left - old_left%cell_width
                 if old_left  > fixed_x >=  new_left and type(self.game_map.locate_cell(self.rect.center).next[next_direction]) in [Coin,Super_coin,Empty_cell,Ghost_door]:
                     self.rect.left = fixed_x
-                    self.direction = self.next_moves.pop(0)
+                    self.set_direction(self.next_moves.pop(0))
                     if next_direction == "top":
                         self.rect.centery -= old_left - new_left
                     elif next_direction == "bottom":
@@ -489,7 +573,7 @@ class Ghost(Image):
                 fixed_x = old_right+cell_width-old_right%cell_width
                 if old_right  < fixed_x <=  new_right and type(self.game_map.locate_cell(self.rect.center).next[next_direction]) in [Coin,Super_coin,Empty_cell,Ghost_door]:
                     self.rect.right = fixed_x
-                    self.direction = self.next_moves.pop(0)
+                    self.set_direction(self.next_moves.pop(0))
                     if next_direction == "top":
                         self.rect.centery -= new_right - old_right
                     elif next_direction == "bottom":
@@ -509,11 +593,11 @@ class Ghost(Image):
                 self.rect.left = wall.rect.right
             elif self.direction == "right" and self.rect.right >= wall.rect.left:
                 self.rect.right = wall.rect.left
-            self.direction = None
+            self.set_direction(None)
         ghost_door = self.game_map.ghost_door.rect
         if self.rect.colliderect(ghost_door) and self.direction == "bottom" and self.rect.bottom >= ghost_door.top:
             self.rect.bottom  = ghost_door.top
-            self.direction = None
+            self.set_direction(None)
 
         cell_width = round(self.width) + round(self.width) % 2
         if self.rect.left > self.game_map.x_cells * cell_width:
