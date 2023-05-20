@@ -210,6 +210,8 @@ class Pacman(Image):
             return a([self.rect.left+1,self.rect.centery])
         if self.direction == "right":
             return a([self.rect.right-1,self.rect.centery])
+        else:
+            return a(self.rect.center)
         
 
     def path(self,old_pacman_rect):
@@ -220,7 +222,7 @@ class Pacman(Image):
                 old_top = old_pacman_rect.top
                 new_top = self.rect.top
                 fixed_y = old_top - old_top%cell_width
-                if old_top  >= fixed_y >=  new_top and type(self.game_map.locate_cell(self.rect.center).next[self.next_direction]) in [Coin,Super_coin,Empty_cell]:
+                if old_top  > fixed_y >=  new_top and type(self.game_map.locate_cell(self.rect.center).next[self.next_direction]) in [Coin,Super_coin,Empty_cell]:
                     self.rect.top = fixed_y
                     if self.next_direction == "left":
                         self.rect.centerx -= old_top - new_top
@@ -233,7 +235,7 @@ class Pacman(Image):
                 old_bottom = old_pacman_rect.bottom
                 new_bottom = self.rect.bottom
                 fixed_y = old_bottom+cell_width-old_bottom%cell_width
-                if old_bottom  <= fixed_y <=  new_bottom and type(self.game_map.locate_cell(self.rect.center).next[self.next_direction]) in [Coin,Super_coin,Empty_cell]:
+                if old_bottom  < fixed_y <=  new_bottom and type(self.game_map.locate_cell(self.rect.center).next[self.next_direction]) in [Coin,Super_coin,Empty_cell]:
                     self.rect.bottom = fixed_y
                     if self.next_direction == "left":
                         self.rect.centerx -= new_bottom - old_bottom
@@ -246,7 +248,7 @@ class Pacman(Image):
                 old_left = old_pacman_rect.left
                 new_left = self.rect.left
                 fixed_x = old_left - old_left%cell_width
-                if old_left  >= fixed_x >=  new_left and type(self.game_map.locate_cell(self.rect.center).next[self.next_direction]) in [Coin,Super_coin,Empty_cell]:
+                if old_left  > fixed_x >=  new_left and type(self.game_map.locate_cell(self.rect.center).next[self.next_direction]) in [Coin,Super_coin,Empty_cell]:
                     self.rect.left = fixed_x
                     if self.next_direction == "top":
                         self.rect.centery -= old_left - new_left
@@ -259,7 +261,7 @@ class Pacman(Image):
                 old_right = old_pacman_rect.right
                 new_right = self.rect.right
                 fixed_x = old_right+cell_width-old_right%cell_width
-                if old_right  <= fixed_x <=  new_right and type(self.game_map.locate_cell(self.rect.center).next[self.next_direction]) in [Coin,Super_coin,Empty_cell]:
+                if old_right  < fixed_x <=  new_right and type(self.game_map.locate_cell(self.rect.center).next[self.next_direction]) in [Coin,Super_coin,Empty_cell]:
                     self.rect.right = fixed_x
                     if self.next_direction == "top":
                         self.rect.centery -= new_right - old_right
@@ -328,6 +330,7 @@ class Ghost(Image):
 
         super().__init__(
             name = ["textures","ghost",color,"right","0.png"],
+            # name = ['textures','r.png'],
             winsize = winsize,
             scale_axis = [width,"x"],
             loc = [topleft,"topleft"],
@@ -343,22 +346,40 @@ class Ghost(Image):
         self.group = group
         self.sprite_sheets = []
         self.state = "imprisoned"
+        self.state_timer:Timer = None
         # self.anim_timer = Timer(assets.SPRITES_DELAY,self.animate)
         # self.animate()
 
     def update(self,dt):
 
         # self.anim_timer.pass_time(dt)
-
+        if self.state_timer:
+            self.state_timer.pass_time(dt)
+        
         if self.state == "imprisoned":
             if len(self.next_moves) == 0:
-                self.next_moves = ["left","right"]
-        elif self.state == "wandering":
+                self.next_moves = ["top","bottom"]
             if self.direction is None:
-                self.direction = random.choice(self.available_dir())
+                self.direction = self.next_moves.pop(0)
+                
+        elif self.state == "wandering":
+            if len(self.next_moves) == 0:
+                self.next_moves = ["left","right","bottom","top"]
+                random.shuffle(self.next_moves)
+                self.next_moves.pop(0)
+            if self.direction is None:
+                self.direction = self.next_moves.pop(0)
+
         elif self.state == "chasing":
             if len(self.next_moves) == 0:
-                self.next_moves = self.game_map.graph.dijkstra(self.next_fixed_pos(),self.game_map.pacman.next_fixed_pos())
+                self.next_moves = self.game_map.get_moves(self.game_map.graph.dijkstra(self.next_fixed_pos(),self.game_map.pacman.next_fixed_pos()))
+            if self.direction is None:
+                try:
+                    self.direction = self.next_moves.pop(0)
+                except:
+                    self.direction = random.choice(self.available_dir())
+
+
 
         if self.direction is not None:
             old_rect = self.rect
@@ -398,72 +419,86 @@ class Ghost(Image):
         a = self.game_map.locate_pos
         if self.direction == "top":
             return a([self.rect.centerx,self.rect.top+1])
-        if self.direction == "bottom":
+        elif self.direction == "bottom":
             return a([self.rect.centerx,self.rect.bottom-1])
-        if self.direction == "left":
+        elif self.direction == "left":
             return a([self.rect.left+1,self.rect.centery])
-        if self.direction == "right":
+        elif self.direction == "right":
             return a([self.rect.right-1,self.rect.centery])
+        else:
+            return a(self.rect.center)
+        
+    
+    def set_state(self,state):
+        
+        if state == self.state:
+            return
+        
+        elif state == "chasing":
+            self.next_moves = []
+
+        elif state == "wandering":
+            self.next_moves = []
+        self.state = state
 
 
     def path(self,old_rect:pygame.Rect):
 
         if len(self.next_moves) != 0:
-            next_direction = self.next_moves.pop(0)
+            next_direction = self.next_moves[0]
             cell_width = round(self.width) + round(self.width) % 2
             if self.direction == "top":
                 old_top = old_rect.top
                 new_top = self.rect.top
                 fixed_y = old_top - old_top%cell_width
-                if old_top  >= fixed_y >=  new_top and type(self.game_map.locate_cell(self.rect.center).next[next_direction]) in [Coin,Super_coin,Empty_cell]:
+                if old_top  > fixed_y >=  new_top and type(self.game_map.locate_cell(self.rect.center).next[next_direction]) in [Coin,Super_coin,Empty_cell,Ghost_door]:
                     self.rect.top = fixed_y
+                    self.direction = self.next_moves.pop(0)
                     if next_direction == "left":
                         self.rect.centerx -= old_top - new_top
-                    else:
+                    elif next_direction == "right":
                         self.rect.centerx += old_top - new_top
-                    self.direction = next_direction
 
             elif self.direction == "bottom":
                 old_bottom = old_rect.bottom
                 new_bottom = self.rect.bottom
                 fixed_y = old_bottom+cell_width-old_bottom%cell_width
-                if old_bottom  <= fixed_y <=  new_bottom and type(self.game_map.locate_cell(self.rect.center).next[next_direction]) in [Coin,Super_coin,Empty_cell]:
+                if old_bottom  < fixed_y <=  new_bottom and type(self.game_map.locate_cell(self.rect.center).next[next_direction]) in [Coin,Super_coin,Empty_cell,Ghost_door]:
                     self.rect.bottom = fixed_y
+                    self.direction = self.next_moves.pop(0)
                     if next_direction == "left":
                         self.rect.centerx -= new_bottom - old_bottom
-                    else:
+                    elif next_direction == "right":
                         self.rect.centerx += new_bottom - old_bottom
-                    self.direction = next_direction
 
             elif self.direction == "left":
                 old_left = old_rect.left
                 new_left = self.rect.left
                 fixed_x = old_left - old_left%cell_width
-                if old_left  >= fixed_x >=  new_left and type(self.game_map.locate_cell(self.rect.center).next[next_direction]) in [Coin,Super_coin,Empty_cell]:
+                if old_left  > fixed_x >=  new_left and type(self.game_map.locate_cell(self.rect.center).next[next_direction]) in [Coin,Super_coin,Empty_cell,Ghost_door]:
                     self.rect.left = fixed_x
+                    self.direction = self.next_moves.pop(0)
                     if next_direction == "top":
                         self.rect.centery -= old_left - new_left
-                    else:
+                    elif next_direction == "bottom":
                         self.rect.centery += old_left - new_left
-                    self.direction = next_direction
 
             elif self.direction == "right":
                 old_right = old_rect.right
                 new_right = self.rect.right
                 fixed_x = old_right+cell_width-old_right%cell_width
-                if old_right  <= fixed_x <=  new_right and type(self.game_map.locate_cell(self.rect.center).next[next_direction]) in [Coin,Super_coin,Empty_cell]:
+                if old_right  < fixed_x <=  new_right and type(self.game_map.locate_cell(self.rect.center).next[next_direction]) in [Coin,Super_coin,Empty_cell,Ghost_door]:
                     self.rect.right = fixed_x
+                    self.direction = self.next_moves.pop(0)
                     if next_direction == "top":
                         self.rect.centery -= new_right - old_right
-                    else:
+                    elif next_direction == "bottom":
                         self.rect.centery += new_right - old_right
-                    self.direction = next_direction
-
 
     def check_walls(self):
 
         colliding = pygame.sprite.spritecollide(self,self.group,False,lambda a,b :a.rect.colliderect(b.rect))
-        walls = [sprite for sprite in colliding if isinstance(sprite, Wall) or isinstance(sprite,Ghost_door)]
+        walls = [sprite for sprite in colliding if isinstance(sprite, Wall)]
         if walls:
             wall = walls[0]
             if self.direction == "top" and self.rect.top <= wall.rect.bottom:
@@ -474,10 +509,11 @@ class Ghost(Image):
                 self.rect.left = wall.rect.right
             elif self.direction == "right" and self.rect.right >= wall.rect.left:
                 self.rect.right = wall.rect.left
-            if len(self.next_moves) != 0:
-                self.direction = self.next_moves.pop(0)
-            else:
-                self.direction = None
+            self.direction = None
+        ghost_door = self.game_map.ghost_door.rect
+        if self.rect.colliderect(ghost_door) and self.direction == "bottom" and self.rect.bottom >= ghost_door.top:
+            self.rect.bottom  = ghost_door.top
+            self.direction = None
 
         cell_width = round(self.width) + round(self.width) % 2
         if self.rect.left > self.game_map.x_cells * cell_width:

@@ -14,11 +14,38 @@ fps_display_update = Timer(0)
 
 background = Box(
     winsize = assets.DEFAULT_WINSIZE,
-    size = [802,452],
+    size = [800,450],
     loc = [[0,0],"topleft"],
     background_clr=(17, 19, 166),
     border = [-1,(0,0,0),0,"inset"],
     parent_groups = [all_group, to_draw_group],
+)
+
+dark_background = Box(
+    winsize = assets.DEFAULT_WINSIZE,
+    size = [800,450],
+    loc = [[0,0],"topleft"],
+    background_clr = [0,0,0],
+    border = [-1,(0,0,0),0,"inset"],
+    alpha = 0,
+    parent_groups = [all_group, to_draw_group],
+    living = False,
+    layer = 10
+)
+
+start_title = Title(
+    winsize = assets.DEFAULT_WINSIZE, 
+    loc = [[400,225],"center"], 
+    background_clr = [0,0,0,0],
+    size = [400 ,60],
+    border=[-1,(0,0,0,0),0,"inset"],
+    text = "Commandez pour jouer",
+    font_clrs = [[240,240,240]],
+    font_size = 50,
+    font_family = "RopaSans-Regular.ttf",
+    parent_groups = [all_group,to_draw_group],
+    living = False,
+    layer = 11
 )
 
 fps_display = Title(
@@ -55,15 +82,14 @@ def loop(screen,new_winsize, dt, new_lvl_path, fps_infos):
         fps_display_update.__init__(1)
 
     if game_map is None:
-
         game_map = Game_map(
             winsize = new_winsize,
             loc = [[400,225],"center"],
             lvl_path = new_lvl_path,
             size = [800,450],
-            parent_groups = [all_group,to_draw_group]
-
-        )
+            parent_groups = [all_group,to_draw_group])
+        show_start_title()
+        
 
     cursor = pygame.mouse.get_pos()
 
@@ -99,15 +125,22 @@ def loop(screen,new_winsize, dt, new_lvl_path, fps_infos):
             if event.key == pygame.K_ESCAPE:
                 return 0
             elif event.key in [pygame.K_UP,pygame.K_z]:
+                if start_title.alpha == 255:
+                    hide_start_title()
                 game_map.handle_input("top")
             elif event.key in [pygame.K_DOWN,pygame.K_s]:
+                if start_title.alpha == 255:
+                    hide_start_title()
                 game_map.handle_input("bottom")
             elif event.key in [pygame.K_LEFT,pygame.K_q]:
+                if start_title.alpha == 255:
+                    hide_start_title()
                 game_map.handle_input("left")
             elif event.key in [pygame.K_RIGHT,pygame.K_d]:
+                if start_title.alpha == 255:
+                    hide_start_title()
                 game_map.handle_input("right")
             
-    
     for btn in clickable_group.sprites():
         manage_states(btn)
     all_group.update(new_winsize,dt,cursor)
@@ -121,5 +154,13 @@ def button_handling(clickable:Button):
     pass
 
 
-    
-    
+def show_start_title():
+    dark_background.instant_change_alpha([0,85],[0.2],["out"])
+    start_title.instant_change_alpha([0,255],[0.2],["out"])
+    start_title.instant_translate([[400,175],[400,225]],[0.2],["out"])
+
+def hide_start_title():
+    dark_background.instant_change_alpha([85,0],[0.2],["in"])
+    start_title.instant_change_alpha([255,0],[0.2],["in"])
+    start_title.instant_translate([[400,225],[400,175]],[0.2],["in"])
+    game_map.set_pause(False)

@@ -3,6 +3,7 @@ from classes.json_handler import JSON_handler
 from classes.blocks import *
 from classes.graph import Graph,Node
 from classes.transition import transition_2bounds
+from classes.timer import Timer
 
 
 def closest_rect(rect, rect_list):
@@ -44,15 +45,17 @@ class Game_map(pygame.sprite.Sprite):
         self.parent_groups = parent_groups
         self.save_manager = JSON_handler()
         self.save_manager.read(lvl_path)
-        matrix = self.save_manager["matrix"]
-
         self.group = pygame.sprite.LayeredUpdates()
-        self.x_cells = len(matrix[0:matrix.find("\n")])
-        self.y_cells = matrix.count("\n")
-        matrix = matrix.replace("\n","")
+        self.ghost_timer = None
+        
+        self.x_cells = len(self.save_manager["matrix"][0:self.save_manager["matrix"].find("\n")])
+        self.y_cells = self.save_manager["matrix"].count("\n")
         self.cell_width = (min(size[0] / self.x_cells, size[1] / self.y_cells))*ratio
         self.cell_width = round(self.cell_width) + round(self.cell_width) % 2
         self.cells = []
+        self.pause = True
+        
+        matrix = self.save_manager["matrix"].replace("\n","")
         i = 0
         for y in range(self.y_cells):
             temp_cells = []
@@ -69,6 +72,7 @@ class Game_map(pygame.sprite.Sprite):
                         topleft = [x*self.cell_width,y*self.cell_width],
                         width = self.cell_width,
                         group = self.group))
+                    self.ghost_door = temp_cells[-1]
                 elif matrix[i] == "P":
                     self.pacman = Pacman(
                         winsize = winsize,
@@ -116,7 +120,7 @@ class Game_map(pygame.sprite.Sprite):
                 width = self.cell_width,
                 group = self.group,
                 game_map = self,
-                speed = transition_2bounds(3,5,self.save_manager["nb_ghosts"],'linear',i)
+                speed = transition_2bounds(3.5,4.25,self.save_manager["nb_ghosts"],'linear',i)
             ))
         [(x-1)*self.cell_width,(y-1)*self.cell_width]
         [(x+1)*self.cell_width,(y-1)*self.cell_width]
@@ -127,9 +131,31 @@ class Game_map(pygame.sprite.Sprite):
         self.generate_graph()
         if living:
             self.liven()
+        
+        self.ghost_chase(0)
 
         self.calc_image()
         self.calc_rect()
+
+
+    def ghost_chase(self,index):    
+        print(index)
+        
+        ghost = self.ghosts[index]
+
+        if index < self.save_manager["nb_ghosts"]-1:
+            t_index = assets.GHOST_CHASING_TIME(self.x_cells,self.y_cells,ghost.speed)
+            dt =  t_index - assets.GHOST_CHASING_TIME(self.x_cells,self.y_cells,self.ghosts[index+1].speed)
+            ghost.state_timer = Timer(t_index,ghost.set_state,"wandering")
+            ghost.set_state("chasing")
+            self.ghost_timer = Timer(dt,self.ghost_chase,index+1)
+
+        elif index == self.save_manager["nb_ghosts"]-1:
+            t_index = assets.GHOST_CHASING_TIME(self.x_cells,self.y_cells,ghost.speed)
+            ghost.state_timer = Timer(t_index,ghost.set_state,"wandering")
+            ghost.set_state("chasing")
+            self.ghost_timer = Timer(t_index+assets.GHOSTS_CHASE_COOLDOWN, self.ghost_chase,0)
+
 
     def liven(self):
         """
@@ -172,12 +198,19 @@ class Game_map(pygame.sprite.Sprite):
     def update(self,new_winsize,dt,cursor):
         """Actualisation du sprite ayant lieu à chaque changement image"""
 
+        print([ghost.state == "chasing" for ghost in self.ghosts])
+        if self.pause:
+            return
+
+        if self.ghost_timer:
+            self.ghost_timer.pass_time(dt)
+
         self.pacman.update(dt)
-        a = self.locate_pos(self.pacman.rect.center)
-        # print(self.get_moves(self.graph.dijkstra([1,1],a)))
-        
         colliding_cells = pygame.sprite.spritecollide(self.pacman,self.group,False)
-        
+        for ghost in self.ghosts:
+            ghost.update(dt)
+            colliding_cells += pygame.sprite.spritecollide(ghost,self.group,False)
+
         to_draw = []
         for sprite in colliding_cells:
             if type(sprite) not in [Ghost,Pacman]:
@@ -252,7 +285,12 @@ class Game_map(pygame.sprite.Sprite):
             for x in range(self.x_cells):
                 if cell is self.cells[y][x]:
                     return [y,x]
-                
+    
+    
+    def set_pause(self,state:bool):
+
+        self.pause = state
+
 
     def locate_cell(self,abs_pos):
 
