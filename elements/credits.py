@@ -59,7 +59,7 @@ annuler = Button(
     background_clr = (250,250,250),
     size = [235,40],
     border=[2,(25,25,25),2,"inset"],
-    text = "Annuler",
+    text = "Retour",
     font_clrs=[(25,25,25)],
     font_size=30,
     font_family="RopaSans-Regular.ttf",
@@ -114,6 +114,10 @@ def loop(screen,new_winsize, dt, fps_infos):
                     btn.set_clicking(False)
                 return res
     
+        elif event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_ESCAPE:
+                return 0
+
     for btn in clickable_group.sprites():
         manage_states(btn)
     all_group.update(new_winsize,dt,cursor)

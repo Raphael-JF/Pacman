@@ -8,6 +8,8 @@ from classes.box import Box
 from classes.button import Button
 from classes.title import Title
 from classes.timer import Timer
+from classes.json_handler import JSON_handler
+from classes.image import Image
 
 all_group = pygame.sprite.Group()
 to_draw_group = pygame.sprite.LayeredUpdates()
@@ -58,7 +60,7 @@ annuler = Button(
     background_clr = (250,250,250),
     size = [235,40],
     border=[2,(25,25,25),2,"inset"],
-    text = "Annuler",
+    text = "Retour",
     font_clrs=[(25,25,25)],
     font_size=30,
     font_family="RopaSans-Regular.ttf",
@@ -94,6 +96,17 @@ lvl1 = Button(
     parent_groups = [all_group,to_draw_group,clickable_group]
 )
 
+lock1 = Image(
+    name = ["textures","padlock.png"],
+    winsize = assets.DEFAULT_WINSIZE,
+    scale_axis = [70,'x'],
+    loc = [[140,150],"center"],
+    border = [-1,[0,0,0],0,"inset"],
+    layer = 2,
+    parent_groups = [all_group, to_draw_group],
+    living = False
+)
+
 lvl2 = Button(
     winsize=assets.DEFAULT_WINSIZE,
     loc = [(270,150),"center"],
@@ -106,6 +119,17 @@ lvl2 = Button(
     font_family="RopaSans-Regular.ttf",
     layer = 1,
     parent_groups = [all_group,to_draw_group,clickable_group]
+)
+
+lock2 = Image(
+    name = ["textures","padlock.png"],
+    winsize = assets.DEFAULT_WINSIZE,
+    scale_axis = [70,'x'],
+    loc = [[270,150],"center"],
+    border = [-1,[0,0,0],0,"inset"],
+    layer = 2,
+    parent_groups = [all_group, to_draw_group],
+    living = False
 )
 
 lvl3 = Button(
@@ -122,6 +146,17 @@ lvl3 = Button(
     parent_groups = [all_group,to_draw_group,clickable_group]
 )
 
+lock3 = Image(
+    name = ["textures","padlock.png"],
+    winsize = assets.DEFAULT_WINSIZE,
+    scale_axis = [70,'x'],
+    loc = [(400,150),"center"],
+    border = [-1,[0,0,0],0,"inset"],
+    layer = 2,
+    parent_groups = [all_group, to_draw_group],
+    living = False
+)
+
 lvl4 = Button(
     winsize=assets.DEFAULT_WINSIZE,
     loc = [(530,150),"center"],
@@ -134,6 +169,17 @@ lvl4 = Button(
     font_family="RopaSans-Regular.ttf",
     layer = 1,
     parent_groups = [all_group,to_draw_group,clickable_group]
+)
+
+lock4 = Image(
+    name = ["textures","padlock.png"],
+    winsize = assets.DEFAULT_WINSIZE,
+    scale_axis = [70,'x'],
+    loc = [(530,150),"center"],
+    border = [-1,[0,0,0],0,"inset"],
+    layer = 2,
+    parent_groups = [all_group, to_draw_group],
+    living = False
 )
 
 lvl5 = Button(
@@ -150,6 +196,17 @@ lvl5 = Button(
     parent_groups = [all_group,to_draw_group,clickable_group]
 )
 
+lock5 = Image(
+    name = ["textures","padlock.png"],
+    winsize = assets.DEFAULT_WINSIZE,
+    scale_axis = [70,'x'],
+    loc = [(660,150),"center"],
+    border = [-1,[0,0,0],0,"inset"],
+    layer = 2,
+    parent_groups = [all_group, to_draw_group],
+    living = False
+)
+
 lvl6 = Button(
     winsize=assets.DEFAULT_WINSIZE,
     loc = [(140,300),"center"],
@@ -162,6 +219,17 @@ lvl6 = Button(
     font_family="RopaSans-Regular.ttf",
     layer = 1,
     parent_groups = [all_group,to_draw_group,clickable_group]
+)
+
+lock6 = Image(
+    name = ["textures","padlock.png"],
+    winsize = assets.DEFAULT_WINSIZE,
+    scale_axis = [70,'x'],
+    loc = [(140,300),"center"],
+    border = [-1,[0,0,0],0,"inset"],
+    layer = 2,
+    parent_groups = [all_group, to_draw_group],
+    living = False
 )
 
 lvl7 = Button(
@@ -178,6 +246,17 @@ lvl7 = Button(
     parent_groups = [all_group,to_draw_group,clickable_group]
 )
 
+lock7 = Image(
+    name = ["textures","padlock.png"],
+    winsize = assets.DEFAULT_WINSIZE,
+    scale_axis = [70,'x'],
+    loc = [(270,300),"center"],
+    border = [-1,[0,0,0],0,"inset"],
+    layer = 2,
+    parent_groups = [all_group, to_draw_group],
+    living = False
+)
+
 lvl8 = Button(
     winsize=assets.DEFAULT_WINSIZE,
     loc = [(400,300),"center"],
@@ -190,6 +269,17 @@ lvl8 = Button(
     font_family="RopaSans-Regular.ttf",
     layer = 1,
     parent_groups = [all_group,to_draw_group,clickable_group]
+)
+
+lock8 = Image(
+    name = ["textures","padlock.png"],
+    winsize = assets.DEFAULT_WINSIZE,
+    scale_axis = [70,'x'],
+    loc = [(400,300),"center"],
+    border = [-1,[0,0,0],0,"inset"],
+    layer = 2,
+    parent_groups = [all_group, to_draw_group],
+    living = False
 )
 
 lvl9 = Button(
@@ -206,6 +296,17 @@ lvl9 = Button(
     parent_groups = [all_group,to_draw_group,clickable_group]
 )
 
+lock9 = Image(
+    name = ["textures","padlock.png"],
+    winsize = assets.DEFAULT_WINSIZE,
+    scale_axis = [70,'x'],
+    loc = [(530,300),"center"],
+    border = [-1,[0,0,0],0,"inset"],
+    layer = 2,
+    parent_groups = [all_group, to_draw_group],
+    living = False
+)
+
 lvl10 = Button(
     winsize=assets.DEFAULT_WINSIZE,
     loc = [(660,300),"center"],
@@ -219,7 +320,40 @@ lvl10 = Button(
     layer = 1,
     parent_groups = [all_group,to_draw_group,clickable_group]
 )
+
+lock10 = Image(
+    name = ["textures","padlock.png"],
+    winsize = assets.DEFAULT_WINSIZE,
+    scale_axis = [70,'x'],
+    loc = [(660,300),"center"],
+    border = [-1,[0,0,0],0,"inset"],
+    layer = 2,
+    parent_groups = [all_group, to_draw_group],
+    living = False
+)
+
+levels = [lvl1,lvl2,lvl3,lvl4,lvl5,lvl6,lvl7,lvl8,lvl9,lvl10]
+locks = [lock1,lock2,lock3,lock4,lock5,lock6,lock7,lock8,lock9,lock10]
 basic_buttons = [annuler,reset,lvl1,lvl2,lvl3,lvl4,lvl5,lvl6,lvl7,lvl8,lvl9,lvl10]
+
+save_manager = JSON_handler()
+data = assets.get_progress()
+if data:
+    save_manager.read(data)
+else:
+    assets.reset_progress(save_manager)
+for key,value in save_manager.data.items():
+    index = int(key[3:]) - 1 
+    if not value:
+        locks[index].liven()
+        basic_buttons.remove(levels[index])
+
+
+
+
+
+
+
 
 
 
@@ -264,6 +398,10 @@ def loop(screen,new_winsize, dt,fps_infos):
                 for btn in clickable_group.sprites():
                     btn.set_clicking(False)
                 return res
+            
+        elif event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_ESCAPE:
+                return 0
     
     for btn in clickable_group.sprites():
         manage_states(btn)
@@ -299,8 +437,15 @@ def manage_states(button:Button):
 
 def button_handling(button:Button):
 
+    if button not in basic_buttons:
+        return
+
     if button is annuler:
         return 0
+    
+    elif button is reset:
+        assets.reset_progress(save_manager)
+        return 1
     
     elif button is lvl1:
         return "1"

@@ -46,7 +46,6 @@ GHOST_BLINK_DELAY = 0.35
 GHOST_ESC_BLINK_TIME = 3 # temps de clignotement des fantômes en mode "escape"
 
 # functions
-from datetime import datetime
 import os,tkinter,math
 from tkinter import filedialog
 
@@ -66,11 +65,6 @@ def add_index(list,value,index):
     raise ValueError("not found")
 
 
-def get_date():
-    now = datetime.now()
-    return now.strftime("%Y_%m_%d_%H-%M-%S")
-
-
 def get_save_files():
     json_files = []
     for root, _, files in os.walk(os.path.join(os.getcwd(),'backup_files','map_editor')):
@@ -78,6 +72,32 @@ def get_save_files():
             if file.endswith('.json'):
                 json_files.append(os.path.join(root, file))
     return json_files
+
+
+def get_progress():
+    res = None
+    for root, dirs, files in os.walk(os.path.join(os.getcwd(),'backup_files')):
+        if "map_editor" in dirs:
+            dirs.remove("map_editor")
+        for file in files:
+            if file == "progress.json":
+                res = os.path.join(root, file)
+    return res
+
+def reset_progress(save_manager):
+    save_manager.data = {
+        "lvl1" : True,
+        "lvl2" : False,
+        "lvl3" : False,
+        "lvl4" : False,
+        "lvl5" : False,
+        "lvl6" : False,
+        "lvl7" : False,
+        "lvl8" : False,
+        "lvl9" : False,
+        "lvl10" : False
+    }
+    save_manager.save(["progress.json"])
 
 def open_file_dialog():
     root = tkinter.Tk()

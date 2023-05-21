@@ -170,6 +170,7 @@ class Pacman(Image):
                 self.sprite_sheets = assets.PACMAN_DYING_SPRITES[:]
             elif len(self.sprite_sheets) == 1:
                 self.game_map.finished = True
+                self.game_map.pacman.kill()
 
         self.set_name(self.sprite_sheets.pop(0))
             

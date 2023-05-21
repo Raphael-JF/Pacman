@@ -450,7 +450,7 @@ options_reset = Button(
 )
 
 
-save_manager = JSON_handler({"matrix":game_map.get_matrix(),"nb_ghosts":4,"date_of_creation":assets.get_date()})
+save_manager = JSON_handler({"matrix":game_map.get_matrix(),"nb_ghosts":4})
 
 
 overlays = [block_overlay,block_overlay_hor,block_overlay_ver,block_overlay_both]
@@ -475,9 +475,22 @@ def loop(screen,new_winsize, dt, fps_infos, first_loop):
         json_files:list[str] = assets.get_save_files()
         for path in json_files:
             if path.endswith("latest.json"):
-                reader = JSON_handler(["map_editor","latest.json"])
-                os.rename(os.path.join(os.getcwd(),"backup_files","map_editor","latest.json"),os.path.join(os.getcwd(),"backup_files","map_editor",reader["date_of_creation"]+".json"))
-        save_manager.save(["map_editor","latest.json"])
+                save_manager.read(["map_editor","latest.json"])
+                game_map.set_matrix(save_manager["matrix"])
+                x = len(save_manager["matrix"][0:save_manager["matrix"].find("\n")])
+                y = save_manager["matrix"].count("\n")
+                if x > 30:
+                    x = 30
+                if x < 9:
+                    x = 9
+                if y > 30:
+                    y = 30
+                if y < 8:
+                    y = 8
+                options_width.set_option(str(x))
+                options_height.set_option(str(y))
+                options_ghosts.set_option(str(save_manager["nb_ghosts"]))
+                break
 
     if fps_display.alive() != fps_infos[1]:
         if fps_infos[1]:
@@ -684,6 +697,9 @@ def button_handling(button:Button|Image_button):
         path = assets.open_save_dialog()
         if path != "":
             save_manager.save(path)
+
+    elif button is hamburger_play:
+        return 1
         
     elif button is hamburger_options:
         cur_menu = "options"

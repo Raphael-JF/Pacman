@@ -5,12 +5,15 @@ import os
 import time
 
 import assets
+from classes.json_handler import JSON_handler
+
 import elements.start_menu as start_menu
 import elements.campagne as campagne
 import elements.personnalise as personnalise
 import elements.parameters as parameters
 import elements.credits as credits
 import elements.game as game
+
 
 class Manager():
     """L'objet Manager gère le comportement du jeu à chaque image. Il redirige vers les instructions à exécuter en fonction des actions utilisateur."""
@@ -84,6 +87,8 @@ class Manager():
             importlib.reload(campagne)
             self.state = self.loop_start_menu
             self.first_looping = True
+        elif action == 1:
+            importlib.reload(campagne)
         elif type(action) is str:
             importlib.reload(campagne)
             self.lvl_path = os.path.join(os.getcwd(),
@@ -98,7 +103,11 @@ class Manager():
             importlib.reload(personnalise)
             self.state = self.loop_start_menu
             self.first_looping = True
-        
+        elif action == 1:
+            importlib.reload(personnalise)
+            self.lvl_path = ["map_editor","latest.json"]
+            self.state = self.loop_game
+            self.first_looping = True
         elif type(action) is str:
             self.lvl_path = action
 
@@ -119,8 +128,6 @@ class Manager():
                 self.current_winsize = action['resolution']
                 pygame.display.quit()
                 self.win = pygame.display.set_mode(self.current_winsize)
-            # if self.fps != action['fps']:
-            #     self.fps = action['fps']
             self.show_fps = action['montrer_fps']
 
 
@@ -139,4 +146,16 @@ class Manager():
             self.state = self.loop_start_menu
             self.lvl_path = None
             self.first_looping = True
-
+        elif action == 1:
+            importlib.reload(game)
+            self.first_looping = True
+        elif action == 10:
+            for i in range(9):
+                if self.lvl_path == os.path.join(os.getcwd(),
+            "levels","lvl"+str(i+1)+".json"):
+                    save_manager = JSON_handler(["progress.json"])
+                    print(save_manager.data)
+                    save_manager["lvl"+str(i+2)] = True
+                    save_manager.save(["progress.json"])
+                    importlib.reload(campagne)
+                    break
