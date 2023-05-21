@@ -217,9 +217,10 @@ class Image(pygame.sprite.Sprite):
 
     def set_name(self,new_name):
         
-        self.name = new_name
-        self.contenu = pygame.image.load(os.path.join(os.getcwd(),'images',*new_name))
-        self.calc_image()
+        if self.name != new_name:
+            self.name = new_name
+            self.contenu = pygame.image.load(os.path.join(os.getcwd(),'images',*new_name))
+            self.calc_image()
 
 
     def manage_frames(self,dt):

@@ -16,7 +16,7 @@ background = Box(
     winsize = assets.DEFAULT_WINSIZE,
     size = [800,450],
     loc = [[0,0],"topleft"],
-    background_clr=(17, 19, 166),
+    background_clr=[0,0,0],
     border = [-1,(0,0,0),0,"inset"],
     parent_groups = [all_group, to_draw_group],
 )
@@ -177,22 +177,33 @@ def loop(screen,new_winsize, dt, new_lvl_path, fps_infos):
             if event.key == pygame.K_ESCAPE:
                 return 0
             elif event.key in [pygame.K_UP,pygame.K_z]:
-                if start_title.alpha == 255:
-                    hide_start_title()
-                game_map.handle_input("top")
+                if start_title.alive():
+                    if start_title.alpha == 255:
+                        hide_start_title()
+                        game_map.handle_input("top")
+                else:
+                    game_map.handle_input("top")
             elif event.key in [pygame.K_DOWN,pygame.K_s]:
-                if start_title.alpha == 255:
-                    hide_start_title()
-                game_map.handle_input("bottom")
+                if start_title.alive():
+                    if start_title.alpha == 255:
+                        hide_start_title()
+                        game_map.handle_input("bottom")
+                else:
+                    game_map.handle_input("bottom")
             elif event.key in [pygame.K_LEFT,pygame.K_q]:
-                if start_title.alpha == 255:
-                    hide_start_title()
-                game_map.handle_input("left")
+                if start_title.alive():
+                    if start_title.alpha == 255:
+                        hide_start_title()
+                        game_map.handle_input("left")
+                else:
+                    game_map.handle_input("left")
             elif event.key in [pygame.K_RIGHT,pygame.K_d]:
-                if start_title.alpha == 255:
-                    hide_start_title()
-                game_map.handle_input("right")
-    
+                if start_title.alive():
+                    if start_title.alpha == 255:
+                        hide_start_title()
+                        game_map.handle_input("right")
+                else:
+                    game_map.handle_input("right")
     update_counts()
     for btn in clickable_group.sprites():
         manage_states(btn)

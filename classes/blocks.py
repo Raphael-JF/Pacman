@@ -140,7 +140,7 @@ class Pacman(Image):
         self.group = group
         self.state = "idle"
         self.sprite_sheets = []
-        self.anim_timer = Timer(assets.SPRITES_DELAY,self.animate)
+        self.anim_timer = Timer(assets.PACMAN_SPRITES_DELAY,self.animate)
         self.animate()
 
     def update(self,dt):
@@ -157,7 +157,7 @@ class Pacman(Image):
 
     def animate(self):
         
-        self.anim_timer = Timer(assets.SPRITES_DELAY,self.animate)
+        self.anim_timer = Timer(assets.PACMAN_SPRITES_DELAY,self.animate)
 
         if self.state == "idle":
             return
@@ -344,18 +344,24 @@ class Pacman(Image):
 
 class Ghost(Image):
     """
-    états possibles:
+    `self.state` possibles:
     - 'wandering'
     - 'imprisoned'
     - 'escaping'
     - 'chasing'
+    - 'dead'
+
+    `self.anim_state` possibles:
+    - 'base'
+    - 'esc_white'
+    - 'esc_blue'
+    - 'dead'
     """
 
     def __init__(self,winsize,color,speed,topleft,width,game_map,group):
 
         super().__init__(
             name = ["textures","ghost",color,"right","0.png"],
-            # name = ['textures','r.png'],
             winsize = winsize,
             scale_axis = [width,"x"],
             loc = [topleft,"topleft"],
@@ -370,16 +376,46 @@ class Ghost(Image):
         self.direction = None
         self.next_moves = []
         self.group = group
-        self.sprite_sheets = []
         self.state = "imprisoned"
         self.state_timer:Timer = None
-        # self.anim_timer = Timer(assets.SPRITES_DELAY,self.animate)
-        # self.animate()
+        self.anim_state = "base"
+        self.sprite_sheets = []
+        self.anim_timer = Timer(assets.GHOST_SPRITES_DELAY,self.animate)
+        self.animate()
+
+    def animate(self):
+
+    #         - 'base'
+    # - 'esc_white'
+    # - 'esc_blue'
+    # - 'dead'
+        self.anim_timer = Timer(assets.GHOST_SPRITES_DELAY,self.animate)
+        name = self.name[:]
+
+        if self.anim_state == "base":
+            if name[-1] == "0.png":
+                self.set_name(["textures","ghost",self.color,self.direction or "right","1.png"])
+            else:
+                self.set_name(["textures","ghost",self.color,self.direction or "right","0.png"])
+        
+        elif self.anim_state == "esc_blue":
+            if name[-1] == "0.png":
+                self.set_name(["textures","ghost","other","esc_blue","1.png"])
+            else:
+                self.set_name(["textures","ghost","other","esc_blue","0.png"])
+        
+        elif self.anim_state == "esc_white":
+            if name[-1] == "0.png":
+                self.set_name(["textures","ghost","other","esc_white","1.png"])
+            else:
+                self.set_name(["textures","ghost","other","esc_white","0.png"])
+
 
 
     def update(self,dt):
 
-        # self.anim_timer.pass_time(dt)
+        self.anim_timer.pass_time(dt)
+
         if self.state_timer:
             self.state_timer.pass_time(dt)
         
@@ -414,6 +450,13 @@ class Ghost(Image):
                     self.set_direction(self.next_moves.pop(0))
                 except:
                     self.set_direction(random.choice(self.available_dir()))
+
+        elif self.state == "dead":
+             if self.direction is None:
+                try:
+                    self.set_direction(self.next_moves.pop(0))
+                except:
+                    self.set_state("wandering")
 
 
         if self.direction is not None:
@@ -494,10 +537,30 @@ class Ghost(Image):
         elif dir == None:
             self.direction = dir
             return
-        new_name = self.name[:]
-        new_name[-2] = dir
-        self.set_name(new_name)
+        
         self.direction = dir
+        if self.anim_state == "base":
+            self.set_name(["textures","ghost",self.color,self.direction,"0.png"])
+        elif self.anim_state == "dead":
+            self.set_name(["textures","ghost","other","dead",self.direction+".png"])
+
+
+    def set_esc_blue(self,left_time):
+        if left_time > assets.GHOST_BLINK_DELAY:
+            self.state_timer = Timer(assets.GHOST_BLINK_DELAY,self.set_esc_white,left_time - assets.GHOST_BLINK_DELAY)
+        else:
+            self.state_timer = Timer(left_time,self.set_state,"wandering")
+        self.anim_state = "esc_blue"
+        self.set_name(["textures","ghost","other","esc_blue","0.png"])
+    
+
+    def set_esc_white(self,left_time):
+        if left_time > assets.GHOST_BLINK_DELAY:
+            self.state_timer = Timer(assets.GHOST_BLINK_DELAY,self.set_esc_blue,left_time - assets.GHOST_BLINK_DELAY)
+        else:
+            self.state_timer = Timer(left_time,self.set_state,"wandering")
+        self.anim_state = "esc_white"
+        self.set_name(["textures","ghost","other","esc_white","0.png"])
 
 
     def set_state(self,state):
@@ -506,21 +569,38 @@ class Ghost(Image):
             return
         
         elif state == "chasing":
+            self.anim_state = "base"
+            self.set_name(["textures","ghost",self.color,self.direction or "right","0.png"])
             self.speed_multiplier = 1
             self.next_moves = []
 
         elif state == "wandering":
+            self.anim_state = "base"
+            self.set_name(["textures","ghost",self.color,self.direction or "right","0.png"])
             self.speed_multiplier = 1
             self.next_moves = []
 
         elif state == "escaping":
-            self.speed_multiplier = 0.75
+            self.speed_multiplier = 0.625
             self.next_moves = []
             self.set_direction(assets.opposite_side(self.direction))
+            self.anim_state = "esc_blue"
+            self.set_name(["textures","ghost","other","esc_blue","0.png"])
         
         elif state == "imprisoned":
             self.speed_multiplier = 1
             self.next_moves = []
+
+        elif state == "dead":
+            self.speed_multiplier = 2
+            x,y = self.game_map.x_cells//2, self.game_map.y_cells//2
+            loc = [[x-1,y-1],[x+1,y-1],[x-1,y],[x+1,y]]
+            self.next_moves = self.game_map.get_moves(self.game_map.graph.dijkstra(self.next_fixed_pos(),random.choice(loc)))
+            if self.direction is None:
+                self.set_direction(self.next_moves.pop(0))
+            self.anim_state = "dead"
+            self.state_timer = None
+            self.set_name(["textures","ghost","other","dead",(self.direction or "right")+".png"])
 
         self.state = state
         
@@ -595,7 +675,7 @@ class Ghost(Image):
                 self.rect.right = wall.rect.left
             self.set_direction(None)
         ghost_door = self.game_map.ghost_door.rect
-        if self.rect.colliderect(ghost_door) and self.direction == "bottom" and self.rect.bottom >= ghost_door.top:
+        if self.rect.colliderect(ghost_door) and self.direction == "bottom" and self.rect.bottom >= ghost_door.top and not self.state == "dead":
             self.rect.bottom  = ghost_door.top
             self.set_direction(None)
 

@@ -23,7 +23,7 @@ background = Box(
     winsize = assets.DEFAULT_WINSIZE,
     size = [800,450],
     loc = [[0,0],"topleft"],
-    background_clr=[17, 19, 166],
+    background_clr=[0,0,0],
     border = [-1,(0,0,0),0,"inset"],
     parent_groups = [all_group, to_draw_group],
     layer = 0
@@ -530,8 +530,10 @@ def loop(screen,new_winsize, dt, fps_infos, first_loop):
             if event.key == pygame.K_ESCAPE:
                 if cur_menu == None:
                     button_handling(hamburger)
-                else:
+                elif cur_menu == "hamburger":
                     button_handling(hamburger_cross)
+                elif cur_menu == "options":
+                    button_handling(options_cross)
             
         elif event.type == pygame.MOUSEWHEEL:
             game_map.change_size_index(event.y)

@@ -140,15 +140,26 @@ class Game_map(pygame.sprite.Sprite):
         if index < self.save_manager["nb_ghosts"]-1:
             t_index = assets.GHOST_CHASING_TIME(self.x_cells,self.y_cells,ghost.speed)
             dt =  t_index - assets.GHOST_CHASING_TIME(self.x_cells,self.y_cells,self.ghosts[index+1].speed)
-            ghost.state_timer = Timer(t_index,ghost.set_state,"wandering")
-            ghost.set_state("chasing")
+            if ghost.state != "dead":
+                ghost.state_timer = Timer(t_index,ghost.set_state,"wandering")
+                ghost.set_state("chasing")
             self.ghost_timer = Timer(dt,self.ghost_chase,index+1)
 
         elif index == self.save_manager["nb_ghosts"]-1:
             t_index = assets.GHOST_CHASING_TIME(self.x_cells,self.y_cells,ghost.speed)
-            ghost.state_timer = Timer(t_index,ghost.set_state,"wandering")
-            ghost.set_state("chasing")
-            self.ghost_timer = Timer(t_index+assets.GHOSTS_CHASE_COOLDOWN(self.save_manager["nb_ghosts"]), self.ghost_chase,0)
+            if ghost.state != "dead":
+                ghost.state_timer = Timer(t_index,ghost.set_state,"wandering")
+                ghost.set_state("chasing")
+            self.ghost_timer = Timer(t_index+assets.GHOST_CHASE_COOLDOWN(self.save_manager["nb_ghosts"]), self.ghost_chase,0)
+
+
+    def ghost_escape(self):
+        
+        time = assets.GHOST_ESCAPE_TIME(self.x_cells,self.y_cells) 
+        self.ghost_timer = Timer(time,self.ghost_chase,0)
+        for ghost in self.ghosts:
+            ghost.set_state("escaping")
+            ghost.state_timer = Timer(time-assets.GHOST_ESC_BLINK_TIME,ghost.set_esc_white,assets.GHOST_ESC_BLINK_TIME)
 
 
     def liven(self):
@@ -208,7 +219,12 @@ class Game_map(pygame.sprite.Sprite):
                 ghost.update(dt)
             colliding_cells += pygame.sprite.spritecollide(ghost,self.group,False)
             if ghost.rect.collidepoint(self.pacman.rect.center):
-                self.pacman.set_state("dying")
+                if ghost.state == "dead":
+                    pass
+                elif ghost.state == "escaping":
+                    ghost.set_state("dead")
+                else:
+                    self.pacman.set_state("dying")
 
         to_draw = []
         for sprite in colliding_cells:
@@ -236,16 +252,6 @@ class Game_map(pygame.sprite.Sprite):
         self.image.blit(self.pacman.image,self.pacman.rect)
         for ghost in self.ghosts:
             self.image.blit(ghost.image,ghost.rect)
-
-
-    def ghost_escape(self):
-        
-        time = assets.GHOSTS_ESCAPE_TIME(self.x_cells,self.y_cells) 
-        self.ghost_timer = Timer(time+assets.GHOSTS_CHASE_COOLDOWN(self.save_manager["nb_ghosts"]),self.ghost_chase,0)
-        for ghost in self.ghosts:
-            ghost.set_state("escaping")
-            ghost.state_timer = Timer(time,ghost.set_state,"wandering")
-
 
 
     def draw_cell(self,cell):
@@ -315,6 +321,7 @@ class Game_map(pygame.sprite.Sprite):
             if n:
                 n.next[assets.opposite_side(side)] = new
             new.next[side] = n
+        del(sprite)
 
         
 

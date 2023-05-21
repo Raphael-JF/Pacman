@@ -36,11 +36,14 @@ GME_VALUE_TO_NAMES = {
 PACMAN_SPEED = lambda cell_width : 4*cell_width
 PACMAN_MOVING_SPRITES = [["textures","pacman","pacman_0.png"],["textures","pacman","pacman_20.png"],["textures","pacman","pacman_40.png"],["textures","pacman","pacman_60.png"],["textures","pacman","pacman_80.png"],["textures","pacman","pacman_60.png"],["textures","pacman","pacman_40.png"],["textures","pacman","pacman_20.png"]]
 PACMAN_DYING_SPRITES = [["textures","pacman","pacman_0.png"],["textures","pacman","pacman_20.png"],["textures","pacman","pacman_40.png"],["textures","pacman","pacman_60.png"],["textures","pacman","pacman_80.png"],["textures","pacman","pacman_100.png"],["textures","pacman","pacman_120.png"],["textures","pacman","pacman_140.png"],["textures","pacman","pacman_160.png"],["textures","pacman","pacman_180.png"],["textures","pacman","pacman_200.png"],["textures","pacman","pacman_220.png"],["textures","pacman","pacman_240.png"],["textures","pacman","pacman_260.png"],["textures","pacman","pacman_280.png"],["textures","pacman","pacman_300.png"],["textures","pacman","pacman_320.png"],["textures","pacman","pacman_340.png"],["textures","pacman","pacman_360.png"]]
-SPRITES_DELAY = 0.035
+PACMAN_SPRITES_DELAY = 0.035
+GHOST_SPRITES_DELAY = 0.1
 GHOST_COLORS = ["red","blue","pink","orange","green","purple","brown","gray"]
 GHOST_CHASING_TIME = lambda cell_x,cell_y,speed: cell_x*cell_y/speed**2.5
-GHOSTS_CHASE_COOLDOWN = lambda nb_ghosts: 2*nb_ghosts
-GHOSTS_ESCAPE_TIME = lambda cell_x,cell_y : ((cell_x*cell_y)**0.5)/3
+GHOST_CHASE_COOLDOWN = lambda nb_ghosts: 2*nb_ghosts
+GHOST_ESCAPE_TIME = lambda cell_x,cell_y : ((cell_x*cell_y)**0.5)/3.5
+GHOST_BLINK_DELAY = 0.35
+GHOST_ESC_BLINK_TIME = 3 # temps de clignotement des fantômes en mode "escape"
 
 # functions
 from datetime import datetime

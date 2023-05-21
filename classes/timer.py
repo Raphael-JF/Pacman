@@ -10,7 +10,7 @@ class Timer():
         """
 
         if seconds < 0:
-            raise ValueError("negative duration")
+            seconds = 0
 
         self.callback = callback
         self.infos = infos
