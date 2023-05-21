@@ -313,11 +313,10 @@ class Pacman(Image):
             self.direction = None
             self.next_direction = None
 
-        cell_width = round(self.width) + round(self.width) % 2
-        if self.rect.left > self.game_map.x_cells * cell_width:
+        if self.rect.left > self.game_map.x_cells * self.width and self.direction == "right":
             self.rect.right = 0
-        elif self.rect.right < 0:
-            self.rect.left = self.game_map.y_cells * cell_width
+        elif self.rect.right < 0 and self.direction == "left":
+            self.rect.left = self.game_map.y_cells * self.width
             
 
 
@@ -679,8 +678,7 @@ class Ghost(Image):
             self.rect.bottom  = ghost_door.top
             self.set_direction(None)
 
-        cell_width = round(self.width) + round(self.width) % 2
-        if self.rect.left > self.game_map.x_cells * cell_width:
+        if self.rect.left > self.game_map.x_cells * self.width and self.direction == "right":
             self.rect.right = 0
-        elif self.rect.right < 0:
-            self.rect.left = self.game_map.y_cells * cell_width
+        elif self.rect.right < 0 and self.direction == "left":
+            self.rect.left = self.game_map.y_cells * self.width

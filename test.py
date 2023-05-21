@@ -1,3 +1,1 @@
-dir = "left" or "right"
-
-print(dir)
+print(-5//2)

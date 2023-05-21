@@ -213,7 +213,22 @@ class Game_map(pygame.sprite.Sprite):
         self.pacman.update(dt)
 
 
+        
+
+
         colliding_cells = pygame.sprite.spritecollide(self.pacman,self.group,False)
+
+        for sprite in colliding_cells:
+            if sprite.rect.collidepoint(self.pacman.rect.center) and type(sprite) in [Coin,Super_coin]:
+                if isinstance(sprite,Coin):
+                    self.nb_coins -= 1
+                elif isinstance(sprite,Super_coin):
+                    self.nb_super_coins -= 1
+                    self.ghost_escape()
+                self.check_coins()
+                self.delete_cell(sprite)
+                colliding_cells.remove(sprite)
+
         for ghost in self.ghosts:
             if self.pacman.state != "dying":
                 ghost.update(dt)
@@ -232,18 +247,6 @@ class Game_map(pygame.sprite.Sprite):
                 for neighbor in list(sprite.next.values()) + [sprite]:
                     if neighbor is not None:
                         to_draw.append(neighbor)
-                if sprite.rect.collidepoint(self.pacman.rect.center):
-                    if isinstance(sprite,Coin):
-                        self.nb_coins -= 1
-                        self.check_coins()
-                        self.delete_cell(sprite)
-                    elif isinstance(sprite,Super_coin):
-                        self.nb_super_coins -= 1
-                        self.check_coins()
-                        self.delete_cell(sprite)
-                        self.ghost_escape()
-
-
 
                 
         for cell in list(set(to_draw)):
@@ -348,7 +351,7 @@ class Game_map(pygame.sprite.Sprite):
     
 
     def check_coins(self):
-        if self.nb_coins == self.max_nb_coins and self.nb_super_coins == self.max_nb_super_coins:
+        if self.nb_coins == 0 and self.nb_super_coins == 0:
             self.finished = True
 
 
