@@ -297,7 +297,7 @@ def loop(screen,new_winsize, dt, lvl_path, fps_infos):
                 else:
                     game_map.handle_input("right")
             
-            elif event.key == pygame.K_a:
+            elif event.key == pygame.K_l:
                 game_map.finished = True
                 game_map.nb_coins = 0
                 game_map.nb_super_coins = 0

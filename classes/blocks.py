@@ -383,12 +383,9 @@ class Ghost(Image):
         self.anim_timer = Timer(assets.GHOST_SPRITES_DELAY,self.animate)
         self.animate()
 
+
     def animate(self):
 
-    #         - 'base'
-    # - 'esc_white'
-    # - 'esc_blue'
-    # - 'dead'
         self.anim_timer = Timer(assets.GHOST_SPRITES_DELAY,self.animate)
         name = self.name[:]
 

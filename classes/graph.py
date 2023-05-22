@@ -193,7 +193,6 @@ class Graph:
             node.set_distance(math.inf)
             node.set_visited(False)
 
-        # File de priorité pour stocker les nœuds à visiter
         queue = [(0, start_node)]
         start_node.set_distance(0)
 
@@ -201,7 +200,6 @@ class Graph:
             current_distance, current_node = heapq.heappop(queue)
             current_node.set_visited(True)
 
-            # Si le nœud actuel est le nœud cible, on a trouvé le chemin le plus court
             if current_node == target_node:
                 break
 
@@ -213,7 +211,6 @@ class Graph:
                         neighbor.set_previous(current_node)
                         heapq.heappush(queue, (new_distance, neighbor))
 
-        # Construction du chemin le plus court
         path = []
         current_node = target_node
 
@@ -228,7 +225,5 @@ class Graph:
         if created_target:
             self.delete(target_pos)
 
-        # if len(path) == 1:
-        #     return []
         path.reverse()
         return path

@@ -22,6 +22,8 @@
 > - [S]/[↓] : Diriger Pac-man vers le bas
 > - [D]/[↑] : Diriger Pac-man vers la droite
 > - [ECHAP] : Mettre en pause/reprendre
+  
+> - [L] : Gagner instantanément
 
 ### menu _paramètres_
 > - [ECHAP] : Retour au menu _début_

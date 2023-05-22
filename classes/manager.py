@@ -20,12 +20,10 @@ class Manager():
 
     def __init__(self):
         pygame.init()
-        #variables
         self.fps = assets.START_GAME_FPS
         self.last_time = time.perf_counter()
         self.state = self.loop_start_menu
         
-        #initialisation
         self.current_winsize = assets.INIT_WINSIZE
         self.win = pygame.display.set_mode(self.current_winsize)
         self.show_fps = False
@@ -154,7 +152,6 @@ class Manager():
                 if self.lvl_path == os.path.join(os.getcwd(),
             "levels","lvl"+str(i+1)+".json"):
                     save_manager = JSON_handler(["progress.json"])
-                    print(save_manager.data)
                     save_manager["lvl"+str(i+2)] = True
                     save_manager.save(["progress.json"])
                     importlib.reload(campagne)

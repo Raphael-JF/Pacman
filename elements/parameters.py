@@ -75,27 +75,6 @@ resolution = Slider(
     living = True
 )
 
-# rafraichissement = Slider(
-#     winsize = assets.DEFAULT_WINSIZE,
-#     loc = [[584,150],"center"],
-#     background_clr= [250,250,250],
-#     font_clrs=[[25,25,25]],
-#     font_size=30,
-#     size = [300,40],
-#     options_list = [str(i) for i in range(10,250,10)],
-#     base_option = '60',
-#     anchor_options = True,
-#     cursor_width = 22.5,
-#     cursor_background_clr = [175,175,175],
-#     cursor_border = [2,(20,20,20)],
-#     border = [2,(20,20,20),0,"inset"],
-#     text = "Rafraîchissement : {} fps",
-#     font_family = "RopaSans-Regular.ttf",
-#     parent_groups= [all_group, to_draw_group, clickable_group],
-#     layer = 5,
-#     living = True
-# )
-
 montrer_fps = Button(
     winsize=assets.DEFAULT_WINSIZE,
     loc = [[584,150],"center"],

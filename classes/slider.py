@@ -82,15 +82,6 @@ class Slider(Box):
             layer = layer
         )
 
-        # self.base_cursor_background_clr = cursor_background_clr[:]
-        # self.base_cursor_border_width = cursor_border[0]
-        # self.base_cursor_border_clr = cursor_border[1][:]
-        
-        # self.base_background_clr = self.background_clr[:]
-        # self.base_border_width = self.border_width
-        # self.base_border_clr = self.border_clr
-        # self.base_border_padding = self.border_padding
-
         self.anchor_options = anchor_options
         self.text_str = text
         self.clicking = False
@@ -152,44 +143,8 @@ class Slider(Box):
         super().rescale(new_winsize)
         self.cursor.rescale(new_winsize)
         self.text.rescale(new_winsize)
-        # self.base_cursor_border_width *= self.ratio
-
-        # self.base_border_width *= self.ratio
-        # self.base_border_padding *= self.ratio
-        
-        # self.hov_border_width *= self.ratio
-        # self.hov_border_padding *= self.ratio
 
         self.calc_image()
-
-    
-    # def state_changing(self,cursor):
-
-    #     if self.rect.collidepoint(cursor) or self.clicking:
-    #         new_state = True
-    #     elif self.clicking:
-    #         new_state = True
-    #     else:
-    #         new_state = False
-
-    #     if self.hovering != new_state:
-    #         self.hovering = new_state
-    #         if not self.hovering:
-    #             self.instant_change_background_clr([self.background_clr,self.base_background_clr],[self.ease_seconds],[self.ease_mode])
-    #             self.instant_change_border_width([self.border_width,self.base_border_width],[self.ease_seconds],[self.ease_mode])
-    #             self.instant_change_border_clr([self.border_clr,self.base_border_clr],[self.ease_seconds],[self.ease_mode])
-    #             self.instant_change_border_padding([self.border_padding,self.base_border_padding],[self.ease_seconds],[self.ease_mode])
-    #             self.cursor.instant_change_background_clr([self.cursor.background_clr,self.base_cursor_background_clr],[self.ease_seconds],[self.ease_mode])
-    #             self.cursor.instant_change_border_width([self.cursor.border_width,self.base_cursor_border_width],[self.ease_seconds],[self.ease_mode])
-    #             self.cursor.instant_change_border_clr([self.cursor.border_clr,self.base_cursor_border_clr],[self.ease_seconds],[self.ease_mode])
-    #         else:
-    #             self.instant_change_background_clr([self.background_clr,self.hov_background_clr],[self.ease_seconds],[self.ease_mode])
-    #             self.instant_change_border_width([self.border_width,self.hov_border_width],[self.ease_seconds],[self.ease_mode])
-    #             self.instant_change_border_clr([self.border_clr,self.hov_border_clr],[self.ease_seconds],[self.ease_mode])
-    #             self.instant_change_border_padding([self.border_padding,self.hov_border_padding],[self.ease_seconds],[self.ease_mode])
-    #             self.cursor.instant_change_background_clr([self.cursor.background_clr,self.hov_cursor_background_clr],[self.ease_seconds],[self.ease_mode])
-    #             self.cursor.instant_change_border_width([self.cursor.border_width,self.hov_cursor_border_width],[self.ease_seconds],[self.ease_mode])
-    #             self.cursor.instant_change_border_clr([self.cursor.border_clr,self.hov_cursor_border_clr],[self.ease_seconds],[self.ease_mode])
 
     
     def set_clicking(self,state:bool):

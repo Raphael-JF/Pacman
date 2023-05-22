@@ -83,7 +83,6 @@ class Title(Box):
         self.text_width = max([i.get_width() for i in texte_surfaces])
         text_surface = pygame.Surface([
             self.text_width,self.text_height],pygame.SRCALPHA)
-        # text_surface.fill((255,0,0,255))
 
         count_height = 0
         for i in texte_surfaces:
