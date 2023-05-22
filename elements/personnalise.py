@@ -716,13 +716,20 @@ def button_handling(button:Button|Image_button):
     elif button is options_apply:
         dim = [game_map.x_tiles,game_map.y_tiles]
         change = False
-        if int(options_width.cur_option) != dim[0]:
+        x = int(options_width.cur_option)
+        y = int(options_height.cur_option)
+        if x % 2 == 0:
+            x += 1
+        if y % 2 == 1:
+            y += 1
+        if x != dim[0]:
             change = True
             dim[0] = int(options_width.cur_option)
-        if int(options_height.cur_option) != dim[1]:
+        if y != dim[1]:
             change = True
             dim[1] = int(options_height.cur_option)
         if change:
+            print("signal")
             game_map.fill(dim)
             save_manager["matrix"] = game_map.get_matrix()
             button_handling(center)
