@@ -687,10 +687,11 @@ def button_handling(button:Button|Image_button):
         path = assets.open_file_dialog()
         if path != "":
             data = JSON_handler(path)
-            if len(data.data.keys()) == 3 and set(data.data.keys()) == {"matrix","nb_ghosts","date_of_creation"}:
+            if len(data.data.keys()) == 2 and set(data.data.keys()) == {"matrix","nb_ghosts"}:
                 game_map.set_matrix(data["matrix"])
                 save_manager["matrix"] = game_map.get_matrix()
                 save_manager.save(["map_editor","latest.json"])
+                
                 button_handling(center)
                 
     elif button is hamburger_save:
@@ -718,10 +719,11 @@ def button_handling(button:Button|Image_button):
         change = False
         x = int(options_width.cur_option)
         y = int(options_height.cur_option)
-        if x % 2 == 0:
-            x += 1
-        if y % 2 == 1:
-            y += 1
+        # if x % 2 == 0:
+        #     x += 1
+        # if y % 2 == 1:
+        #     y += 1
+        print(dim,[x,y])
         if x != dim[0]:
             change = True
             dim[0] = int(options_width.cur_option)
@@ -729,8 +731,7 @@ def button_handling(button:Button|Image_button):
             change = True
             dim[1] = int(options_height.cur_option)
         if change:
-            print("signal")
-            game_map.fill(dim)
+            game_map.fill([x,y])
             save_manager["matrix"] = game_map.get_matrix()
             button_handling(center)
         if int(options_ghosts.cur_option) != save_manager["nb_ghosts"]:
