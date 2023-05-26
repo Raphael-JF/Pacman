@@ -45,6 +45,7 @@ class Image(pygame.sprite.Sprite):
         self.border_position = border[3]
         self.parent_groups = parent_groups
         self.contenu = pygame.image.load(os.path.join(os.getcwd(),'images',*name))
+        self.alt_contenus = {}
 
         if scale_axis[1] == "x":
             self.height = (scale_axis[0]*self.contenu.get_height()) / self.contenu.get_width()
@@ -219,7 +220,11 @@ class Image(pygame.sprite.Sprite):
         
         if self.name != new_name:
             self.name = new_name
-            self.contenu = pygame.image.load(os.path.join(os.getcwd(),'images',*new_name))
+            try:
+                self.contenu = self.alt_contenus[os.path.join(os.getcwd(),'images',*new_name)].copy()
+            except KeyError:
+                self.contenu = pygame.image.load(os.path.join(os.getcwd(),'images',*new_name))
+                self.alt_contenus[os.path.join(os.getcwd(),'images',*new_name)] = self.contenu.copy()
             self.calc_image()
 
 

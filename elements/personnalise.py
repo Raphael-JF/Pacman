@@ -551,10 +551,7 @@ def loop(screen,new_winsize, dt, fps_infos, first_loop):
         elif event.type == pygame.MOUSEWHEEL:
             game_map.change_size_index(event.y)
             for overlay in overlays:
-                if overlay.alive():
-                    overlay.set_size([game_map.tile_width-game_map.border_width]*2)
-                else:
-                    overlay.set_size([(game_map.tile_width-game_map.border_width)*assets.DEFAULT_WINSIZE[0]/game_map.winsize[0]]*2)
+                overlay.set_size([game_map.tile_width-game_map.border_width]*2)
             kill_overlay()
     
 
@@ -691,7 +688,19 @@ def button_handling(button:Button|Image_button):
                 game_map.set_matrix(data["matrix"])
                 save_manager["matrix"] = game_map.get_matrix()
                 save_manager.save(["map_editor","latest.json"])
-                
+                x = game_map.x_tiles
+                y = game_map.y_tiles
+                if x > 30:
+                    x = 30
+                if x < 9:
+                    x = 9
+                if y > 30:
+                    y = 30
+                if y < 8:
+                    y = 8
+                options_width.set_option(str(x))
+                options_height.set_option(str(y))
+                options_ghosts.set_option(str(data["nb_ghosts"]))
                 button_handling(center)
                 
     elif button is hamburger_save:
