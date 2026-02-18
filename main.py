@@ -5,4 +5,4 @@ if __name__ == "__main__":
     from classes.manager import Manager
     MAIN = Manager()
     while True:
-        MAIN.manage_state()
+        MAIN.manage_state() 
